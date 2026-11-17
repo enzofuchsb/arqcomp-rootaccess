@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="96" viewBox="0 0 900 96" role="img" aria-label="Barra de TRACE subindo de verde para âmbar e vermelho">
+  <defs>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#ffffff" opacity="0.035"/>
+    </pattern>
+  </defs>
+  <style>
+    .mono { font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace; }
+    .fill { animation: grow 8s linear infinite, tint 8s steps(1) infinite; }
+    @keyframes grow { 0% { width: 0; } 85% { width: 846px; } 100% { width: 846px; } }
+    @keyframes tint { 0% { fill: #39FF88; } 34% { fill: #FFB547; } 68% { fill: #FF5468; } }
+    .st { opacity: 0; animation: st 8s steps(1) infinite; }
+    .s1 { animation-name: s1; } .s2 { animation-name: s2; } .s3 { animation-name: s3; } .s4 { animation-name: s4; }
+    @keyframes s1 { 0% { opacity: 1; } 34% { opacity: 0; } }
+    @keyframes s2 { 0% { opacity: 0; } 34% { opacity: 1; } 68% { opacity: 0; } }
+    @keyframes s3 { 0% { opacity: 0; } 68% { opacity: 1; } 85% { opacity: 0; } }
+    @keyframes s4 { 0% { opacity: 0; } 85% { opacity: 1; } 88% { opacity: 0; } 91% { opacity: 1; } 94% { opacity: 0; } 97% { opacity: 1; } }
+  </style>
+  <rect width="900" height="96" fill="#0B1013"/>
+  <rect x="0.5" y="0.5" width="899" height="95" fill="none" stroke="#1B2A24"/>
+
+  <text x="24" y="34" class="mono" font-size="13" fill="#7C9488" letter-spacing="2">TRACE</text>
+  <g class="mono" font-size="13">
+    <text x="876" y="34" text-anchor="end" fill="#39FF88" class="st s1">[ SEGURO ]</text>
+    <text x="876" y="34" text-anchor="end" fill="#FFB547" class="st s2">[ ALERTA ]</text>
+    <text x="876" y="34" text-anchor="end" fill="#FF5468" class="st s3">[ PERIGO ]</text>
+    <text x="876" y="34" text-anchor="end" fill="#FF5468" class="st s4">[ RASTREADO ]</text>
+  </g>
+
+  <rect x="24" y="48" width="852" height="18" fill="#06080A" stroke="#1B2A24"/>
+  <rect x="27" y="51" width="0" height="12" class="fill"/>
+  <!-- marcadores 40% e 80% -->
+  <line x1="364" y1="44" x2="364" y2="70" stroke="#7C9488" stroke-dasharray="2 2"/>
+  <line x1="706" y1="44" x2="706" y2="70" stroke="#7C9488" stroke-dasharray="2 2"/>
+  <g class="mono" font-size="11" fill="#7C9488">
+    <text x="24" y="84">0%</text>
+    <text x="364" y="84" text-anchor="middle">40%</text>
+    <text x="706" y="84" text-anchor="middle">80%</text>
+    <text x="876" y="84" text-anchor="end">100%</text>
+  </g>
+  <rect width="900" height="96" fill="url(#scan)"/>
+</svg>

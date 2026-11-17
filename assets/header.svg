@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="340" viewBox="0 0 900 340" role="img" aria-label="ROOT ACCESS — boot do sistema">
+  <defs>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#ffffff" opacity="0.035"/>
+    </pattern>
+    <filter id="glow" x="-10%" y="-30%" width="120%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="frame"><rect width="900" height="340"/></clipPath>
+  </defs>
+  <style>
+    .mono { font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace; font-size: 15px; }
+    .ok { fill: #39FF88; } .amb { fill: #FFB547; } .txt { fill: #C9F5DA; } .mut { fill: #7C9488; }
+    .line { opacity: 0; animation: show 0.01s forwards; }
+    .l1 { animation-delay: 0.3s; } .l2 { animation-delay: 0.8s; } .l3 { animation-delay: 1.3s; }
+    .l4 { animation-delay: 1.8s; } .l5 { animation-delay: 2.3s; }
+    .lock { animation: show 0.01s 1.8s forwards, blink 1s 1.8s steps(1) infinite; }
+    .title { opacity: 0; animation: flicker 0.9s 2.9s forwards; }
+    .tag { opacity: 0; animation: show 0.01s 3.6s forwards; }
+    .cursor { animation: blink 1s steps(1) infinite; }
+    .sweep { animation: sweep 6s linear infinite; }
+    @keyframes show { to { opacity: 1; } }
+    @keyframes blink { 50% { opacity: 0; } }
+    @keyframes flicker {
+      0% { opacity: 0; } 10% { opacity: 1; } 20% { opacity: 0.2; } 30% { opacity: 1; }
+      45% { opacity: 0.4; } 60% { opacity: 1; } 100% { opacity: 1; }
+    }
+    @keyframes sweep { from { transform: translateY(-60px); } to { transform: translateY(400px); } }
+  </style>
+
+  <g clip-path="url(#frame)">
+    <rect width="900" height="340" fill="#06080A"/>
+    <rect x="0.5" y="0.5" width="899" height="339" fill="none" stroke="#1B2A24"/>
+
+    <!-- barra de título do terminal -->
+    <rect x="1" y="1" width="898" height="28" fill="#0B1013"/>
+    <line x1="1" y1="29" x2="899" y2="29" stroke="#1B2A24"/>
+    <text x="16" y="20" class="mono mut" font-size="12">root@sys:~$ ./boot --firewall=on</text>
+    <text x="884" y="20" class="mono mut" font-size="12" text-anchor="end">BIOS v1.6 · tty0</text>
+
+    <!-- linhas de boot -->
+    <g class="mono">
+      <text x="24" y="62" class="line l1"><tspan class="ok">[  OK  ]</tspan><tspan class="txt"> Fonte de energia estabilizada</tspan></text>
+      <text x="24" y="86" class="line l2"><tspan class="ok">[  OK  ]</tspan><tspan class="txt"> Tensão enviada à placa-mãe</tspan></text>
+      <text x="24" y="110" class="line l3"><tspan class="ok">[  OK  ]</tspan><tspan class="txt"> 16 módulos de hardware detectados</tspan></text>
+      <text x="24" y="134" class="line lock"><tspan class="amb">[ LOCK ]</tspan><tspan class="txt"> Firewall ativo: 16/16 módulos bloqueados</tspan></text>
+      <text x="24" y="158" class="line l5"><tspan class="amb">[ WARN ]</tspan><tspan class="txt"> Sistema de rastreamento iniciado</tspan></text>
+    </g>
+
+    <!-- título -->
+    <g class="title">
+      <text x="24" y="262" font-family="VT323, 'Courier New', monospace" font-size="104" fill="#39FF88" filter="url(#glow)" letter-spacing="3">ROOT ACCESS</text>
+    </g>
+    <g class="tag mono">
+      <text x="26" y="300" class="txt" font-size="14">Religue a máquina módulo por módulo, antes que o firewall te rastreie.</text>
+      <rect x="26" y="312" width="9" height="16" fill="#39FF88" class="cursor"/>
+    </g>
+
+    <!-- scanlines + feixe -->
+    <rect width="900" height="340" fill="url(#scan)"/>
+    <rect class="sweep" x="0" y="0" width="900" height="40" fill="#39FF88" opacity="0.035"/>
+  </g>
+</svg>
