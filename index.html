@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ROOT ACCESS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <main id="app">
+    <!-- TELA 1: BOOT -->
+    <section id="screen-boot" class="screen active" aria-label="Inicialização">
+      <div class="boot-wrap">
+        <pre id="boot-log" class="boot-log" aria-live="polite"></pre>
+
+        <div id="boot-intro" class="boot-intro hidden">
+          <h1 class="title-giant">ROOT ACCESS</h1>
+          <p class="tagline">Religue a máquina módulo por módulo, antes que o firewall te rastreie.</p>
+
+          <div class="rules">
+            <article class="rule-card">
+              <span class="rule-num">01</span>
+              <h2>Descubra a chave</h2>
+              <p>Leia o pacote interceptado e digite o nome do componente bloqueado.</p>
+            </article>
+            <article class="rule-card">
+              <span class="rule-num">02</span>
+              <h2>Fuja do trace</h2>
+              <p>O rastreamento sobe com o tempo e a cada erro. Em 100%, você é pego.</p>
+            </article>
+            <article class="rule-card">
+              <span class="rule-num">03</span>
+              <h2>Use as dicas</h2>
+              <p>BRUTE FORCE revela uma letra, SNIFF dá uma dica extra. Ambos custam trace.</p>
+            </article>
+          </div>
+
+          <button id="btn-start" class="btn btn-primary btn-big" type="button">&gt; INICIAR INVASÃO</button>
+          <p class="hint">ou pressione <kbd>Enter</kbd></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TELA 2: JOGO -->
+    <section id="screen-game" class="screen" aria-label="Jogo">
+      <header class="topbar">
+        <div class="logo">ROOT ACCESS</div>
+        <div id="phase-label" class="phase-label">FASE 1 · ENERGIA E FIRMWARE — MÓDULO 01/16</div>
+        <div class="trace">
+          <span class="trace-label">TRACE</span>
+          <div class="trace-bar" role="progressbar" aria-label="Rastreamento" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="trace-fill" class="trace-fill"></div>
+          </div>
+          <span id="trace-pct" class="trace-pct">0%</span>
+          <button id="btn-sound" class="btn btn-small" type="button" aria-pressed="true">SOM: ON</button>
+        </div>
+      </header>
+
+      <div class="game-body">
+        <div class="main-col">
+          <p class="placeholder">[ ... ] Área do jogo — construída na etapa 2.</p>
+        </div>
+        <aside class="sidebar">
+          <h2 class="side-title">MÓDULOS DO SISTEMA</h2>
+        </aside>
+      </div>
+
+      <footer class="footer">comandos: help · status · brute · sniff · decrypt · clear · reboot</footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
