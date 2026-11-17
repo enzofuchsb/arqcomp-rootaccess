@@ -57,7 +57,7 @@
             <div id="trace-fill" class="trace-fill"></div>
           </div>
           <span id="trace-pct" class="trace-pct">0%</span>
-          <button id="btn-sound" class="btn btn-small" type="button" aria-pressed="true">SOM: ON</button>
+          <button id="btn-sound" class="btn btn-small btn-sound" type="button" aria-pressed="true">SOM: ON</button>
         </div>
       </header>
 
@@ -123,10 +123,52 @@
 
     <!-- TELA: DESKTOP ROOT/OS (Ato 2) — montado na etapa 2 -->
     <section id="screen-desktop" class="screen" aria-label="Área de trabalho ROOT/OS">
-      <div class="desktop-placeholder">
-        <p>ROOT/OS 2002 · Modo de segurança</p>
-        <p class="dim">Área de trabalho em construção (próxima etapa).</p>
+      <header class="dk-topbar">
+        <span class="dk-brand">ROOT ACCESS</span>
+        <span id="dk-phase" class="dk-phase">ATO 2 · SISTEMA — MÓDULOS 6/16</span>
+        <div class="trace">
+          <span class="trace-label">TRACE</span>
+          <div class="trace-bar" role="progressbar" aria-label="Rastreamento" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div id="dtrace-fill" class="trace-fill"></div>
+          </div>
+          <span id="dtrace-pct" class="trace-pct">0%</span>
+          <button class="btn btn-small btn-sound" type="button" aria-pressed="true">SOM: ON</button>
+        </div>
+      </header>
+
+      <div id="dk-area" class="dk-area">
+        <span class="safe-corner tl">Modo de segurança</span>
+        <span class="safe-corner tr">Modo de segurança</span>
+        <span class="safe-corner bl">Modo de segurança</span>
+        <span class="safe-corner br">Modo de segurança</span>
+        <div id="dk-icons" class="dk-icons" role="list" aria-label="Ícones da área de trabalho"></div>
+        <div id="dk-windows"></div>
+
+        <nav id="dk-start" class="dk-start" hidden aria-label="Menu Iniciar">
+          <div class="dk-start-head"><span class="dk-avatar" aria-hidden="true"></span><strong>root</strong><small>ROOT/OS 2002</small></div>
+          <div id="dk-start-list" class="dk-start-list"></div>
+          <div class="dk-start-foot"><button id="dk-reboot" type="button" class="dk-start-off">Reiniciar</button></div>
+        </nav>
+
+        <div id="dk-balloon" class="dk-balloon" hidden role="status" aria-live="polite">
+          <strong id="dk-balloon-title"></strong>
+          <span id="dk-balloon-text"></span>
+        </div>
       </div>
+
+      <footer class="taskbar">
+        <button id="dk-start-btn" class="start-btn" type="button" aria-expanded="false" aria-controls="dk-start">
+          <span class="os-logo-mark small" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Iniciar
+        </button>
+        <div id="dk-tasks" class="dk-tasks"></div>
+        <div class="tray">
+          <button id="tray-defender" class="tray-shield" type="button" title="ROOT Defender">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3z" fill="currentColor"/><path d="M12 5v14c-3-1.3-5-4.4-5-8V7l5-2z" fill="rgba(255,255,255,.35)"/></svg>
+            <span id="tray-pct">0%</span>
+          </button>
+          <span id="dk-clock" class="dk-clock">00:00</span>
+        </div>
+      </footer>
     </section>
 
     <!-- TELA 3: GAME OVER -->
@@ -190,5 +232,7 @@
   </main>
 
   <script src="script.js"></script>
+  <script src="desktop.js"></script>
+  <script src="apps.js"></script>
 </body>
 </html>

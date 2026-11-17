@@ -218,9 +218,33 @@ function runBoot() {
   })();
 }
 
+/* Clique durante a animação do boot: pula a digitação e mostra a tela completa */
+function skipBoot() {
+  if (bootReady || !$('screen-boot').classList.contains('active')) return;
+  clearBootTimers();
+  const log = $('boot-log');
+  log.textContent = '';
+  BOOT_LINES.forEach((line) => {
+    const row = document.createElement('div');
+    const tag = document.createElement('span');
+    tag.className = line.cls;
+    tag.textContent = line.tag + ' ';
+    row.append(tag, document.createTextNode(line.text));
+    log.appendChild(row);
+  });
+  $('boot-intro').classList.remove('hidden');
+  bootReady = true;
+  $('btn-start').focus();
+}
+
 /* ---------- Log do terminal ---------- */
+/* no Ato 2 o log é o do app Terminal (root.exe), criado em apps.js */
+function logEl() {
+  return (state.ato === 2 && window.t2LogEl) || $('log');
+}
+
 function logLine(tag, cls, text) {
-  const log = $('log');
+  const log = logEl();
   const row = document.createElement('div');
   const t = document.createElement('span');
   t.className = cls;
@@ -276,6 +300,8 @@ function renderTrace() {
   pct.className = 'trace-pct ' + nivel;
   pct.textContent = v + '%';
   fill.parentElement.setAttribute('aria-valuenow', v);
+  // espelho do trace no desktop (barra do topo + escudo da bandeja)
+  if (typeof window.desktopTrace === 'function') window.desktopTrace(v, nivel);
 }
 
 function addTrace(qtd) {
@@ -340,9 +366,10 @@ function somGameOver() {
 }
 
 function renderSom() {
-  const b = $('btn-sound');
-  b.textContent = somLigado ? 'SOM: ON' : 'SOM: OFF';
-  b.setAttribute('aria-pressed', String(somLigado));
+  document.querySelectorAll('.btn-sound').forEach((b) => {
+    b.textContent = somLigado ? 'SOM: ON' : 'SOM: OFF';
+    b.setAttribute('aria-pressed', String(somLigado));
+  });
 }
 
 function toggleSom() {
@@ -444,6 +471,7 @@ function crtReboot() {
 /* ---------- Dicas ---------- */
 function bruteForce() {
   if (!state.rodando) return;
+  if (state.ato === 2) { if (window.t2Brute) window.t2Brute(); return; }
   const et = ETAPAS[state.etapa];
   const faltando = [];
   for (let i = 0; i < et.resposta.length; i++) {
@@ -465,6 +493,7 @@ function bruteForce() {
 }
 
 function sniff() {
+  if (state.rodando && state.ato === 2) { if (window.t2Sniff) window.t2Sniff(); return; }
   if (!state.rodando || state.sniffUsado) return;
   state.sniffUsado = true;
   state.dicas++;
@@ -497,6 +526,7 @@ function updateStats() {
   $('stat-errors').textContent = state.erros;
   $('stat-hints').textContent = state.dicas;
   $('online-count').textContent = state.online.size + '/16';
+  if (typeof window.desktopUpdate === 'function') window.desktopUpdate();
 }
 
 /* ---------- Barra lateral de módulos ---------- */
@@ -624,6 +654,7 @@ function executarComando(txt) {
       logLine('[ INFO ]', 'info', 'clear ........... limpa o log');
       logLine('[ INFO ]', 'info', 'reboot .......... reinicia o sistema');
       logLine('[ INFO ]', 'info', 'Qualquer outro texto é testado como chave do módulo.');
+      if (state.ato === 2) logLine('[ INFO ]', 'info', 'Ato 2: brute e sniff agem sobre o pacote selecionado na lista.');
       break;
     case 'status':
       logLine('[ INFO ]', 'info',
@@ -634,7 +665,7 @@ function executarComando(txt) {
       bruteForce();
       break;
     case 'sniff':
-      if (state.sniffUsado) logLine('[ INFO ]', 'info', 'SNIFF já usado neste módulo.');
+      if (state.ato === 1 && state.sniffUsado) logLine('[ INFO ]', 'info', 'SNIFF já usado neste módulo.');
       else sniff();
       break;
     case 'decrypt': {
@@ -651,7 +682,7 @@ function executarComando(txt) {
       break;
     }
     case 'clear':
-      $('log').textContent = '';
+      logEl().textContent = '';
       break;
     case 'reboot':
       crtReboot();
@@ -773,6 +804,7 @@ function startGame() {
   state.dicas = 0;
   state.trace = 0;
   state.rodando = true;
+  if (typeof window.desktopReset === 'function') window.desktopReset();
   renderTrace();
 
   $('log').textContent = '';
@@ -828,6 +860,7 @@ function vitoria() {
 
 /* ---------- Eventos ---------- */
 $('btn-start').addEventListener('click', startGame);
+$('screen-boot').addEventListener('click', skipBoot);
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && $('screen-boot').classList.contains('active')) {
@@ -857,7 +890,7 @@ $('btn-sniff').addEventListener('click', sniff);
 
 $('btn-win-reboot').addEventListener('click', crtReboot);
 $('btn-over-reboot').addEventListener('click', crtReboot);
-$('btn-sound').addEventListener('click', toggleSom);
+document.querySelectorAll('.btn-sound').forEach((b) => b.addEventListener('click', toggleSom));
 $('hall-form').addEventListener('submit', onSalvarHall);
 
 renderSom();
