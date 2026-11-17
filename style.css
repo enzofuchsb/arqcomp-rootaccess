@@ -197,13 +197,198 @@ kbd {
   color: var(--muted);
 }
 
+/* ---------- JOGO: coluna principal ---------- */
+.main-col { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+
+.log {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  font-size: 13px;
+  height: 200px;
+  overflow-y: auto;
+}
+.log div { white-space: pre-wrap; word-break: break-word; }
+.log .ok   { color: var(--green); }
+.log .fail { color: var(--red); }
+.log .lock { color: var(--amber); }
+.log .info { color: var(--cyan); }
+.log .dim  { color: var(--muted); }
+.log .blink { animation: blink 1s steps(1) infinite; }
+
+.packet {
+  border: 1px solid var(--cyan);
+  background: var(--panel);
+}
+.packet-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.packet-time { color: var(--muted); font-weight: 400; }
+.packet-clue { margin: 0; padding: 16px 14px; font-size: 17px; color: var(--text); }
+.packet.crypto { border-color: var(--red); }
+.packet.crypto .packet-head { border-color: var(--red); color: var(--red); }
+.sniff-line {
+  margin: 0;
+  padding: 10px 14px;
+  border-top: 1px dashed var(--border);
+  color: var(--amber);
+  font-size: 14px;
+}
+
+.slots { display: flex; flex-wrap: wrap; gap: 6px; }
+.slot {
+  width: 38px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-bottom: 2px solid var(--green);
+  background: var(--panel);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+.slot.filled { border-color: var(--green); color: var(--green); }
+.slot.revealed { color: var(--amber); border-color: var(--amber); }
+.slots.error .slot { border-color: var(--red); color: var(--red); }
+.slots.error { animation: shake 0.4s; }
+
+.term {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+}
+.term:focus-within { border-color: var(--green); }
+.prompt { color: var(--green); font-weight: 700; white-space: nowrap; }
+.term-field { display: flex; align-items: center; flex: 1; min-width: 0; }
+.term-input {
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  outline: none;
+  padding: 0;
+  width: 1ch;
+  max-width: 100%;
+  caret-color: transparent;
+  text-transform: uppercase;
+}
+.term-cursor { color: var(--green); animation: blink 1s steps(1) infinite; }
+
+.actions { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; }
+.act { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 56px; }
+.act small { font-weight: 400; font-size: 11px; letter-spacing: 0; opacity: 0.8; }
+.btn-amber { color: var(--amber); border-color: var(--amber); }
+.btn-amber:hover { background: rgba(255, 181, 71, 0.08); border-color: var(--amber); }
+.btn-cyan { color: var(--cyan); border-color: var(--cyan); }
+.btn-cyan:hover { background: rgba(92, 216, 255, 0.08); border-color: var(--cyan); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ---------- JOGO: barra lateral ---------- */
+.side-head { display: flex; justify-content: space-between; align-items: baseline; }
+.online-count { color: var(--green); font-size: 13px; font-weight: 700; }
+.phase-group { margin-bottom: 14px; }
+.phase-group h3 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  margin: 0 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.mod {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  padding: 3px 0;
+  color: var(--muted);
+}
+.mod-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mod-num { color: var(--muted); margin-right: 6px; }
+.mod.online { color: var(--green); }
+.mod.current { color: var(--amber); }
+.mod.current .mod-state { animation: blink 1s steps(1) infinite; }
+.mod-state { font-weight: 700; font-size: 11px; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 18px 0 0;
+}
+.stats div { border: 1px solid var(--border); padding: 8px; background: var(--bg); }
+.stats dt { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+.stats dd { margin: 2px 0 0; font-size: 18px; font-weight: 700; color: var(--text); }
+
+/* ---------- VITÓRIA ---------- */
+.end-wrap { max-width: 1040px; margin: 0 auto; padding: 48px 24px; }
+.end-log { height: auto; margin-bottom: 24px; }
+.whoami { color: var(--green); margin: 0 0 4px; }
+.title-win { font-size: clamp(48px, 9vw, 112px); margin-bottom: 28px; }
+.end-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+.end-card { border: 1px solid var(--border); background: var(--panel); padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.end-card span { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
+.end-card strong { font-size: 24px; color: var(--green); }
+
+/* ---------- TRACE: cores ---------- */
+.trace-fill.mid { background: var(--amber); }
+.trace-fill.high, .trace-fill.full { background: var(--red); }
+.trace-fill.full { width: 100%; }
+.trace-pct.mid { color: var(--amber); }
+.trace-pct.high { color: var(--red); }
+
+.slot.revealed:not(.filled) { color: var(--amber); border-color: var(--amber); }
+.log .warn { color: var(--amber); }
+
+/* ---------- GAME OVER ---------- */
+#screen-over { background: #1a0508; }
+.over-trace { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.over-bar { flex: 1; border-color: var(--red); }
+.over-pct { color: var(--red); font-weight: 700; }
+.over-log { border-color: #4a1219; background: #12040a; }
+.title-over {
+  color: var(--red);
+  text-shadow: none;
+  font-size: clamp(48px, 10vw, 120px);
+  margin-bottom: 28px;
+  position: relative;
+}
+#screen-over .end-card { border-color: #4a1219; background: #12040a; }
+#screen-over .end-card strong { color: var(--red); }
+.btn-danger { background: var(--red); color: #1a0508; border-color: var(--red); }
+.btn-danger:hover { background: #ff7a8a; border-color: #ff7a8a; }
+
 /* ---------- Animações ---------- */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
 @keyframes blink { 50% { opacity: 0; } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 860px) {
   .rules { grid-template-columns: 1fr; }
   .game-body { grid-template-columns: 1fr; }
+  .actions { grid-template-columns: 1fr; }
+  .end-cards { grid-template-columns: repeat(2, 1fr); }
+  .slot { width: 30px; height: 38px; font-size: 18px; }
   .sidebar { border-left: 0; border-top: 1px solid var(--border); }
 }
 

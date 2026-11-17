@@ -63,14 +63,90 @@
 
       <div class="game-body">
         <div class="main-col">
-          <p class="placeholder">[ ... ] Área do jogo — construída na etapa 2.</p>
+          <div id="log" class="log" aria-live="polite"></div>
+
+          <section id="packet" class="packet" aria-labelledby="packet-head">
+            <div class="packet-head">
+              <span id="packet-head">PKT#01 · PACOTE INTERCEPTADO</span>
+              <span id="packet-time" class="packet-time">00:00:00</span>
+            </div>
+            <p id="packet-clue" class="packet-clue"></p>
+            <p id="sniff-line" class="sniff-line hidden"></p>
+          </section>
+
+          <div id="decoder" class="decoder hidden"></div>
+
+          <div id="slots" class="slots" aria-label="Casinhas da resposta"></div>
+
+          <form id="term" class="term" autocomplete="off">
+            <label for="term-input" class="prompt">root@sys:~$</label>
+            <div class="term-field">
+              <input id="term-input" class="term-input" type="text" spellcheck="false" autocapitalize="characters" aria-label="Digite a chave ou um comando">
+              <span class="term-cursor" aria-hidden="true">█</span>
+            </div>
+          </form>
+
+          <div class="actions">
+            <button id="btn-scan" class="btn btn-primary act" type="button">&gt; EXECUTAR SCAN</button>
+            <button id="btn-brute" class="btn btn-amber act" type="button">BRUTE FORCE · +10%<small>revela uma letra</small></button>
+            <button id="btn-sniff" class="btn btn-cyan act" type="button">SNIFF · +5%<small>dica extra sobre a palavra</small></button>
+          </div>
         </div>
+
         <aside class="sidebar">
-          <h2 class="side-title">MÓDULOS DO SISTEMA</h2>
+          <div class="side-head">
+            <h2 class="side-title">MÓDULOS DO SISTEMA</h2>
+            <span id="online-count" class="online-count">0/16</span>
+          </div>
+          <div id="modules"></div>
+          <dl class="stats">
+            <div><dt>TEMPO</dt><dd id="stat-time">00:00</dd></div>
+            <div><dt>ERROS</dt><dd id="stat-errors">0</dd></div>
+            <div><dt>DICAS</dt><dd id="stat-hints">0</dd></div>
+          </dl>
         </aside>
       </div>
 
       <footer class="footer">comandos: help · status · brute · sniff · decrypt · clear · reboot</footer>
+    </section>
+
+    <!-- TELA 3: GAME OVER -->
+    <section id="screen-over" class="screen" aria-label="Game over">
+      <div class="end-wrap">
+        <div class="over-trace">
+          <span class="trace-label">TRACE</span>
+          <div class="trace-bar over-bar"><div class="trace-fill full"></div></div>
+          <span class="trace-pct over-pct">100%</span>
+        </div>
+        <div class="log end-log over-log">
+          <div><span class="fail">[ALERTA]</span> Origem da invasão identificada</div>
+          <div><span class="fail">[ALERTA]</span> Sessão encerrada pelo firewall</div>
+        </div>
+        <h1 class="title-giant title-over" data-text="CONEXÃO RASTREADA">CONEXÃO RASTREADA</h1>
+        <div class="end-cards">
+          <div class="end-card"><span>MÓDULOS LIBERADOS</span><strong id="over-mods">0/16</strong></div>
+          <div class="end-card"><span>TEMPO</span><strong id="over-time">00:00</strong></div>
+          <div class="end-card"><span>ERROS</span><strong id="over-errors">0</strong></div>
+          <div class="end-card"><span>DICAS</span><strong id="over-hints">0</strong></div>
+        </div>
+        <button id="btn-over-reboot" class="btn btn-danger btn-big" type="button">&gt; REBOOT</button>
+      </div>
+    </section>
+
+    <!-- TELA 4: VITÓRIA -->
+    <section id="screen-win" class="screen" aria-label="Vitória">
+      <div class="end-wrap">
+        <div id="win-log" class="log end-log"></div>
+        <p class="whoami">root@sys:~# whoami</p>
+        <h1 class="title-giant title-win">ACESSO ROOT CONCEDIDO</h1>
+        <div class="end-cards">
+          <div class="end-card"><span>TEMPO</span><strong id="win-time">00:00</strong></div>
+          <div class="end-card"><span>TRACE FINAL</span><strong id="win-trace">0%</strong></div>
+          <div class="end-card"><span>ERROS</span><strong id="win-errors">0</strong></div>
+          <div class="end-card"><span>DICAS</span><strong id="win-hints">0</strong></div>
+        </div>
+        <button id="btn-win-reboot" class="btn btn-primary btn-big" type="button">&gt; REBOOT</button>
+      </div>
     </section>
   </main>
 
