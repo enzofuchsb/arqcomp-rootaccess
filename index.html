@@ -74,7 +74,17 @@
             <p id="sniff-line" class="sniff-line hidden"></p>
           </section>
 
-          <div id="decoder" class="decoder hidden"></div>
+          <section id="decoder" class="decoder hidden" aria-labelledby="decoder-title">
+            <div class="decoder-head">
+              <span id="decoder-title">DECODIFICADOR · CIFRA DE CÉSAR</span>
+              <div class="decoder-ctrl">
+                <button id="btn-key-down" class="btn btn-small" type="button" aria-label="Diminuir chave">−</button>
+                <span class="decoder-key">CHAVE <strong id="decoder-key">00</strong></span>
+                <button id="btn-key-up" class="btn btn-small" type="button" aria-label="Aumentar chave">+</button>
+              </div>
+            </div>
+            <p id="decoder-out" class="decoder-out" aria-live="polite"></p>
+          </section>
 
           <div id="slots" class="slots" aria-label="Casinhas da resposta"></div>
 
@@ -139,13 +149,33 @@
         <div id="win-log" class="log end-log"></div>
         <p class="whoami">root@sys:~# whoami</p>
         <h1 class="title-giant title-win">ACESSO ROOT CONCEDIDO</h1>
-        <div class="end-cards">
-          <div class="end-card"><span>TEMPO</span><strong id="win-time">00:00</strong></div>
-          <div class="end-card"><span>TRACE FINAL</span><strong id="win-trace">0%</strong></div>
-          <div class="end-card"><span>ERROS</span><strong id="win-errors">0</strong></div>
-          <div class="end-card"><span>DICAS</span><strong id="win-hints">0</strong></div>
+        <div class="win-grid">
+          <div>
+            <div class="end-cards">
+              <div class="end-card"><span>TEMPO</span><strong id="win-time">00:00</strong></div>
+              <div class="end-card"><span>TRACE FINAL</span><strong id="win-trace">0%</strong></div>
+              <div class="end-card"><span>ERROS</span><strong id="win-errors">0</strong></div>
+              <div class="end-card"><span>DICAS</span><strong id="win-hints">0</strong></div>
+            </div>
+            <button id="btn-win-reboot" class="btn btn-primary btn-big" type="button">&gt; REBOOT</button>
+          </div>
+
+          <section class="hall" aria-labelledby="hall-title">
+            <h2 id="hall-title" class="hall-title">HALL DOS INVASORES</h2>
+            <form id="hall-form" class="hall-form" autocomplete="off">
+              <label for="hall-name" class="hall-label">codinome</label>
+              <div class="hall-row">
+                <input id="hall-name" class="hall-input" type="text" maxlength="16" placeholder="ex: zero_cool" required>
+                <button id="btn-hall-save" class="btn btn-primary" type="submit">SALVAR NO HALL</button>
+              </div>
+              <p id="hall-msg" class="hall-msg" aria-live="polite"></p>
+            </form>
+            <table class="hall-table">
+              <thead><tr><th scope="col">#</th><th scope="col">CODINOME</th><th scope="col">TEMPO</th></tr></thead>
+              <tbody id="hall-body"></tbody>
+            </table>
+          </section>
         </div>
-        <button id="btn-win-reboot" class="btn btn-primary btn-big" type="button">&gt; REBOOT</button>
       </div>
     </section>
   </main>

@@ -344,6 +344,30 @@ kbd {
 .end-card span { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; }
 .end-card strong { font-size: 24px; color: var(--green); }
 
+/* ---------- DECODIFICADOR ---------- */
+.decoder { border: 1px solid var(--border); background: var(--panel); }
+.decoder-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.decoder-ctrl { display: flex; align-items: center; gap: 10px; }
+.decoder-ctrl .btn { font-size: 16px; padding: 2px 12px; }
+.decoder-key strong { color: var(--text); font-size: 15px; }
+.decoder-out { margin: 0; padding: 14px; font-size: 16px; color: var(--muted); }
+.decoder.solved { border-color: var(--green); }
+.decoder.solved .decoder-out { color: var(--green); }
+.decoder.solved .decoder-key strong { color: var(--green); }
+.packet.crypto .packet-clue { color: var(--red); letter-spacing: 0.02em; }
+
 /* ---------- TRACE: cores ---------- */
 .trace-fill.mid { background: var(--amber); }
 .trace-fill.high, .trace-fill.full { background: var(--red); }
@@ -372,6 +396,97 @@ kbd {
 .btn-danger { background: var(--red); color: #1a0508; border-color: var(--red); }
 .btn-danger:hover { background: #ff7a8a; border-color: #ff7a8a; }
 
+/* ---------- GLITCH (game over) ---------- */
+.title-over { animation: jitter 2.4s infinite; }
+.title-over::before,
+.title-over::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.title-over::before {
+  color: var(--cyan);
+  transform: translate(-3px, 0);
+  mix-blend-mode: screen;
+  animation: slice-a 1.8s infinite steps(1);
+}
+.title-over::after {
+  color: var(--amber);
+  transform: translate(3px, 0);
+  mix-blend-mode: screen;
+  animation: slice-b 2.2s infinite steps(1);
+}
+@keyframes jitter {
+  0%, 90%, 100% { transform: none; }
+  91% { transform: translate(-4px, 1px) skewX(-4deg); }
+  93% { transform: translate(4px, -1px) skewX(3deg); }
+  95% { transform: translate(-2px, 0); }
+}
+@keyframes slice-a {
+  0%   { clip-path: inset(0 0 70% 0); }
+  25%  { clip-path: inset(40% 0 35% 0); }
+  50%  { clip-path: inset(75% 0 5% 0); }
+  75%  { clip-path: inset(15% 0 60% 0); }
+}
+@keyframes slice-b {
+  0%   { clip-path: inset(60% 0 10% 0); }
+  33%  { clip-path: inset(5% 0 80% 0); }
+  66%  { clip-path: inset(35% 0 40% 0); }
+}
+
+/* glitch nas casinhas ao errar */
+.slots.error .slot { animation: slot-glitch 0.4s steps(2); }
+@keyframes slot-glitch {
+  0%   { box-shadow: -3px 0 0 var(--cyan), 3px 0 0 var(--amber); }
+  50%  { box-shadow: 3px 0 0 var(--cyan), -3px 0 0 var(--amber); }
+  100% { box-shadow: none; }
+}
+
+/* ---------- CRT desligando ---------- */
+#app { transform-origin: center; }
+#app.crt-off { animation: crt-off 0.65s ease-in forwards; }
+@keyframes crt-off {
+  0%   { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
+  45%  { transform: scale(1, 0.006); filter: brightness(3); opacity: 1; }
+  75%  { transform: scale(0.25, 0.006); filter: brightness(4); opacity: 1; }
+  100% { transform: scale(0, 0); opacity: 0; }
+}
+body.crt-dark { background: #000; overflow: hidden; }
+
+/* ---------- HALL DOS INVASORES ---------- */
+.win-grid { display: grid; grid-template-columns: 1fr 360px; gap: 24px; align-items: start; }
+.win-grid .end-cards { grid-template-columns: repeat(2, 1fr); }
+.hall { border: 1px solid var(--border); background: var(--panel); padding: 18px; }
+.hall-title { font-size: 13px; letter-spacing: 0.1em; color: var(--amber); margin: 0 0 12px; }
+.hall-label { font-size: 12px; color: var(--muted); }
+.hall-row { display: flex; gap: 8px; margin-top: 4px; }
+.hall-input {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: #000;
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+}
+.hall-input:focus-visible { outline: 2px solid var(--cyan); outline-offset: 1px; }
+.hall-msg { min-height: 1.5em; margin: 6px 0 10px; font-size: 12px; color: var(--green); }
+.hall-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.hall-table th { text-align: left; font-size: 11px; color: var(--muted); font-weight: 400; padding: 6px 4px; border-bottom: 1px solid var(--border); }
+.hall-table td { padding: 6px 4px; border-bottom: 1px solid var(--border); }
+.hall-table td:last-child, .hall-table th:last-child { text-align: right; }
+.hall-table tr.me td { color: var(--green); }
+
+@media (max-width: 860px) {
+  .win-grid { grid-template-columns: 1fr; }
+  .topbar { justify-content: center; text-align: center; }
+  .trace-bar { width: 120px; }
+  .main-col, .sidebar { padding: 16px; }
+  .log { height: 160px; }
+}
+
 /* ---------- Animações ---------- */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
@@ -395,3 +510,4 @@ kbd {
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; transition: none !important; }
 }
+.hall-table .dim { color: var(--muted); }

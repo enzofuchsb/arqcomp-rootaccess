@@ -111,6 +111,8 @@ const state = {
   segundos: 0,
   revelados: [],   // índices de letras reveladas pelo BRUTE FORCE
   sniffUsado: false,
+  cifra: 0,        // deslocamento secreto da etapa (fase 4)
+  chave: 0,        // chave escolhida no decodificador
   rodando: false
 };
 let timerId = null;
@@ -180,6 +182,7 @@ function typeLine(container, line, done) {
 function runBoot() {
   clearBootTimers();
   stopTimer();
+  state.rodando = false;
   bootReady = false;
   const log = $('boot-log');
   log.textContent = '';
@@ -264,8 +267,155 @@ function addTrace(qtd) {
   if (state.trace >= 100) gameOver();
 }
 
-/* Sons entram na etapa 5 */
-function alarme() {}
+/* ---------- Sons (Web Audio API, sem arquivos) ---------- */
+let audioCtx = null;
+let somLigado = true;
+try { somLigado = localStorage.getItem('rootaccess-som') !== 'off'; } catch (e) { /* sem storage */ }
+
+function ctx() {
+  if (!somLigado) return null;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  } catch (e) {
+    return null;
+  }
+}
+
+/* toca um bipe: frequência (Hz), duração (s), forma de onda, volume, atraso (s) */
+function bipe(freq, dur, tipo, vol, atraso) {
+  const ac = ctx();
+  if (!ac) return;
+  const t = ac.currentTime + (atraso || 0);
+  const osc = ac.createOscillator();
+  const gain = ac.createGain();
+  osc.type = tipo || 'square';
+  osc.frequency.setValueAtTime(freq, t);
+  gain.gain.setValueAtTime(vol || 0.05, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  osc.connect(gain).connect(ac.destination);
+  osc.start(t);
+  osc.stop(t + dur + 0.02);
+}
+
+function somTecla()   { bipe(1400 + Math.random() * 300, 0.025, 'square', 0.015); }
+function somAcerto()  { bipe(880, 0.08, 'square', 0.05); bipe(1320, 0.12, 'square', 0.05, 0.08); }
+function somErro()    { bipe(140, 0.3, 'sawtooth', 0.08); bipe(90, 0.3, 'sawtooth', 0.06, 0.12); }
+function alarme() {
+  for (let i = 0; i < 4; i++) {
+    bipe(960, 0.14, 'square', 0.06, i * 0.3);
+    bipe(640, 0.14, 'square', 0.06, i * 0.3 + 0.15);
+  }
+}
+function somVitoria() {
+  [523, 659, 784, 1046, 784, 1046, 1318].forEach((f, i) => bipe(f, 0.12, 'square', 0.05, i * 0.11));
+}
+function somGameOver() {
+  [440, 330, 220, 110].forEach((f, i) => bipe(f, 0.25, 'sawtooth', 0.07, i * 0.22));
+}
+
+function renderSom() {
+  const b = $('btn-sound');
+  b.textContent = somLigado ? 'SOM: ON' : 'SOM: OFF';
+  b.setAttribute('aria-pressed', String(somLigado));
+}
+
+function toggleSom() {
+  somLigado = !somLigado;
+  try { localStorage.setItem('rootaccess-som', somLigado ? 'on' : 'off'); } catch (e) { /* ignora */ }
+  renderSom();
+  if (somLigado) bipe(1000, 0.06, 'square', 0.05);
+}
+
+/* ---------- Hall dos Invasores (localStorage) ---------- */
+const HALL_KEY = 'rootaccess-hall';
+let hallSalvo = false;
+let hallUltimo = null;
+
+function lerHall() {
+  try {
+    const dados = JSON.parse(localStorage.getItem(HALL_KEY) || '[]');
+    return Array.isArray(dados) ? dados.filter((r) => r && typeof r.nome === 'string' && typeof r.tempo === 'number') : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function salvarHall(lista) {
+  try {
+    localStorage.setItem(HALL_KEY, JSON.stringify(lista));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function renderHall() {
+  const top = lerHall().sort((a, b) => a.tempo - b.tempo).slice(0, 5);
+  const body = $('hall-body');
+  body.textContent = '';
+  if (!top.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = 3;
+    td.className = 'dim';
+    td.textContent = 'nenhum invasor registrado ainda';
+    tr.appendChild(td);
+    body.appendChild(tr);
+    return;
+  }
+  top.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    if (hallUltimo && r.id === hallUltimo) tr.className = 'me';
+    [pad2(i + 1), r.nome, formatTime(r.tempo)].forEach((v) => {
+      const td = document.createElement('td');
+      td.textContent = v;
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+function onSalvarHall(e) {
+  e.preventDefault();
+  if (hallSalvo) return;
+  const nome = $('hall-name').value.trim().replace(/\s+/g, '_').slice(0, 16);
+  if (!nome) { $('hall-msg').textContent = 'digite um codinome.'; return; }
+  const reg = { id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), nome, tempo: state.segundos };
+  const lista = lerHall();
+  lista.push(reg);
+  if (salvarHall(lista)) {
+    hallSalvo = true;
+    hallUltimo = reg.id;
+    $('hall-msg').textContent = 'registro gravado: ' + nome + ' · ' + formatTime(state.segundos);
+    $('btn-hall-save').disabled = true;
+    $('hall-name').disabled = true;
+    somAcerto();
+  } else {
+    $('hall-msg').textContent = 'não foi possível salvar (armazenamento bloqueado).';
+  }
+  renderHall();
+}
+
+/* ---------- Reboot com efeito CRT ---------- */
+let rebootando = false;
+function crtReboot() {
+  if (rebootando) return;
+  rebootando = true;
+  state.rodando = false;
+  stopTimer();
+  bipe(220, 0.4, 'sine', 0.05);
+  const app = $('app');
+  document.body.classList.add('crt-dark');
+  app.classList.add('crt-off');
+  setTimeout(() => {
+    app.classList.remove('crt-off');
+    document.body.classList.remove('crt-dark');
+    rebootando = false;
+    runBoot();
+  }, 750);
+}
 
 /* ---------- Dicas ---------- */
 function bruteForce() {
@@ -313,6 +463,7 @@ function gameOver() {
   $('over-time').textContent = formatTime(state.segundos);
   $('over-errors').textContent = state.erros;
   $('over-hints').textContent = state.dicas;
+  somGameOver();
   showScreen('over');
   $('btn-over-reboot').focus();
 }
@@ -409,7 +560,16 @@ function loadStage() {
   $('packet').classList.toggle('crypto', crypto);
   $('packet-head').textContent = 'PKT#' + n + ' · ' + (crypto ? 'PACOTE CRIPTOGRAFADO' : 'PACOTE INTERCEPTADO');
   $('packet-time').textContent = clock();
-  $('packet-clue').textContent = et.pista;   // cifra de César entra na etapa 4
+  if (crypto) {
+    state.cifra = 1 + Math.floor(Math.random() * 25);   // 1 a 25
+    state.chave = 0;
+    $('packet-clue').textContent = cesar(et.pista, state.cifra);
+    $('decoder').classList.remove('hidden');
+    renderDecoder();
+  } else {
+    $('packet-clue').textContent = et.pista;
+    $('decoder').classList.add('hidden');
+  }
   $('sniff-line').classList.add('hidden');
   $('sniff-line').textContent = '';
 
@@ -423,11 +583,105 @@ function loadStage() {
 }
 
 /* ---------- Verificação ---------- */
+/* ---------- Cifra de César ---------- */
+/* Desloca só A-Z e a-z; acentos, números e pontuação ficam iguais */
+function cesar(texto, desloc) {
+  const d = ((desloc % 26) + 26) % 26;
+  return texto.replace(/[A-Za-z]/g, (c) => {
+    const base = c <= 'Z' ? 65 : 97;
+    return String.fromCharCode(((c.charCodeAt(0) - base + d) % 26) + base);
+  });
+}
+
+function renderDecoder() {
+  const et = ETAPAS[state.etapa];
+  const cifrado = cesar(et.pista, state.cifra);
+  $('decoder-key').textContent = pad2(state.chave);
+  $('decoder-out').textContent = cesar(cifrado, -state.chave);
+  const ok = state.chave === state.cifra;
+  $('decoder').classList.toggle('solved', ok);
+  return ok;
+}
+
+function setChave(n) {
+  if (ETAPAS[state.etapa].fase !== 4) return false;
+  state.chave = ((n % 26) + 26) % 26;
+  if (renderDecoder()) {
+    logLine('[  OK  ]', 'ok', 'Pacote decifrado com a chave ' + pad2(state.chave));
+  }
+  return true;
+}
+
+/* ---------- Comandos do terminal ---------- */
+function executarComando(txt) {
+  const partes = txt.trim().toLowerCase().split(/\s+/);
+  const cmd = partes[0];
+  const comandos = ['help', 'status', 'brute', 'sniff', 'decrypt', 'clear', 'reboot'];
+  if (!comandos.includes(cmd)) return false;
+
+  logLine('root@sys:~$', 'dim', txt.trim());
+
+  switch (cmd) {
+    case 'help':
+      logLine('[ INFO ]', 'info', 'help ............ lista os comandos');
+      logLine('[ INFO ]', 'info', 'status .......... módulos, trace, erros, dicas e tempo');
+      logLine('[ INFO ]', 'info', 'brute ........... revela uma letra (+10% trace)');
+      logLine('[ INFO ]', 'info', 'sniff ........... dica extra sobre a palavra (+5% trace)');
+      logLine('[ INFO ]', 'info', 'decrypt --chave N aplica a chave N no decodificador (fase 4)');
+      logLine('[ INFO ]', 'info', 'clear ........... limpa o log');
+      logLine('[ INFO ]', 'info', 'reboot .......... reinicia o sistema');
+      logLine('[ INFO ]', 'info', 'Qualquer outro texto é testado como chave do módulo.');
+      break;
+    case 'status':
+      logLine('[ INFO ]', 'info',
+        'módulos ' + state.etapa + '/16 · trace ' + Math.round(state.trace) + '% · erros ' + state.erros +
+        ' · dicas ' + state.dicas + ' · tempo ' + formatTime(state.segundos));
+      break;
+    case 'brute':
+      bruteForce();
+      break;
+    case 'sniff':
+      if (state.sniffUsado) logLine('[ INFO ]', 'info', 'SNIFF já usado neste módulo.');
+      else sniff();
+      break;
+    case 'decrypt': {
+      const m = txt.match(/--chave\s+(-?\d+)/i);
+      if (ETAPAS[state.etapa].fase !== 4) {
+        logLine('[ FAIL ]', 'fail', 'decrypt: este pacote não está criptografado.');
+      } else if (!m) {
+        logLine('[ FAIL ]', 'fail', 'uso: decrypt --chave N   (N de 1 a 25)');
+      } else {
+        const n = parseInt(m[1], 10);
+        if (n < 0 || n > 25) logLine('[ FAIL ]', 'fail', 'decrypt: a chave vai de 0 a 25.');
+        else {
+          setChave(n);
+          logLine('[ INFO ]', 'info', 'chave ' + pad2(n) + ' aplicada no decodificador.');
+        }
+      }
+      break;
+    }
+    case 'clear':
+      $('log').textContent = '';
+      break;
+    case 'reboot':
+      crtReboot();
+      return true;
+  }
+  return true;
+}
+
 function executarScan() {
   if (!state.rodando) return;
   const inp = $('term-input');
   const bruto = inp.value.trim();
   if (!bruto) { inp.focus(); return; }
+
+  if (executarComando(bruto)) {
+    inp.value = '';
+    fitInput();
+    if (state.rodando) { renderSlots(); inp.focus(); }
+    return;
+  }
 
   const et = ETAPAS[state.etapa];
   const chave = normalizar(bruto);
@@ -442,6 +696,7 @@ function executarScan() {
 function acertou(et) {
   document.querySelectorAll('#log .blink').forEach((el) => el.classList.remove('blink'));
   logLine('[  OK  ]', 'ok', et.logOk);
+  somAcerto();
   state.etapa++;
   updateStats();
 
@@ -454,6 +709,7 @@ function acertou(et) {
 
 function errou(bruto) {
   state.erros++;
+  somErro();
   updateStats();
   logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada no módulo ' + pad2(state.etapa + 1) + ' — trace +10%');
 
@@ -517,6 +773,15 @@ function vitoria() {
   $('win-errors').textContent = state.erros;
   $('win-hints').textContent = state.dicas;
 
+  hallSalvo = false;
+  hallUltimo = null;
+  $('hall-name').value = '';
+  $('hall-name').disabled = false;
+  $('btn-hall-save').disabled = false;
+  $('hall-msg').textContent = '';
+  renderHall();
+  somVitoria();
+
   showScreen('win');
   $('btn-win-reboot').focus();
 }
@@ -537,6 +802,7 @@ $('term').addEventListener('submit', (e) => {
 });
 
 $('term-input').addEventListener('input', () => {
+  somTecla();
   fitInput();
   renderSlots();
 });
@@ -548,8 +814,13 @@ $('term').addEventListener('click', () => $('term-input').focus());
 
 $('btn-brute').addEventListener('click', bruteForce);
 $('btn-sniff').addEventListener('click', sniff);
+$('btn-key-down').addEventListener('click', () => setChave(state.chave - 1));
+$('btn-key-up').addEventListener('click', () => setChave(state.chave + 1));
 
-$('btn-win-reboot').addEventListener('click', runBoot);
-$('btn-over-reboot').addEventListener('click', runBoot);
+$('btn-win-reboot').addEventListener('click', crtReboot);
+$('btn-over-reboot').addEventListener('click', crtReboot);
+$('btn-sound').addEventListener('click', toggleSom);
+$('hall-form').addEventListener('submit', onSalvarHall);
 
+renderSom();
 runBoot();
