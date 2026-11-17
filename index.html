@@ -20,7 +20,7 @@
 
         <div id="boot-intro" class="boot-intro hidden">
           <h1 class="title-giant">ROOT ACCESS</h1>
-          <p class="tagline">Religue a máquina módulo por módulo, antes que o firewall te rastreie.</p>
+          <p class="tagline">Dê a partida no PC, invada o sistema e religue os 16 módulos antes que o firewall te rastreie.</p>
 
           <div class="rules">
             <article class="rule-card">
@@ -50,7 +50,7 @@
     <section id="screen-game" class="screen" aria-label="Jogo">
       <header class="topbar">
         <div class="logo">ROOT ACCESS</div>
-        <div id="phase-label" class="phase-label">FASE 1 · ENERGIA E FIRMWARE — MÓDULO 01/16</div>
+        <div id="phase-label" class="phase-label">ATO 1 · PARTIDA — MÓDULO 01/16</div>
         <div class="trace">
           <span class="trace-label">TRACE</span>
           <div class="trace-bar" role="progressbar" aria-label="Rastreamento" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -72,18 +72,6 @@
             </div>
             <p id="packet-clue" class="packet-clue"></p>
             <p id="sniff-line" class="sniff-line hidden"></p>
-          </section>
-
-          <section id="decoder" class="decoder hidden" aria-labelledby="decoder-title">
-            <div class="decoder-head">
-              <span id="decoder-title">DECODIFICADOR · CIFRA DE CÉSAR</span>
-              <div class="decoder-ctrl">
-                <button id="btn-key-down" class="btn btn-small" type="button" aria-label="Diminuir chave">−</button>
-                <span class="decoder-key">CHAVE <strong id="decoder-key">00</strong></span>
-                <button id="btn-key-up" class="btn btn-small" type="button" aria-label="Aumentar chave">+</button>
-              </div>
-            </div>
-            <p id="decoder-out" class="decoder-out" aria-live="polite"></p>
           </section>
 
           <div id="slots" class="slots" aria-label="Casinhas da resposta"></div>
@@ -118,6 +106,27 @@
       </div>
 
       <footer class="footer">comandos: help · status · brute · sniff · decrypt · clear · reboot</footer>
+    </section>
+
+    <!-- TELA: CARREGAMENTO DO ROOT/OS -->
+    <section id="screen-loading" class="screen" aria-label="Carregando ROOT/OS">
+      <div class="loading-wrap">
+        <div class="os-logo">
+          <span class="os-logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="os-logo-text">ROOT/OS <strong>2002</strong></span>
+        </div>
+        <div class="loading-bar" role="progressbar" aria-label="Carregando sistema"><div id="loading-fill" class="loading-fill"></div></div>
+        <p id="loading-msg" class="loading-msg" aria-live="polite">Carregando núcleo do sistema...</p>
+        <p class="loading-safe">modo de segurança</p>
+      </div>
+    </section>
+
+    <!-- TELA: DESKTOP ROOT/OS (Ato 2) — montado na etapa 2 -->
+    <section id="screen-desktop" class="screen" aria-label="Área de trabalho ROOT/OS">
+      <div class="desktop-placeholder">
+        <p>ROOT/OS 2002 · Modo de segurança</p>
+        <p class="dim">Área de trabalho em construção (próxima etapa).</p>
+      </div>
     </section>
 
     <!-- TELA 3: GAME OVER -->

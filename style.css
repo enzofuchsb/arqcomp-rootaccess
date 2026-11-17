@@ -511,3 +511,79 @@ body.crt-dark { background: #000; overflow: hidden; }
   * { animation-duration: 0.01ms !important; transition: none !important; }
 }
 .hall-table .dim { color: var(--muted); }
+
+/* =========================================================
+   CARREGAMENTO DO ROOT/OS 2002
+   (a partir daqui começa a estética anos 2000 do sistema)
+   ========================================================= */
+#screen-loading.active,
+#screen-desktop.active { display: flex; }
+
+#screen-loading {
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: min(360px, 86vw);
+}
+.os-logo { display: flex; align-items: center; gap: 14px; }
+.os-logo-mark {
+  display: grid;
+  grid-template-columns: 18px 18px;
+  gap: 3px;
+  transform: skewX(-8deg);
+}
+.os-logo-mark i { display: block; height: 18px; border-radius: 3px 3px 3px 3px; }
+.os-logo-mark i:nth-child(1) { background: #2F7BFF; }
+.os-logo-mark i:nth-child(2) { background: #39C7FF; }
+.os-logo-mark i:nth-child(3) { background: #1FBF6A; }
+.os-logo-mark i:nth-child(4) { background: #E8B530; }
+.os-logo-text {
+  font-family: Tahoma, Verdana, 'Segoe UI', sans-serif;
+  font-size: 34px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+.os-logo-text strong { color: #6FB3FF; font-weight: 400; font-style: italic; }
+.loading-bar {
+  width: 100%;
+  height: 16px;
+  padding: 2px;
+  border: 1px solid #5A6B86;
+  border-radius: 4px;
+  background: #0A0F1A;
+  overflow: hidden;
+}
+.loading-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, #8EC5FF, #2F6FE0 50%, #1C4FB8);
+  transition: width 0.18s linear;
+}
+.loading-msg, .loading-safe {
+  margin: 0;
+  font-family: Tahoma, Verdana, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: #AFC0D8;
+}
+.loading-safe { color: #6B7A92; text-transform: lowercase; letter-spacing: 0.08em; }
+
+/* Placeholder até a etapa 2 */
+#screen-desktop {
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #0D2A5C;
+  color: #fff;
+  font-family: Tahoma, Verdana, sans-serif;
+}
+.desktop-placeholder { text-align: center; }

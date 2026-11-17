@@ -2,87 +2,102 @@
 
 /* =========================================================
    ROOT ACCESS — script principal
-   Etapa 1: tela de boot
-   Etapa 2: etapas, verificação, log, módulos, contadores, vitória
+   Núcleo compartilhado: dados, estado, trace, sons, hall,
+   Ato 1 (boot), carregamento do ROOT/OS, game over e vitória.
+   O desktop do Ato 2 fica em desktop.js.
    ========================================================= */
 
-/* ---------- Dados: as 16 etapas ---------- */
-const FASES = {
-  1: 'ENERGIA E FIRMWARE',
-  2: 'TESTE DO PROCESSADOR',
-  3: 'MEMÓRIA E COMUNICAÇÃO',
-  4: 'SISTEMA'
+/* ---------- Dados: as 16 palavras ---------- */
+const ATOS = {
+  1: 'PARTIDA',
+  2: 'SISTEMA'
 };
 
+/* local = onde a pista fica escondida no Ato 2 */
 const ETAPAS = [
-  { fase: 1, resposta: 'CPU',
+  { ato: 1, resposta: 'CPU',
     pista: 'Chip principal que executa as instruções de todos os programas.',
     sniff: 'Sigla de 3 letras; costuma ser chamada de cérebro do computador.',
-    logOk: 'CPU online — processador central energizado' },
-  { fase: 1, resposta: 'ROM',
+    logOk: 'CPU online — processador central energizado',
+    local: '' },
+  { ato: 1, resposta: 'ROM',
     pista: 'Memória só de leitura que guarda o programa de inicialização de fábrica.',
     sniff: 'Sigla de 3 letras; vem gravada de fábrica e não perde nada ao desligar.',
-    logOk: 'ROM online — firmware de inicialização carregado' },
-  { fase: 1, resposta: 'EEPROM',
-    pista: 'Memória não volátil apagável eletricamente, que guarda configurações da BIOS.',
-    sniff: 'Sigla de 6 letras; versão regravável eletricamente de uma memória só de leitura.',
-    logOk: 'EEPROM online — configurações da BIOS restauradas' },
-  { fase: 1, resposta: 'FLASH',
-    pista: 'Memória não volátil regravável em blocos, usada em pendrives e cartões SD.',
-    sniff: 'Palavra curta em inglês que também significa clarão.',
-    logOk: 'FLASH online — armazenamento regravável montado' },
-
-  { fase: 2, resposta: 'UC',
-    pista: 'Parte da CPU que busca, decodifica instruções e coordena os outros componentes.',
-    sniff: 'Sigla de 2 letras; funciona como o maestro dentro do processador.',
-    logOk: 'UC online — ciclo de busca e decodificação ativo' },
-  { fase: 2, resposta: 'ULA',
-    pista: 'Parte da CPU responsável pelos cálculos e pelas comparações lógicas.',
-    sniff: 'Sigla de 3 letras. É ela que soma, subtrai e decide se um valor é maior que outro.',
-    logOk: 'ULA online — operações aritméticas e lógicas liberadas' },
-  { fase: 2, resposta: 'REGISTRADORES',
-    pista: 'Pequenas memórias dentro do processador, as mais rápidas do computador.',
-    sniff: 'Palavra no plural; guardam os valores que a CPU está usando neste instante.',
-    logOk: 'REGISTRADORES online — banco de registradores zerado' },
-  { fase: 2, resposta: 'CACHE',
-    pista: 'Memória ultrarrápida entre CPU e RAM que guarda o que é mais usado.',
-    sniff: 'Palavra de origem francesa; existe em níveis chamados L1, L2 e L3.',
-    logOk: 'CACHE online — níveis L1, L2 e L3 sincronizados' },
-
-  { fase: 3, resposta: 'RAM',
+    logOk: 'ROM online — firmware de inicialização carregado',
+    local: '' },
+  { ato: 1, resposta: 'RAM',
     pista: 'Memória principal de trabalho, volátil: perde tudo quando o computador desliga.',
     sniff: 'Sigla de 3 letras; quanto mais dela, mais programas abertos ao mesmo tempo.',
-    logOk: 'RAM online — memória principal ativa' },
-  { fase: 3, resposta: 'ADDRESSBUS',
+    logOk: 'RAM online — memória principal ativa',
+    local: '' },
+  { ato: 1, resposta: 'ADDRESSBUS',
     pista: 'Vias que indicam qual posição da memória o processador quer acessar.',
     sniff: 'Duas palavras em inglês juntas; só indica ONDE, nunca leva o conteúdo.',
-    logOk: 'ADDRESS BUS online — endereçamento de memória liberado' },
-  { fase: 3, resposta: 'DATABUS',
+    logOk: 'ADDRESS BUS online — endereçamento de memória liberado',
+    local: '' },
+  { ato: 1, resposta: 'DATABUS',
     pista: 'Vias por onde as informações viajam entre processador, memória e periféricos.',
     sniff: 'Duas palavras em inglês juntas; é o caminho que carrega o conteúdo em si.',
-    logOk: 'DATA BUS online — tráfego de dados restabelecido' },
-  { fase: 3, resposta: 'DMA',
-    pista: 'Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU.',
-    sniff: 'Sigla de 3 letras; libera o processador enquanto um periférico copia informações.',
-    logOk: 'DMA online — acesso direto à memória habilitado' },
-
-  { fase: 4, resposta: 'MEMORIADEMASSA',
+    logOk: 'DATA BUS online — tráfego de dados restabelecido',
+    local: '' },
+  { ato: 1, resposta: 'MEMORIADEMASSA',
     pista: 'Onde arquivos e sistema ficam guardados mesmo desligado, como HDs e SSDs.',
     sniff: 'Três palavras em português juntas; o nome lembra grande quantidade.',
-    logOk: 'MEMÓRIA DE MASSA online — disco do sistema montado' },
-  { fase: 4, resposta: 'DUALCORE',
+    logOk: 'MEMÓRIA DE MASSA online — disco do sistema montado',
+    local: '' },
+  { ato: 2, resposta: 'UC',
+    pista: 'Parte da CPU que busca, decodifica instruções e coordena os outros componentes.',
+    sniff: 'Sigla de 2 letras; funciona como o maestro dentro do processador.',
+    logOk: 'UC online — ciclo de busca e decodificação ativo',
+    local: 'Painel de Controle › Sistema' },
+  { ato: 2, resposta: 'ULA',
+    pista: 'Parte da CPU responsável pelos cálculos e pelas comparações lógicas.',
+    sniff: 'Sigla de 3 letras. É ela que soma, subtrai e decide se um valor é maior que outro.',
+    logOk: 'ULA online — operações aritméticas e lógicas liberadas',
+    local: 'Gerenciador de Tarefas › Processos' },
+  { ato: 2, resposta: 'REGISTRADORES',
+    pista: 'Pequenas memórias dentro do processador, as mais rápidas do computador.',
+    sniff: 'Palavra no plural; guardam os valores que a CPU está usando neste instante.',
+    logOk: 'REGISTRADORES online — banco de registradores restaurado',
+    local: 'notas_do_admin.txt' },
+  { ato: 2, resposta: 'EEPROM',
+    pista: 'Memória não volátil apagável eletricamente, que guarda configurações da BIOS.',
+    sniff: 'Sigla de 6 letras; versão regravável eletricamente de uma memória só de leitura.',
+    logOk: 'EEPROM online — configurações da BIOS restauradas',
+    local: 'Painel de Controle › BIOS' },
+  { ato: 2, resposta: 'CACHE',
+    pista: 'Memória ultrarrápida entre CPU e RAM que guarda o que é mais usado.',
+    sniff: 'Palavra de origem francesa; existe em níveis chamados L1, L2 e L3.',
+    logOk: 'CACHE online — níveis L1, L2 e L3 sincronizados',
+    local: 'Internet › página inicial' },
+  { ato: 2, resposta: 'FLASH',
+    pista: 'Memória não volátil regravável em blocos, usada em pendrives e cartões SD.',
+    sniff: 'Palavra curta em inglês que também significa clarão.',
+    logOk: 'FLASH online — armazenamento regravável montado',
+    local: 'Meu Computador › Disco removível (E:)' },
+  { ato: 2, resposta: 'DUALCORE',
     pista: 'Processador com dois núcleos trabalhando ao mesmo tempo.',
     sniff: 'Duas palavras em inglês juntas; tem tantos núcleos quanto uma pessoa tem olhos.',
-    logOk: 'DUAL CORE online — 2 núcleos em paralelo' },
-  { fase: 4, resposta: 'QUADCORE',
+    logOk: 'DUAL CORE online — 2 núcleos em paralelo',
+    local: 'Gerenciador de Tarefas › Desempenho' },
+  { ato: 2, resposta: 'QUADCORE',
     pista: 'Processador com quatro núcleos trabalhando ao mesmo tempo.',
     sniff: 'Duas palavras em inglês juntas; tem tantos núcleos quanto um carro tem rodas.',
-    logOk: 'QUADCORE online — 4 núcleos em paralelo' },
-  { fase: 4, resposta: 'MICROCONTROLADOR',
+    logOk: 'QUADCORE online — 4 núcleos em paralelo',
+    local: 'E-mail › Upgrade aprovado' },
+  { ato: 2, resposta: 'DMA',
+    pista: 'Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU.',
+    sniff: 'Sigla de 3 letras; libera o processador enquanto um periférico copia informações.',
+    logOk: 'DMA online — acesso direto à memória habilitado',
+    local: 'Lixeira › relatorio_perifericos.txt' },
+  { ato: 2, resposta: 'MICROCONTROLADOR',
     pista: 'Chip com processador, memória e entradas/saídas juntos, como o do Arduino.',
     sniff: 'Palavra longa, com um prefixo que significa muito pequeno.',
-    logOk: 'Dispositivo externo detectado na porta USB — MICROCONTROLADOR online — Arduino conectado' }
+    logOk: 'Dispositivo externo (Arduino) detectado na porta USB — MICROCONTROLADOR online',
+    local: 'Painel de Controle › Gerenciador de Dispositivos' }
 ];
+
+const ATO1_TOTAL = ETAPAS.filter((e) => e.ato === 1).length;   // 6
 
 /* ---------- Boot ---------- */
 const BOOT_LINES = [
@@ -90,6 +105,7 @@ const BOOT_LINES = [
   { tag: '[  OK  ]', cls: 'ok',   text: 'Tensão enviada à placa-mãe' },
   { tag: '[  OK  ]', cls: 'ok',   text: '16 módulos de hardware detectados' },
   { tag: '[ LOCK ]', cls: 'lock', text: 'Firewall ativo: 16/16 módulos bloqueados' },
+  { tag: '[ FAIL ]', cls: 'fail', text: 'Partida interrompida: 6 peças mínimas offline' },
   { tag: '[ WARN ]', cls: 'warn', text: 'Sistema de rastreamento iniciado' }
 ];
 
@@ -103,7 +119,9 @@ let bootReady = false;
 
 /* ---------- Estado do jogo ---------- */
 const state = {
-  etapa: 0,
+  ato: 1,
+  etapa: 0,          // índice do módulo atual no Ato 1
+  online: new Set(), // índices dos módulos já ONLINE (0 a 15)
   erros: 0,
   dicas: 0,
   trace: 0,
@@ -111,12 +129,11 @@ const state = {
   segundos: 0,
   revelados: [],   // índices de letras reveladas pelo BRUTE FORCE
   sniffUsado: false,
-  cifra: 0,        // deslocamento secreto da etapa (fase 4)
-  chave: 0,        // chave escolhida no decodificador
   rodando: false
 };
 let timerId = null;
 let traceId = null;
+let loadingTimers = [];
 
 /* ---------- Utilidades ---------- */
 function later(fn, ms) {
@@ -230,8 +247,13 @@ function startTimer() {
     state.segundos = Math.floor((Date.now() - state.inicio) / 1000);
     $('stat-time').textContent = formatTime(state.segundos);
   }, 250);
-  // trace sobe +1% a cada 6 segundos
-  traceId = setInterval(() => addTrace(1), 6000);
+  startTrace();
+}
+
+/* trace passivo: +1% a cada 6s no Ato 1 e a cada 10s no Ato 2 */
+function startTrace() {
+  if (traceId) clearInterval(traceId);
+  traceId = setInterval(() => addTrace(1), state.ato === 1 ? 6000 : 10000);
 }
 
 function stopTimer() {
@@ -239,6 +261,8 @@ function stopTimer() {
   if (traceId) clearInterval(traceId);
   timerId = null;
   traceId = null;
+  loadingTimers.forEach(clearTimeout);
+  loadingTimers = [];
 }
 
 /* ---------- TRACE ---------- */
@@ -459,7 +483,7 @@ function gameOver() {
   state.rodando = false;
   stopTimer();
   state.segundos = Math.floor((Date.now() - state.inicio) / 1000);
-  $('over-mods').textContent = state.etapa + '/16';
+  $('over-mods').textContent = state.online.size + '/16';
   $('over-time').textContent = formatTime(state.segundos);
   $('over-errors').textContent = state.erros;
   $('over-hints').textContent = state.dicas;
@@ -472,22 +496,22 @@ function updateStats() {
   $('stat-time').textContent = formatTime(state.segundos);
   $('stat-errors').textContent = state.erros;
   $('stat-hints').textContent = state.dicas;
-  $('online-count').textContent = state.etapa + '/16';
+  $('online-count').textContent = state.online.size + '/16';
 }
 
 /* ---------- Barra lateral de módulos ---------- */
 function renderModules() {
   const box = $('modules');
   box.textContent = '';
-  [1, 2, 3, 4].forEach((f) => {
+  [1, 2].forEach((ato) => {
     const group = document.createElement('div');
     group.className = 'phase-group';
     const h = document.createElement('h3');
-    h.textContent = 'FASE ' + f + ' · ' + FASES[f];
+    h.textContent = 'ATO ' + ato + ' · ' + ATOS[ato];
     group.appendChild(h);
 
     ETAPAS.forEach((et, i) => {
-      if (et.fase !== f) return;
+      if (et.ato !== ato) return;
       const row = document.createElement('div');
       const name = document.createElement('span');
       name.className = 'mod-name';
@@ -498,11 +522,11 @@ function renderModules() {
       st.className = 'mod-state';
 
       let label;
-      if (i < state.etapa) {
+      if (state.online.has(i)) {
         row.className = 'mod online';
         label = et.resposta;
         st.textContent = 'ONLINE';
-      } else if (i === state.etapa) {
+      } else if (state.ato === 1 && i === state.etapa) {
         row.className = 'mod current';
         label = '???';
         st.textContent = 'LOCK';
@@ -554,22 +578,11 @@ function loadStage() {
   $('btn-sniff').disabled = false;
   $('btn-brute').disabled = et.resposta.length <= 1;
 
-  $('phase-label').textContent = 'FASE ' + et.fase + ' · ' + FASES[et.fase] + ' — MÓDULO ' + n + '/16';
+  $('phase-label').textContent = 'ATO 1 · PARTIDA — MÓDULO ' + n + '/16';
 
-  const crypto = et.fase === 4;
-  $('packet').classList.toggle('crypto', crypto);
-  $('packet-head').textContent = 'PKT#' + n + ' · ' + (crypto ? 'PACOTE CRIPTOGRAFADO' : 'PACOTE INTERCEPTADO');
+  $('packet-head').textContent = 'PKT#' + n + ' · PACOTE INTERCEPTADO';
   $('packet-time').textContent = clock();
-  if (crypto) {
-    state.cifra = 1 + Math.floor(Math.random() * 25);   // 1 a 25
-    state.chave = 0;
-    $('packet-clue').textContent = cesar(et.pista, state.cifra);
-    $('decoder').classList.remove('hidden');
-    renderDecoder();
-  } else {
-    $('packet-clue').textContent = et.pista;
-    $('decoder').classList.add('hidden');
-  }
+  $('packet-clue').textContent = et.pista;
   $('sniff-line').classList.add('hidden');
   $('sniff-line').textContent = '';
 
@@ -582,8 +595,7 @@ function loadStage() {
   $('term-input').focus();
 }
 
-/* ---------- Verificação ---------- */
-/* ---------- Cifra de César ---------- */
+/* ---------- Cifra de César (usada na Lixeira, Ato 2) ---------- */
 /* Desloca só A-Z e a-z; acentos, números e pontuação ficam iguais */
 function cesar(texto, desloc) {
   const d = ((desloc % 26) + 26) % 26;
@@ -591,25 +603,6 @@ function cesar(texto, desloc) {
     const base = c <= 'Z' ? 65 : 97;
     return String.fromCharCode(((c.charCodeAt(0) - base + d) % 26) + base);
   });
-}
-
-function renderDecoder() {
-  const et = ETAPAS[state.etapa];
-  const cifrado = cesar(et.pista, state.cifra);
-  $('decoder-key').textContent = pad2(state.chave);
-  $('decoder-out').textContent = cesar(cifrado, -state.chave);
-  const ok = state.chave === state.cifra;
-  $('decoder').classList.toggle('solved', ok);
-  return ok;
-}
-
-function setChave(n) {
-  if (ETAPAS[state.etapa].fase !== 4) return false;
-  state.chave = ((n % 26) + 26) % 26;
-  if (renderDecoder()) {
-    logLine('[  OK  ]', 'ok', 'Pacote decifrado com a chave ' + pad2(state.chave));
-  }
-  return true;
 }
 
 /* ---------- Comandos do terminal ---------- */
@@ -627,14 +620,14 @@ function executarComando(txt) {
       logLine('[ INFO ]', 'info', 'status .......... módulos, trace, erros, dicas e tempo');
       logLine('[ INFO ]', 'info', 'brute ........... revela uma letra (+10% trace)');
       logLine('[ INFO ]', 'info', 'sniff ........... dica extra sobre a palavra (+5% trace)');
-      logLine('[ INFO ]', 'info', 'decrypt --chave N aplica a chave N no decodificador (fase 4)');
+      logLine('[ INFO ]', 'info', 'decrypt --chave N aplica a chave N no arquivo cifrado aberto');
       logLine('[ INFO ]', 'info', 'clear ........... limpa o log');
       logLine('[ INFO ]', 'info', 'reboot .......... reinicia o sistema');
       logLine('[ INFO ]', 'info', 'Qualquer outro texto é testado como chave do módulo.');
       break;
     case 'status':
       logLine('[ INFO ]', 'info',
-        'módulos ' + state.etapa + '/16 · trace ' + Math.round(state.trace) + '% · erros ' + state.erros +
+        'módulos ' + state.online.size + '/16 · trace ' + Math.round(state.trace) + '% · erros ' + state.erros +
         ' · dicas ' + state.dicas + ' · tempo ' + formatTime(state.segundos));
       break;
     case 'brute':
@@ -646,17 +639,14 @@ function executarComando(txt) {
       break;
     case 'decrypt': {
       const m = txt.match(/--chave\s+(-?\d+)/i);
-      if (ETAPAS[state.etapa].fase !== 4) {
-        logLine('[ FAIL ]', 'fail', 'decrypt: este pacote não está criptografado.');
+      if (state.ato !== 2 || typeof window.desktopDecrypt !== 'function') {
+        logLine('[ FAIL ]', 'fail', 'decrypt: nenhum arquivo criptografado aberto.');
       } else if (!m) {
-        logLine('[ FAIL ]', 'fail', 'uso: decrypt --chave N   (N de 1 a 25)');
+        logLine('[ FAIL ]', 'fail', 'uso: decrypt --chave N   (N de 0 a 25)');
       } else {
         const n = parseInt(m[1], 10);
         if (n < 0 || n > 25) logLine('[ FAIL ]', 'fail', 'decrypt: a chave vai de 0 a 25.');
-        else {
-          setChave(n);
-          logLine('[ INFO ]', 'info', 'chave ' + pad2(n) + ' aplicada no decodificador.');
-        }
+        else window.desktopDecrypt(n);
       }
       break;
     }
@@ -697,14 +687,61 @@ function acertou(et) {
   document.querySelectorAll('#log .blink').forEach((el) => el.classList.remove('blink'));
   logLine('[  OK  ]', 'ok', et.logOk);
   somAcerto();
+  state.online.add(state.etapa);
   state.etapa++;
   updateStats();
 
-  if (state.etapa >= ETAPAS.length) {
-    vitoria();
+  if (state.etapa >= ATO1_TOTAL) {
+    fimAto1();
   } else {
     loadStage();
   }
+}
+
+/* ---------- Fim do Ato 1 → carregamento do ROOT/OS ---------- */
+function fimAto1() {
+  state.rodando = false;            // trava input e trace durante a transição
+  if (traceId) clearInterval(traceId);
+  traceId = null;
+  renderModules();
+  $('term-input').value = '';
+  fitInput();
+  $('slots').textContent = '';
+  $('btn-brute').disabled = true;
+  $('btn-sniff').disabled = true;
+  $('btn-scan').disabled = true;
+  logLine('[  OK  ]', 'ok', 'Sistema operacional encontrado no disco');
+  logLine('[ INFO ]', 'info', 'Carregando ROOT/OS 2002 em MODO DE SEGURANÇA...');
+  loadingTimers.push(setTimeout(telaCarregamento, 1600));
+}
+
+function telaCarregamento() {
+  const fill = $('loading-fill');
+  const txt = $('loading-msg');
+  const msgs = ['Carregando núcleo do sistema...', 'Montando disco C:...', 'Iniciando drivers mínimos...', 'Preparando área de trabalho...'];
+  fill.style.width = '0%';
+  txt.textContent = msgs[0];
+  showScreen('loading');
+  bipe(520, 0.15, 'sine', 0.05);
+
+  let p = 0;
+  (function passo() {
+    p = Math.min(100, p + 4 + Math.random() * 7);
+    fill.style.width = p + '%';
+    txt.textContent = msgs[Math.min(msgs.length - 1, Math.floor(p / 25))];
+    if (p < 100) loadingTimers.push(setTimeout(passo, 180 + Math.random() * 220));
+    else loadingTimers.push(setTimeout(iniciarAto2, 600));
+  })();
+}
+
+function iniciarAto2() {
+  state.ato = 2;
+  state.rodando = true;
+  startTrace();
+  renderModules();
+  updateStats();
+  showScreen('desktop');
+  if (typeof window.desktopStart === 'function') window.desktopStart();
 }
 
 function errou(bruto) {
@@ -729,7 +766,9 @@ function startGame() {
   bootReady = false;
   clearBootTimers();
 
+  state.ato = 1;
   state.etapa = 0;
+  state.online = new Set();
   state.erros = 0;
   state.dicas = 0;
   state.trace = 0;
@@ -740,6 +779,7 @@ function startGame() {
   logLine('[  OK  ]', 'ok', 'Conexão estabelecida com root@sys');
   logLine('[ INFO ]', 'info', 'Digite o nome do componente bloqueado e pressione Enter.');
 
+  $('btn-scan').disabled = false;
   showScreen('game');
   startTimer();
   loadStage();
@@ -814,8 +854,6 @@ $('term').addEventListener('click', () => $('term-input').focus());
 
 $('btn-brute').addEventListener('click', bruteForce);
 $('btn-sniff').addEventListener('click', sniff);
-$('btn-key-down').addEventListener('click', () => setChave(state.chave - 1));
-$('btn-key-up').addEventListener('click', () => setChave(state.chave + 1));
 
 $('btn-win-reboot').addEventListener('click', crtReboot);
 $('btn-over-reboot').addEventListener('click', crtReboot);
