@@ -1249,3 +1249,247 @@ body:has(#screen-desktop.active) .scanlines { display: none; }
   .rw-body.em { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .em-list { border-right: 0; border-bottom: 1px solid #C3CBD8; max-height: 30vh; }
 }
+
+/* =========================================================
+   ETAPAS 4–6 · Documentos, Lixeira, Defender e final
+   ========================================================= */
+
+/* listas de arquivos (Documentos, Lixeira, Confidencial) */
+.fx-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; background: #fff; border: 1px solid #C3CBD8; }
+.fx-item {
+  display: grid;
+  grid-template-columns: 26px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: default;
+}
+.fx-item small { color: #777; }
+.fx-item.sel, .fx-item:hover { background: #DCE6FA; }
+.fx-item:focus-visible { outline: 2px dotted #1A3E8C; outline-offset: -2px; }
+.fx-ico { width: 22px; height: 22px; display: block; border-radius: 2px; }
+.fx-ico.folder { background: linear-gradient(to bottom, #F7C64B, #E8A92A); border: 1px solid #8A5B0C; border-radius: 2px 6px 2px 2px; }
+.fx-ico.txt { background: repeating-linear-gradient(to bottom, #fff 0 4px, #9AA9C0 4px 5px); border: 1px solid #3A4F72; }
+.fx-ico.exe { background: linear-gradient(135deg, #D2422A, #8E1A10); border: 1px solid #5A0F08; }
+.fx-ico.bin { background: #C3CEDF; border: 1px solid #46607A; }
+
+/* Lixeira: arquivo cifrado + DECODIFICADOR (visual de terminal) */
+.trash-file { margin: 10px 0; padding: 10px 12px; background: #fff; border: 1px solid #D2422A; border-radius: 3px; }
+.trash-file-name { margin: 0 0 6px; font-weight: 700; color: #B3261E; font-size: 12px; }
+.trash-cipher { margin: 0; font: 14px 'Courier New', monospace; color: #8E1A10; word-break: break-word; }
+.rw-body .decoder { color: var(--text); font-family: var(--mono); }
+.rw-body .decoder-head { color: var(--muted); }
+.trash-tip { margin-top: 8px; font-size: 12px; }
+
+/* pasta Confidencial */
+.pw-form { margin-top: 12px; padding: 12px; background: #fff; border: 1px solid #C3CBD8; border-radius: 4px; }
+.pw-form label { display: block; margin-bottom: 8px; }
+.pw-row { display: flex; gap: 6px; }
+.pw-input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  border: 1px solid #7F9DB9;
+  font: inherit;
+  background: #fff;
+  color: #111;
+}
+.pw-input:focus-visible { outline: 2px solid #2F6AE0; outline-offset: 0; }
+.pw-msg { min-height: 1.4em; margin: 8px 0 0; color: #B3261E; font-weight: 700; }
+.postit {
+  margin-top: 12px;
+  max-width: 260px;
+  padding: 14px;
+  background: #FFF27A;
+  border: 1px solid #D8C440;
+  box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.25);
+  transform: rotate(-1.5deg);
+  font: 15px 'Comic Sans MS', 'Segoe Print', cursive;
+}
+.postit p { margin: 6px 0 0; }
+
+/* pop-ups do ROOT Defender */
+.rw-win.def-pop {
+  left: 50%;
+  top: 50%;
+  width: min(380px, calc(100% - 20px));
+  min-height: 0;
+  transform: translate(-50%, -50%);
+  animation: none;
+}
+.rw-win.def-pop .rw-titlebar { cursor: default; }
+.rw-win.def-pop.danger { background: #C0301E; border-color: #6E140A; }
+.rw-win.def-pop.danger .rw-titlebar { background: linear-gradient(to bottom, #FF8A70, #D9442C 40%, #A82614); text-shadow: 1px 1px 0 #5A0F08; }
+.def-pop-body { padding: 14px; }
+.def-body p { margin: 0 0 8px; }
+.def-title { font-weight: 700; font-size: 14px; color: #1A3E8C; }
+.def-threat { font-weight: 700; font-size: 20px; color: #B3261E; letter-spacing: 0.04em; }
+.def-small { font-size: 12px; color: #555; }
+.def-warn { font-size: 12px; color: #9A5B00; }
+.def-bar { margin: 6px 0 8px; }
+.def-bar .loading-fill { transition: width 2s linear; }
+.def-clue { margin: 8px 0 10px; padding: 8px 10px; background: #fff; border-left: 4px solid #2F6AE0; font-style: italic; }
+.def-form { margin-bottom: 4px; }
+.def-ok { color: #2B7A3C; font-weight: 700; }
+.def-bad { color: #B3261E; font-weight: 700; }
+.def-timer { text-align: right; margin: 0; }
+
+/* honeypot: tela pisca em vermelho */
+#screen-desktop.alarm .dk-area::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 8000;
+  pointer-events: none;
+  background: rgba(255, 30, 40, 0.45);
+  animation: alarmFlash 0.36s steps(2) 6;
+}
+@keyframes alarmFlash { 50% { opacity: 0; } }
+
+/* final: glitch antes da vitória */
+#screen-desktop.glitch-out { animation: dkGlitch 0.7s steps(7) forwards; }
+@keyframes dkGlitch {
+  0%   { filter: none; transform: none; }
+  15%  { filter: hue-rotate(90deg) saturate(3); transform: translateX(-8px) skewX(4deg); }
+  30%  { filter: invert(1); transform: translateX(10px); }
+  45%  { filter: hue-rotate(-120deg) contrast(2); transform: translateY(-6px) skewX(-6deg); }
+  60%  { filter: invert(1) hue-rotate(180deg); transform: translateX(6px); }
+  80%  { filter: brightness(3); transform: scaleY(0.4); }
+  100% { filter: brightness(0); transform: scaleY(0.02); }
+}
+
+@media (max-width: 700px) {
+  .rw-win.def-pop {
+    left: 10px !important;
+    top: 50% !important;
+    width: calc(100% - 20px) !important;
+    height: auto !important;
+    transform: translateY(-50%);
+    border-radius: 8px 8px 0 0;
+  }
+  .fx-item { grid-template-columns: 26px 1fr; }
+  .fx-item small { grid-column: 2; }
+}
+
+/* =========================================================
+   Tutorial (pop-up de boas-vindas + e-mail do fuchs)
+   ========================================================= */
+.tut-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.os-btn-primary {
+  background: linear-gradient(to bottom, #5FC46A, #2E9A3A);
+  border-color: #1E6B27;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 1px 1px 0 #1E6B27;
+}
+.em-h { margin: 14px 0 6px; font-size: 13px; color: #1A3E8C; }
+.em-ul { margin: 0 0 8px; padding-left: 20px; }
+.em-ul li { margin-bottom: 4px; }
+.em-example {
+  padding: 10px 12px;
+  background: #FFFBE0;
+  border: 1px solid #E8A92A;
+  border-left-width: 4px;
+  font-weight: 700;
+}
+
+/* ícone do E-mail pulsando até o tutorial ser lido */
+.dk-icon.notify .dk-icon-img { animation: notifyPulse 1.2s ease-in-out infinite; }
+.dk-icon.notify .dk-icon-label::after { content: ' (1)'; color: #FFE27A; font-weight: 700; }
+@keyframes notifyPulse {
+  50% { transform: translateY(-3px) scale(1.08); filter: drop-shadow(0 0 6px #FFE27A); }
+}
+
+/* =========================================================
+   ENIGMAS DO ATO 2 (enigmas.js)
+   ========================================================= */
+.eg-tip { margin: 6px 0 10px; font-size: 12px; }
+.eg-ok { border-color: #2B7A3C; color: #2B7A3C; font-weight: 700; }
+.eg-btns { display: flex; gap: 6px; }
+.eg-mini { padding: 2px 8px; font-size: 12px; }
+
+/* cartões reordenáveis (UC em linha, FLASH em coluna) */
+.eg-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.eg-col { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+.eg-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #8C9BB4;
+  border-radius: 4px;
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, 0.08);
+  cursor: grab;
+}
+.eg-col .eg-card { flex-direction: row; align-items: center; justify-content: space-between; }
+.eg-card.drag { opacity: 0.5; }
+.eg-card.over { border-color: #2F6AE0; box-shadow: 0 0 0 2px #9FBFF5; }
+.eg-card-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.eg-card-body small { color: #777; font-size: 11px; }
+.eg-card-body strong { color: #1A3E8C; font-size: 13px; letter-spacing: 0.03em; word-break: break-word; }
+.eg-card-ctrl { display: flex; gap: 4px; justify-content: center; }
+.eg-col .eg-card-ctrl { flex-direction: column; }
+.eg-frag { font-family: 'Courier New', monospace; font-size: 13px; }
+.eg-doc p { margin: 0; font: 14px 'Courier New', monospace; color: #111; }
+
+/* DUALCORE: dois núcleos lado a lado */
+.eg-cores { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.eg-core {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: #fff;
+  border: 2px solid #8C9BB4;
+  border-radius: 4px;
+  min-width: 0;
+}
+.eg-core.hover { border-color: #2F6AE0; }
+.eg-core.over { border-color: #D2422A; background: #FFF4F1; }
+.eg-core-head { display: flex; justify-content: space-between; align-items: baseline; }
+.eg-core-sum { font-weight: 700; color: #2B7A3C; }
+.eg-core.over .eg-core-sum { color: #B3261E; }
+.eg-core-bar { height: 10px; background: #E3E8F0; border: 1px solid #A7B2C4; }
+.eg-core-fill { height: 100%; background: linear-gradient(to bottom, #6FD67C, #2E9A3A); }
+.eg-core.over .eg-core-fill { background: linear-gradient(to bottom, #FF8A70, #C0301E); }
+.eg-procs { display: flex; flex-direction: column; gap: 4px; min-height: 40px; }
+.eg-proc {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: #F3F1EA;
+  border: 1px solid #C3CBD8;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: grab;
+}
+.eg-proc span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* navegador: links, histórico e páginas cortadas */
+.br-home, .br-hist { width: auto; padding: 0 8px; color: #1A3E8C; cursor: pointer; font: inherit; font-size: 12px; }
+.br-home:focus-visible, .br-hist:focus-visible, .br-link:focus-visible { outline: 2px dotted #1A3E8C; outline-offset: 1px; }
+.br-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.br-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #1C55CC;
+  text-decoration: underline;
+  font: 13px Tahoma, Verdana, sans-serif;
+  cursor: pointer;
+}
+.br-cache { margin: 0 0 8px; padding: 4px 8px; background: #E8F6EA; border: 1px solid #8FCB98; font: 11px Tahoma, Verdana, sans-serif; color: #2B7A3C; }
+.br-loading { margin-top: 8px; max-width: 320px; }
+
+@media (max-width: 700px) {
+  .eg-row { grid-template-columns: 1fr 1fr; }
+  .eg-cores { grid-template-columns: 1fr; }
+  .br-label { display: none; }
+}

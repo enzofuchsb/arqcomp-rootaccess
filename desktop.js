@@ -331,6 +331,8 @@ window.desktopReset = function () {
   clearInterval(dk.relogioId);
   dk.relogioId = null;
   if (typeof window.appsReset === 'function') window.appsReset();
+  if (typeof window.defenderStop === 'function') window.defenderStop();
+  $('screen-desktop').classList.remove('alarm', 'glitch-out');
 };
 
 window.desktopStart = function () {
@@ -341,6 +343,8 @@ window.desktopStart = function () {
   dk.relogioId = setInterval(atualizarRelogio, 5000);
   window.desktopTrace(Math.round(state.trace), state.trace >= 80 ? 'high' : state.trace >= 40 ? 'mid' : '');
   setTimeout(() => balao('ROOT/OS 2002', 'Sistema iniciado em modo de segurança. 10 módulos ainda estão OFFLINE.'), 700);
+  if (typeof window.defenderStart === 'function') window.defenderStart();
+  if (typeof window.appsTutorial === 'function') setTimeout(window.appsTutorial, 1200);
 };
 
 /* expostos para as próximas etapas (apps, Defender) */
@@ -364,7 +368,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !$('dk-start').hidden) { fecharMenu(); $('dk-start-btn').focus(); }
 });
 $('tray-defender').addEventListener('click', () => {
-  balao('ROOT Defender', 'Proteção ativa. Rastreamento atual: ' + Math.round(state.trace) + '%.');
+  balao('ROOT Defender', 'Proteção ativa. Rastreamento atual: ' + Math.round(state.trace) + '%. Varreduras e verificações de integridade acontecem sem aviso.');
 });
 
 montarIcones();

@@ -285,11 +285,32 @@ function acertou2(i) {
   renderPacotes();
   if (typeof window.appsOnline === 'function') window.appsOnline(i);
 
-  if (state.online.size >= ETAPAS.length) {
-    // etapa 6 troca isto pelo "Sistema otimizado" + glitch
-    setTimeout(vitoria, 900);
-    state.rodando = false;
-  }
+  if (state.online.size >= ETAPAS.length) sistemaOtimizado();
+}
+
+/* ---------- Final: 16/16 → sistema otimizado → glitch → vitória ---------- */
+function sistemaOtimizado() {
+  state.rodando = false;                 // congela trace e Defender
+  if (typeof window.defenderStop === 'function') window.defenderStop();
+  window.dkOtimizado = true;
+  $('screen-desktop').classList.add('optimized');   // some o "Modo de segurança"
+  logLine('[  OK  ]', 'ok', '16/16 módulos online — saindo do modo de segurança');
+
+  // mostra os 4 núcleos no Gerenciador de Tarefas
+  window.dkAbrirApp('taskmgr');
+  const win = document.querySelector('.rw-win[data-app="taskmgr"]');
+  const aba = win && [...win.querySelectorAll('.os-tab')].find((b) => b.textContent === 'Desempenho');
+  if (aba) aba.click();
+
+  dkBalao('Sistema otimizado', 'Todos os 16 módulos estão online. 4 núcleos ativos. Firewall desativado.', 4000);
+  bipe(659, 0.1, 'square', 0.05); bipe(988, 0.16, 'square', 0.05, 0.12);
+
+  setTimeout(() => {
+    const scr = $('screen-desktop');
+    scr.classList.add('glitch-out');
+    bipe(110, 0.5, 'sawtooth', 0.05);
+    setTimeout(() => { scr.classList.remove('glitch-out'); vitoria(); }, 700);
+  }, 2000);
 }
 
 function errou2(bruto) {
@@ -564,7 +585,33 @@ appById('computer').render = function (body) {
 };
 
 /* ---------- E-mail (QUADCORE; dica da senha usada na etapa 4) ---------- */
+/* E-mail do tutorial: explica o Ato 2 e aponta o e-mail logo abaixo como exemplo.
+   Itens do corpo: texto = parágrafo; { h } = subtítulo; { lista } = tópicos; { exemplo } = destaque */
+const TUTORIAL_ASSUNTO = 'Tutorial: como invadir este sistema';
+
 const EMAILS = [
+  { de: 'Fuchs', assunto: TUTORIAL_ASSUNTO, data: '15/03/2002', tutorial: true,
+    corpo: [
+      'E aí, invasor. Você passou do boot; agora vem a parte difícil. Lê com calma:',
+      { h: 'O objetivo' },
+      'Faltam 10 módulos para o sistema sair do modo de segurança. Cada um é um componente do computador, e a pista de cada um está escondida em algum lugar deste desktop: pastas, arquivos, programas e e-mails.',
+      { h: 'Como funciona' },
+      { lista: [
+        'Abra os ícones com duplo clique e explore. Quando achar uma pista, toca um bipe e aparece o balão "Pacote interceptado".',
+        'Toda pista encontrada vai para a lista PACOTES COLETADOS do Terminal (root.exe).',
+        'No Terminal, digite o nome do componente e aperte Enter. Vale qualquer ordem, e dá até para acertar sem ter a pista.',
+        'Clique num pacote da lista para usar BRUTE FORCE (revela uma letra, +10% de trace) ou SNIFF (dica extra, +5%).'
+      ] },
+      { h: 'Cuidado com o TRACE' },
+      { lista: [
+        'Ele sobe sozinho com o tempo e +10% a cada resposta errada. Em 100%, você é rastreado.',
+        'O ROOT Defender faz varreduras de vez em quando (o trace acelera) e às vezes pede uma verificação de integridade: acertando, o trace cai 2%.',
+        'Tem arquivo que é armadilha. Se ele pede para não ser aberto, não abra... Ou abra, tente a sorte ;)'
+      ] },
+      { h: 'Exemplo' },
+      { exemplo: 'Abra o e-mail logo abaixo deste, "Upgrade aprovado", do Suporte TI. Ele tem a dica da próxima palavra. Leia, abra o Terminal (root.exe) e digite a resposta.' },
+      'Boa sorte. — fuchs'
+    ] },
   { de: 'Suporte TI', assunto: 'Upgrade aprovado', data: '14/03/2002',
     corpo: ['Olá,', 'Aprovamos a troca do seu processador por um de quatro núcleos trabalhando ao mesmo tempo. Ative o módulo novo pelo terminal.', 'Att., Suporte TI'],
     pista: 'QUADCORE' },
@@ -591,12 +638,60 @@ appById('email').render = function (body) {
       a2.vistos.add('mail:' + m.assunto);
       leitura.textContent = '';
       leitura.append(el('h3', 'em-subj', m.assunto), el('p', 'em-from', 'De: ' + m.de + ' · ' + m.data));
-      m.corpo.forEach((l) => leitura.appendChild(el('p', null, l)));
+      m.corpo.forEach((l) => {
+        if (typeof l === 'string') leitura.appendChild(el('p', null, l));
+        else if (l.h) leitura.appendChild(el('h4', 'em-h', l.h));
+        else if (l.lista) {
+          const ul = el('ul', 'em-ul');
+          l.lista.forEach((t) => ul.appendChild(el('li', null, t)));
+          leitura.appendChild(ul);
+        } else if (l.exemplo) leitura.appendChild(el('p', 'em-example', l.exemplo));
+      });
+      leitura.scrollTop = 0;
+      if (m.tutorial) marcarTutorialLido();
       if (m.pista) coletar(m.pista);
     });
     lista.appendChild(b);
   });
   body.append(lista, leitura);
+  // primeira vez no E-mail: já abre o tutorial do fuchs
+  if (!a2.vistos.has('mail:' + TUTORIAL_ASSUNTO)) lista.querySelector('.em-item').click();
+};
+
+/* ---------- Tutorial: pop-up de boas-vindas → E-mail do fuchs ---------- */
+let tutorialPop = null;
+
+function marcarTutorialLido() {
+  const ic = document.querySelector('.dk-icon[data-app="email"]');
+  if (ic) ic.classList.remove('notify');
+  if (tutorialPop) { tutorialPop.fechar(); tutorialPop = null; }
+}
+
+window.appsTutorial = function () {
+  if (!state.rodando || state.ato !== 2 || a2.vistos.has('mail:' + TUTORIAL_ASSUNTO)) return;
+  const ic = document.querySelector('.dk-icon[data-app="email"]');
+  if (ic) ic.classList.add('notify');
+
+  const corpo = el('div', 'def-body tut-body');
+  const abrir = el('button', 'os-btn os-btn-primary', 'Abrir E-mail');
+  const depois = el('button', 'os-btn', 'Depois');
+  abrir.type = depois.type = 'button';
+  const row = el('div', 'tut-actions');
+  row.append(abrir, depois);
+  corpo.append(
+    el('p', 'def-title', 'Bem-vindo ao ROOT/OS 2002'),
+    el('p', null, 'Você tem 1 nova mensagem de fuchs.'),
+    el('p', null, 'Abra o E-mail para seguir o tutorial e descobrir como religar o resto do sistema.'),
+    row
+  );
+  tutorialPop = window.defPopup('ROOT/OS — nova mensagem', corpo, {
+    icone: ICONES.email,
+    onClose: () => { tutorialPop = null; }
+  });
+  bipe(988, 0.07, 'sine', 0.04); bipe(1319, 0.1, 'sine', 0.04, 0.09);
+  abrir.addEventListener('click', () => { marcarTutorialLido(); window.dkAbrirApp('email'); });
+  depois.addEventListener('click', () => { if (tutorialPop) tutorialPop.fechar(); });
+  setTimeout(() => abrir.focus(), 30);
 };
 
 /* ---------- Terminal no sistema de janelas ---------- */
@@ -609,6 +704,254 @@ appTerm.render = function (body) {
   setTimeout(() => t2.input.focus(), 30);
 };
 
+
+/* =========================================================
+   ETAPA 4 · Lixeira (DMA), Documentos (Confidencial, honeypot)
+   e MICROCONTROLADOR
+   ========================================================= */
+
+/* ---------- Lixeira: relatorio_perifericos.txt cifrado (César, chave 7) ---------- */
+const DMA_ORIGINAL = 'Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU: DESATIVADO.';
+const DMA_CHAVE = 7;
+const DMA_CIFRADO = cesar(DMA_ORIGINAL, DMA_CHAVE);
+const dec = { chave: 0, out: null, keyEl: null, box: null };
+
+function renderDecoder2() {
+  if (!dec.out) return false;
+  dec.keyEl.textContent = pad2(dec.chave);
+  dec.out.textContent = cesar(DMA_CIFRADO, -dec.chave);
+  const ok = dec.chave === DMA_CHAVE;
+  dec.box.classList.toggle('solved', ok);
+  if (ok && !a2.coletados.has(idxDe('DMA'))) {
+    logLine('[  OK  ]', 'ok', 'relatorio_perifericos.txt decifrado com a chave ' + pad2(dec.chave));
+    coletar('DMA');
+  }
+  return ok;
+}
+
+function setChave2(n) {
+  dec.chave = ((n % 26) + 26) % 26;
+  bipe(700 + dec.chave * 20, 0.03, 'square', 0.03);
+  renderDecoder2();
+}
+
+/* chamado pelo comando "decrypt --chave N" do Terminal */
+window.desktopDecrypt = function (n) {
+  if (!dec.out || !dec.out.isConnected) {
+    logLine('[ FAIL ]', 'fail', 'decrypt: abra relatorio_perifericos.txt na Lixeira primeiro.');
+    return;
+  }
+  setChave2(n);
+  logLine('[ INFO ]', 'info', 'chave ' + pad2(dec.chave) + ' aplicada no DECODIFICADOR da Lixeira.');
+};
+
+function abrirRelatorio(area) {
+  area.textContent = '';
+  const voltar = el('button', 'os-btn', '◀ Voltar');
+  voltar.type = 'button';
+  voltar.addEventListener('click', () => listarLixeira(area));
+
+  const cif = el('div', 'trash-file');
+  cif.append(el('p', 'trash-file-name', 'relatorio_perifericos.txt · CRIPTOGRAFADO'), el('p', 'trash-cipher', DMA_CIFRADO));
+
+  // painel no visual de terminal (igual ao decodificador antigo do Ato 1)
+  const box = el('section', 'decoder');
+  const head = el('div', 'decoder-head');
+  const ctrl = el('div', 'decoder-ctrl');
+  const menos = el('button', 'btn btn-small', '−');
+  const mais = el('button', 'btn btn-small', '+');
+  menos.type = mais.type = 'button';
+  menos.setAttribute('aria-label', 'Diminuir chave');
+  mais.setAttribute('aria-label', 'Aumentar chave');
+  const key = el('span', 'decoder-key', 'CHAVE ');
+  const strong = el('strong', null, '00');
+  key.appendChild(strong);
+  ctrl.append(menos, key, mais);
+  head.append(el('span', null, 'DECODIFICADOR · CIFRA DE CÉSAR'), ctrl);
+  const out = el('p', 'decoder-out');
+  out.setAttribute('aria-live', 'polite');
+  box.append(head, out);
+  menos.addEventListener('click', () => setChave2(dec.chave - 1));
+  mais.addEventListener('click', () => setChave2(dec.chave + 1));
+
+  dec.out = out;
+  dec.keyEl = strong;
+  dec.box = box;
+  area.append(voltar, cif, box, el('p', 'os-muted trash-tip', 'Dica: o comando decrypt --chave N no Terminal também gira a chave.'));
+  renderDecoder2();
+}
+
+function listarLixeira(area) {
+  area.textContent = '';
+  dec.out = null;
+  area.appendChild(el('h3', 'os-h', 'Lixeira'));
+  const lista = el('div', 'fx-list');
+  [
+    ['relatorio_perifericos.txt', 'Documento de texto · 1 KB', true],
+    ['wallpaper_antigo.bmp', 'Imagem · 768 KB', false],
+    ['instalador_jogo.zip', 'Arquivo compactado · 3,2 MB', false]
+  ].forEach(([nome, tipo, abre]) => {
+    const b = el('button', 'fx-item');
+    b.type = 'button';
+    b.append(el('span', 'fx-ico ' + (abre ? 'txt' : 'bin'), ''), el('strong', null, nome), el('small', null, tipo));
+    b.addEventListener('dblclick', () => abrir());
+    b.addEventListener('click', () => {
+      lista.querySelectorAll('.fx-item').forEach((x) => x.classList.remove('sel'));
+      b.classList.add('sel');
+      if (isTouch()) abrir();
+    });
+    b.addEventListener('keydown', (e) => { if (e.key === 'Enter') abrir(); });
+    function abrir() {
+      if (abre) abrirRelatorio(area);
+      else { somErro(); dkBalao('Lixeira', 'O arquivo ' + nome + ' está corrompido e não pode ser aberto.'); }
+    }
+    lista.appendChild(b);
+  });
+  area.append(lista, el('p', 'os-muted', 'Duplo clique para abrir um arquivo.'));
+}
+
+appById('trash').render = function (body) { listarLixeira(body); };
+appById('trash').onClose = () => { dec.out = null; };
+
+/* ---------- Documentos: Confidencial (senha) + honeypot ---------- */
+function abrirPostit(area) {
+  area.textContent = '';
+  const voltar = el('button', 'os-btn', '◀ Voltar');
+  voltar.type = 'button';
+  voltar.addEventListener('click', () => abrirConfidencial(area));
+  const nota = el('div', 'postit');
+  nota.append(el('strong', null, 'postit.txt'), el('p', null, 'Chave do relatório que joguei na lixeira: 7'));
+  area.append(voltar, nota);
+}
+
+function abrirConfidencial(area) {
+  area.textContent = '';
+  const voltar = el('button', 'os-btn', '◀ Documentos');
+  voltar.type = 'button';
+  voltar.addEventListener('click', () => listarDocs(area));
+  area.appendChild(voltar);
+
+  if (!a2.vistos.has('conf')) {
+    const form = el('form', 'pw-form');
+    form.autocomplete = 'off';
+    const lbl = el('label', null, 'A pasta "Confidencial" é protegida. Digite a senha:');
+    lbl.htmlFor = 'pw-input';
+    const inp = el('input', 'pw-input');
+    inp.id = 'pw-input';
+    inp.type = 'password';
+    const ok = el('button', 'os-btn', 'OK');
+    ok.type = 'submit';
+    const msg = el('p', 'pw-msg');
+    msg.setAttribute('aria-live', 'assertive');
+    const row = el('div', 'pw-row');
+    row.append(inp, ok);
+    form.append(el('h3', 'os-h', 'Confidencial · protegida por senha'), lbl, row, msg);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!state.rodando) return;
+      if (normalizar(inp.value) === 'RAM2002') {
+        a2.vistos.add('conf');
+        somAcerto();
+        logLine('[  OK  ]', 'ok', 'Pasta Confidencial desbloqueada');
+        abrirConfidencial(area);
+      } else {
+        somErro();
+        msg.textContent = 'Acesso negado. Tentativa registrada pelo ROOT Defender (trace +5%).';
+        logLine('[ FAIL ]', 'fail', 'Senha incorreta na pasta Confidencial — trace +5%');
+        inp.value = '';
+        addTrace(5);
+        inp.focus();
+      }
+    });
+    area.appendChild(form);
+    setTimeout(() => inp.focus(), 30);
+    return;
+  }
+  area.appendChild(el('h3', 'os-h', 'Confidencial'));
+  const lista = el('div', 'fx-list');
+  const b = el('button', 'fx-item');
+  b.type = 'button';
+  b.append(el('span', 'fx-ico txt', ''), el('strong', null, 'postit.txt'), el('small', null, 'Documento de texto · 1 KB'));
+  b.addEventListener('click', () => abrirPostit(area));
+  lista.appendChild(b);
+  area.appendChild(lista);
+}
+
+function honeypot() {
+  if (!state.rodando) return;
+  const scr = $('screen-desktop');
+  scr.classList.remove('alarm');
+  void scr.offsetWidth;
+  scr.classList.add('alarm');
+  setTimeout(() => scr.classList.remove('alarm'), 2200);
+  alarme();
+  logLine('[ WARN ]', 'warn', 'NAO_ABRA.exe executado: ROOT Defender detectou a invasão — trace +15%');
+  if (typeof window.defPopup === 'function') {
+    const corpo = el('div', 'def-body');
+    corpo.append(
+      el('p', 'def-threat', 'AMEAÇA DETECTADA'),
+      el('p', null, 'Arquivo: C:\\Documentos\\NAO_ABRA.exe'),
+      el('p', null, 'Tipo: armadilha de rastreamento (honeypot). Sua origem foi parcialmente exposta.'),
+      el('p', 'def-small', 'Trace +15%')
+    );
+    window.defPopup('ROOT Defender — ameaça', corpo, { danger: true, auto: 6000 });
+  }
+  addTrace(15);
+}
+
+function listarDocs(area) {
+  area.textContent = '';
+  area.appendChild(el('h3', 'os-h', 'Documentos'));
+  const lista = el('div', 'fx-list');
+  [
+    ['Confidencial', 'Pasta protegida', 'folder', () => abrirConfidencial(area)],
+    ['NAO_ABRA.exe', 'Aplicativo · 66 KB', 'exe', honeypot],
+    ['trabalho_arquitetura.doc', 'Documento · 48 KB', 'txt', () => dkBalao('Documentos', 'Nenhum programa instalado em modo de segurança abre arquivos .doc.')]
+  ].forEach(([nome, tipo, ico, abrir]) => {
+    const b = el('button', 'fx-item');
+    b.type = 'button';
+    b.append(el('span', 'fx-ico ' + ico, ''), el('strong', null, nome), el('small', null, tipo));
+    b.addEventListener('dblclick', abrir);
+    b.addEventListener('click', () => {
+      lista.querySelectorAll('.fx-item').forEach((x) => x.classList.remove('sel'));
+      b.classList.add('sel');
+      if (isTouch()) abrir();
+    });
+    b.addEventListener('keydown', (e) => { if (e.key === 'Enter') abrir(); });
+    lista.appendChild(b);
+  });
+  area.append(lista, el('p', 'os-muted', 'Duplo clique para abrir.'));
+}
+
+appById('docs').render = function (body) { listarDocs(body); };
+
+/* ---------- MICROCONTROLADOR: novo hardware ---------- */
+const MICRO = idxDe('MICROCONTROLADOR');
+
+/* chamado a cada módulo do Ato 2 que fica ONLINE */
+window.appsOnline = function () {
+  if (a2.vistos.has('hw')) return;
+  const outros = ATO2_IDX.filter((i) => i !== MICRO);
+  if (outros.every((i) => state.online.has(i))) {
+    a2.vistos.add('hw');
+    setTimeout(() => {
+      if (!state.rodando) return;
+      bipe(523, 0.1, 'square', 0.05); bipe(784, 0.14, 'square', 0.05, 0.12);
+      dkBalao('Novo hardware encontrado', 'Dispositivo USB desconhecido. Veja em Painel de Controle › Gerenciador de Dispositivos.', 7000);
+    }, 1200);
+  }
+};
+
+/* acrescenta o dispositivo USB no Gerenciador de Dispositivos */
+window.appsDevices = function (area, ul) {
+  if (!a2.vistos.has('hw')) return;
+  const li = el('li', 'bad new');
+  li.append(el('span', null, 'Dispositivo USB desconhecido'), el('small', null, 'driver ausente'));
+  ul.appendChild(li);
+  area.appendChild(caixa('Dispositivo USB desconhecido', ['Chip com processador, memória e entradas/saídas juntos, parecido com o de um Arduino.'], true));
+  coletar('MICROCONTROLADOR');
+};
+
 /* ---------- Reset (nova invasão) ---------- */
 window.appsReset = function () {
   a2.coletados.clear();
@@ -618,6 +961,8 @@ window.appsReset = function () {
   a2.vistos.clear();
   window.dkOtimizado = false;
   clearInterval(graficoId);
+  dec.chave = 0;
+  dec.out = null;
   t2.input.value = '';
   iniciarLogTerminal();
   renderPacotes();
