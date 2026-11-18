@@ -562,7 +562,8 @@ function renderModules() {
         st.textContent = 'LOCK';
       } else {
         row.className = 'mod';
-        label = '▒'.repeat(et.resposta.length);
+        // Ato 2: tamanho fixo, para não revelar quantas letras a palavra tem
+        label = et.ato === 2 ? '▒▒▒' : '▒'.repeat(et.resposta.length);
         st.textContent = 'OFFLINE';
       }
       name.append(num, document.createTextNode(label));
@@ -639,7 +640,7 @@ function cesar(texto, desloc) {
 function executarComando(txt) {
   const partes = txt.trim().toLowerCase().split(/\s+/);
   const cmd = partes[0];
-  const comandos = ['help', 'status', 'brute', 'sniff', 'decrypt', 'clear', 'reboot'];
+  const comandos = ['help', 'status', 'brute', 'sniff', 'decrypt', 'ls', 'cat', 'clear', 'reboot'];
   if (!comandos.includes(cmd)) return false;
 
   logLine('root@sys:~$', 'dim', txt.trim());
@@ -651,6 +652,9 @@ function executarComando(txt) {
       logLine('[ INFO ]', 'info', 'brute ........... revela uma letra (+10% trace)');
       logLine('[ INFO ]', 'info', 'sniff ........... dica extra sobre a palavra (+5% trace)');
       logLine('[ INFO ]', 'info', 'decrypt --chave N aplica a chave N no arquivo cifrado aberto');
+      logLine('[ INFO ]', 'info', 'ls .............. lista os arquivos do sistema');
+      logLine('[ INFO ]', 'info', 'ls -a ........... lista também os arquivos ocultos (começam com ponto)');
+      logLine('[ INFO ]', 'info', 'cat <arquivo> ... mostra o conteúdo de um arquivo');
       logLine('[ INFO ]', 'info', 'clear ........... limpa o log');
       logLine('[ INFO ]', 'info', 'reboot .......... reinicia o sistema');
       logLine('[ INFO ]', 'info', 'Qualquer outro texto é testado como chave do módulo.');
@@ -681,6 +685,15 @@ function executarComando(txt) {
       }
       break;
     }
+    case 'ls':
+    case 'cat':
+      // sistema de arquivos só existe no Ato 2 (apps.js)
+      if (state.ato !== 2 || typeof window.fsComando !== 'function') {
+        logLine('[ FAIL ]', 'fail', cmd + ': nenhum sistema de arquivos montado.');
+      } else {
+        window.fsComando(cmd, partes.slice(1));
+      }
+      break;
     case 'clear':
       logEl().textContent = '';
       break;

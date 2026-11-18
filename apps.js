@@ -203,7 +203,9 @@ function renderSlots2() {
   const box = t2.slots;
   box.textContent = '';
   const i = a2.sel;
-  if (i == null) { box.classList.add('hidden'); return; }
+  // Ato 2: as casinhas só aparecem depois de SNIFF ou BRUTE FORCE no pacote
+  const dica = i != null && (a2.sniffs.has(i) || (a2.revelados[i] || []).length > 0);
+  if (!dica) { box.classList.add('hidden'); return; }
   box.classList.remove('hidden');
   const resp = ETAPAS[i].resposta;
   const rev = a2.revelados[i] || [];
@@ -278,7 +280,7 @@ function scan2() {
   const chave = normalizar(bruto);
   const i = ATO2_IDX.find((k) => !state.online.has(k) && ETAPAS[k].resposta === chave);
   if (i != null) acertou2(i);
-  else errou2(bruto);
+  else errou2(bruto, ETAPAS.some((e, k) => state.online.has(k) && e.resposta === chave));
   if (state.rodando) t2.input.focus();
 }
 
@@ -320,11 +322,12 @@ function sistemaOtimizado() {
   }, 2000);
 }
 
-function errou2(bruto) {
+function errou2(bruto, jaOnline) {
   state.erros++;
   somErro();
   updateStats();
-  logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada — nenhum módulo pendente corresponde — trace +10%');
+  logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada — ' +
+    (jaOnline ? 'módulo já está online' : 'nenhum módulo pendente corresponde') + ' — trace +10%');
   const s = t2.slots;
   s.classList.remove('error');
   void s.offsetWidth;
@@ -621,7 +624,7 @@ const EMAILS = [
   { de: 'Suporte TI', assunto: 'Upgrade aprovado', data: '14/03/2002',
     corpo: ['Olá,', 'Aprovamos a troca do seu processador por um de quatro núcleos trabalhando ao mesmo tempo. Ative o módulo novo pelo terminal.', 'Att., Suporte TI'],
     pista: 'QUADCORE' },
-  { de: 'Admin', assunto: 'Pasta Confidencial', data: '12/03/2002',
+  { de: 'Admin', assunto: 'Pasta Confidencial', data: '12/03/2002', requer: 'CACHE',
     corpo: ['Para não esquecer:', 'A senha da pasta Confidencial é o nome da memória principal volátil seguido do ano do sistema, tudo junto e em maiúsculas.', '— admin'] },
   { de: 'ROOT/OS', assunto: 'Bem-vindo ao ROOT/OS 2002', data: '01/03/2002',
     corpo: ['Obrigado por usar o ROOT/OS 2002.', 'Dica: o ROOT Defender protege o seu computador 24 horas por dia. Não desative o antivírus.'] }
@@ -634,6 +637,8 @@ appById('email').render = function (body) {
   const leitura = el('div', 'em-read');
   leitura.appendChild(el('p', 'os-muted', 'Selecione uma mensagem.'));
   EMAILS.forEach((m) => {
+    // algumas mensagens só chegam depois de um módulo ficar online
+    if (m.requer && !state.online.has(idxDe(m.requer))) return;
     const b = el('button', 'em-item' + (a2.vistos.has('mail:' + m.assunto) ? '' : ' unread'));
     b.type = 'button';
     b.append(el('strong', null, m.de), el('span', null, m.assunto), el('small', null, m.data));
@@ -718,8 +723,13 @@ appTerm.render = function (body) {
 
 /* ---------- Lixeira: relatorio_perifericos.txt cifrado (César, chave 7) ---------- */
 const DMA_ORIGINAL = 'Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU: DESATIVADO.';
-const DMA_CHAVE = 7;
-const DMA_CIFRADO = cesar(DMA_ORIGINAL, DMA_CHAVE);
+let DMA_CHAVE = 7;                 // sorteada a cada partida (1 a 25)
+let DMA_CIFRADO = '';
+function sortearDma() {
+  DMA_CHAVE = 1 + Math.floor(Math.random() * 25);
+  DMA_CIFRADO = cesar(DMA_ORIGINAL, DMA_CHAVE);
+}
+sortearDma();
 const dec = { chave: 0, out: null, keyEl: null, box: null };
 
 function renderDecoder2() {
@@ -794,6 +804,7 @@ function listarLixeira(area) {
   const lista = el('div', 'fx-list');
   [
     ['relatorio_perifericos.txt', 'Documento de texto · 1 KB', true],
+    ['firmware_antigo.bin', 'Arquivo binário · 512 KB', 'falsa'],
     ['wallpaper_antigo.bmp', 'Imagem · 768 KB', false],
     ['instalador_jogo.zip', 'Arquivo compactado · 3,2 MB', false]
   ].forEach(([nome, tipo, abre]) => {
@@ -808,7 +819,8 @@ function listarLixeira(area) {
     });
     b.addEventListener('keydown', (e) => { if (e.key === 'Enter') abrir(); });
     function abrir() {
-      if (abre) abrirRelatorio(area);
+      if (abre === 'falsa') verTexto(area, nome, FALSAS[nome], () => listarLixeira(area));
+      else if (abre) abrirRelatorio(area);
       else { somErro(); dkBalao('Lixeira', 'O arquivo ' + nome + ' está corrompido e não pode ser aberto.'); }
     }
     lista.appendChild(b);
@@ -820,14 +832,61 @@ appById('trash').render = function (body) { listarLixeira(body); };
 appById('trash').onClose = () => { dec.out = null; };
 
 /* ---------- Documentos: Confidencial (senha) + honeypot ---------- */
-function abrirPostit(area) {
+/* ---------- Visualizador de texto simples (arquivos .txt, .log, .tmp...) ---------- */
+function verTexto(area, nome, linhas, voltar) {
+  area.textContent = '';
+  const back = el('button', 'os-btn', '◀ Voltar');
+  back.type = 'button';
+  back.addEventListener('click', voltar);
+  const doc = el('pre', 'txt-view');
+  doc.textContent = linhas.join('\n');
+  area.append(back, el('h3', 'os-h', nome), doc);
+}
+
+/* Pistas falsas: descrevem módulos do Ato 1 (já online) e NÃO entram nos pacotes */
+const FALSAS = {
+  'ssd_backup.tmp': [
+    'BACKUP TEMPORÁRIO — não apagar',
+    '',
+    'Cópia de segurança de todo o sistema e dos arquivos do usuário.',
+    'Fica guardada de forma permanente: continua lá mesmo com o computador desligado.',
+    'Capacidade enorme, medida em centenas de gigabytes.'
+  ],
+  'volatil.log': [
+    '[23:58] queda de energia detectada',
+    '[23:58] tudo o que estava aberto foi perdido',
+    '',
+    'Nota: a memória de trabalho do computador não guarda nada sem energia.',
+    'Quanto mais dela, mais programas abertos ao mesmo tempo.'
+  ],
+  'firmware_antigo.bin': [
+    'firmware_antigo.bin — cópia do programa de inicialização',
+    '',
+    'Gravado de fábrica num chip que só pode ser lido.',
+    'Não pode ser alterado pelo usuário e não perde nada ao desligar.'
+  ]
+};
+
+/* Tabela Morse (A–Z) da pasta Confidencial */
+const MORSE = {
+  A: '.-', B: '-...', C: '-.-.', D: '-..', E: '.', F: '..-.', G: '--.', H: '....', I: '..',
+  J: '.---', K: '-.-', L: '.-..', M: '--', N: '-.', O: '---', P: '.--.', Q: '--.-', R: '.-.',
+  S: '...', T: '-', U: '..-', V: '...-', W: '.--', X: '-..-', Y: '-.--', Z: '--..'
+};
+
+function abrirTabelaMorse(area) {
   area.textContent = '';
   const voltar = el('button', 'os-btn', '◀ Voltar');
   voltar.type = 'button';
   voltar.addEventListener('click', () => abrirConfidencial(area));
-  const nota = el('div', 'postit');
-  nota.append(el('strong', null, 'postit.txt'), el('p', null, 'Chave do relatório que joguei na lixeira: 7'));
-  area.append(voltar, nota);
+  const grade = el('div', 'morse-table');
+  Object.keys(MORSE).forEach((l) => {
+    const c = el('div', 'morse-cell');
+    c.append(el('strong', null, l), el('span', null, MORSE[l].replace(/\./g, '•').replace(/-/g, '—')));
+    grade.appendChild(c);
+  });
+  area.append(voltar, el('h3', 'os-h', 'tabela_morse.txt'),
+    el('p', 'os-muted', '• = ponto (sinal curto)   — = traço (sinal longo)'), grade);
 }
 
 function abrirConfidencial(area) {
@@ -877,8 +936,8 @@ function abrirConfidencial(area) {
   const lista = el('div', 'fx-list');
   const b = el('button', 'fx-item');
   b.type = 'button';
-  b.append(el('span', 'fx-ico txt', ''), el('strong', null, 'postit.txt'), el('small', null, 'Documento de texto · 1 KB'));
-  b.addEventListener('click', () => abrirPostit(area));
+  b.append(el('span', 'fx-ico txt', ''), el('strong', null, 'tabela_morse.txt'), el('small', null, 'Documento de texto · 1 KB'));
+  b.addEventListener('click', () => abrirTabelaMorse(area));
   lista.appendChild(b);
   area.appendChild(lista);
 }
@@ -912,6 +971,7 @@ function listarDocs(area) {
   [
     ['Confidencial', 'Pasta protegida', 'folder', () => abrirConfidencial(area)],
     ['NAO_ABRA.exe', 'Aplicativo · 66 KB', 'exe', honeypot],
+    ['volatil.log', 'Registro · 2 KB', 'txt', () => verTexto(area, 'volatil.log', FALSAS['volatil.log'], () => listarDocs(area))],
     ['trabalho_arquitetura.doc', 'Documento · 48 KB', 'txt', () => dkBalao('Documentos', 'Nenhum programa instalado em modo de segurança abre arquivos .doc.')]
   ].forEach(([nome, tipo, ico, abrir]) => {
     const b = el('button', 'fx-item');
@@ -935,7 +995,17 @@ appById('docs').render = function (body) { listarDocs(body); };
 const MICRO = idxDe('MICROCONTROLADOR');
 
 /* chamado a cada módulo do Ato 2 que fica ONLINE */
-window.appsOnline = function () {
+window.appsOnline = function (i) {
+  // CACHE online → chega o e-mail do Admin (dica da senha da pasta Confidencial)
+  if (i === idxDe('CACHE')) {
+    setTimeout(() => {
+      if (!state.rodando) return;
+      bipe(988, 0.07, 'sine', 0.04); bipe(1319, 0.1, 'sine', 0.04, 0.09);
+      dkBalao('Nova mensagem recebida', 'De: Admin — Pasta Confidencial. Abra o E-mail.', 6000);
+      const corpo = document.querySelector('.rw-win[data-app="email"] .rw-body');
+      if (corpo) { corpo.textContent = ''; appById('email').render(corpo); }
+    }, 900);
+  }
   if (a2.vistos.has('hw')) return;
   const outros = ATO2_IDX.filter((i) => i !== MICRO);
   if (outros.every((i) => state.online.has(i))) {
@@ -954,8 +1024,110 @@ window.appsDevices = function (area, ul) {
   const li = el('li', 'bad new');
   li.append(el('span', null, 'Dispositivo USB desconhecido'), el('small', null, 'driver ausente'));
   ul.appendChild(li);
-  area.appendChild(caixa('Dispositivo USB desconhecido', ['Chip com processador, memória e entradas/saídas juntos, parecido com o de um Arduino.'], true));
-  coletar('MICROCONTROLADOR');
+  const abrir = el('button', 'os-btn', 'Abrir dispositivo');
+  abrir.type = 'button';
+  abrir.addEventListener('click', () => { abrir.remove(); area.appendChild(painelMorse()); });
+  area.appendChild(abrir);
+};
+
+/* LED do dispositivo piscando ARDUINO em Morse, em loop */
+const MORSE_T = { ponto: 220, traco: 760, gap: 260, letra: 1000, fim: 2800 };
+const PLACA = 'ARDUINO';
+
+function sequenciaMorse(palavra) {
+  const seq = [];   // [aceso?, duração]
+  palavra.split('').forEach((l, k) => {
+    MORSE[l].split('').forEach((s, j) => {
+      seq.push([true, s === '.' ? MORSE_T.ponto : MORSE_T.traco]);
+      if (j < MORSE[l].length - 1) seq.push([false, MORSE_T.gap]);
+    });
+    seq.push([false, k < palavra.length - 1 ? MORSE_T.letra : MORSE_T.fim]);
+  });
+  return seq;
+}
+
+function painelMorse() {
+  const box = el('div', 'os-box morse-box');
+  box.appendChild(el('h4', null, 'Dispositivo USB desconhecido'));
+  box.appendChild(el('p', null, 'A placa não tem driver. O único sinal é um LED que pisca sem parar.'));
+  const led = el('div', 'morse-led');
+  led.setAttribute('aria-hidden', 'true');
+  const ledBox = el('div', 'morse-led-wrap');
+  ledBox.append(led, el('small', null, 'LED de status'));
+  box.appendChild(ledBox);
+
+  const seq = sequenciaMorse(PLACA);
+  let k = 0;
+  (function passo() {
+    if (!led.isConnected && k > 0) return;   // janela fechada: para o loop
+    const [aceso, ms] = seq[k % seq.length];
+    led.classList.toggle('on', aceso);
+    k++;
+    setTimeout(passo, ms);
+  })();
+
+  if (a2.vistos.has('placa')) {
+    box.appendChild(el('p', 'eg-ok', 'Placa identificada: chip com processador, memória e entradas/saídas juntos.'));
+    return box;
+  }
+  const form = el('form', 'pw-form');
+  form.autocomplete = 'off';
+  const lbl = el('label', null, 'Identificar placa:');
+  lbl.htmlFor = 'placa-input';
+  const inp = el('input', 'pw-input');
+  inp.id = 'placa-input';
+  inp.spellcheck = false;
+  const ok = el('button', 'os-btn', 'Identificar');
+  ok.type = 'submit';
+  const row = el('div', 'pw-row');
+  row.append(inp, ok);
+  const msg = el('p', 'pw-msg');
+  msg.setAttribute('aria-live', 'assertive');
+  form.append(lbl, row, msg);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!state.rodando) return;
+    if (normalizar(inp.value) === PLACA) {
+      a2.vistos.add('placa');
+      form.replaceWith(el('p', 'eg-ok', 'Placa identificada: chip com processador, memória e entradas/saídas juntos.'));
+      logLine('[  OK  ]', 'ok', 'Dispositivo USB identificado');
+      coletar('MICROCONTROLADOR');
+    } else {
+      somErro();
+      msg.textContent = 'Placa não reconhecida.';
+      logLine('[ FAIL ]', 'fail', 'Identificação de placa incorreta — trace +5%');
+      inp.value = '';
+      addTrace(5);
+      inp.focus();
+    }
+  });
+  box.appendChild(form);
+  return box;
+}
+
+/* =========================================================
+   Sistema de arquivos do Terminal: ls, ls -a, cat
+   ========================================================= */
+const FS = {
+  'notas_do_admin.txt': () => (typeof window.notasTexto === 'function' ? window.notasTexto() : '').split('\n'),
+  'sistema.cfg': () => ['modo=seguranca', 'versao=ROOT/OS 2002', 'usuario=root'],
+  'root.exe': null,                                    // binário
+  '.chave_lixeira': () => ['chave do relatorio_perifericos.txt: ' + DMA_CHAVE],
+  '.config_shell': () => ['prompt=root@sys:~$', 'cor=verde']
+};
+
+window.fsComando = function (cmd, args) {
+  if (cmd === 'ls') {
+    const todos = args.includes('-a');
+    const nomes = Object.keys(FS).filter((n) => todos || !n.startsWith('.'));
+    logLine('[ INFO ]', 'info', (todos ? '.  ..  ' : '') + nomes.join('  '));
+    return;
+  }
+  const nome = args[0];
+  if (!nome) { logLine('[ FAIL ]', 'fail', 'uso: cat <arquivo>'); return; }
+  if (!(nome in FS)) { logLine('[ FAIL ]', 'fail', 'cat: ' + nome + ': arquivo não encontrado'); return; }
+  if (!FS[nome]) { logLine('[ FAIL ]', 'fail', 'cat: ' + nome + ': arquivo binário, não pode ser exibido'); return; }
+  FS[nome]().forEach((l) => logLine('     ', 'dim', l));
 };
 
 /* ---------- Reset (nova invasão) ---------- */
@@ -969,6 +1141,7 @@ window.appsReset = function () {
   clearInterval(graficoId);
   dec.chave = 0;
   dec.out = null;
+  sortearDma();
   t2.input.value = '';
   iniciarLogTerminal();
   renderPacotes();

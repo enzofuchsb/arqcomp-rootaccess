@@ -271,6 +271,20 @@ appById('control').render = function (body) {
 /* =========================================================
    BLOCO DE NOTAS: REGISTRADORES + programa do admin (PIN)
    ========================================================= */
+/* texto completo das notas (também usado pelo "cat" do Terminal) */
+window.notasTexto = function () {
+  const larg = Math.max(...eg.programa.map(([c]) => c.length)) + 4;
+  const prog = eg.programa.map(([cod, com]) => cod.padEnd(larg) + '; ' + com).join('\n');
+  return 'Lembrete: as pequenas memórias dentro do processador, as mais rápidas de todas, foram zeradas. Reativar pelo terminal.\n' +
+    'Obs.: arquivos que começam com ponto ficam escondidos.\n\n' +
+    '— admin\n\n' +
+    '----------------------------------------\n' +
+    'pin_bios.asm  (pra eu não esquecer)\n' +
+    '----------------------------------------\n' +
+    prog + '\n' +
+    '; o PIN da BIOS é o valor final de A\n';
+};
+
 appById('notes').render = function (body) {
   body.classList.add('np');
   const menu = el('div', 'np-menu');
@@ -278,16 +292,7 @@ appById('notes').render = function (body) {
   const txt = el('textarea', 'np-text');
   txt.readOnly = true;
   txt.setAttribute('aria-label', 'Conteúdo de notas_do_admin.txt');
-  const larg = Math.max(...eg.programa.map(([c]) => c.length)) + 4;
-  const prog = eg.programa.map(([cod, com]) => cod.padEnd(larg) + '; ' + com).join('\n');
-  txt.value =
-    'Lembrete: as pequenas memórias dentro do processador, as mais rápidas de todas, foram zeradas. Reativar pelo terminal.\n\n' +
-    '— admin\n\n' +
-    '----------------------------------------\n' +
-    'pin_bios.asm  (pra eu não esquecer)\n' +
-    '----------------------------------------\n' +
-    prog + '\n' +
-    '; o PIN da BIOS é o valor final de A\n';
+  txt.value = window.notasTexto();
   body.append(menu, txt);
   coletar('REGISTRADORES');
 };
@@ -479,6 +484,21 @@ function abrirPendrive(area, voltar) {
   area.append(lista, montar);
 }
 
+/* Disco local (C:): só a pista falsa ssd_backup.tmp */
+function abrirDiscoC(body, voltar) {
+  body.textContent = '';
+  const back = el('button', 'os-btn', '◀ Unidades');
+  back.type = 'button';
+  back.addEventListener('click', voltar);
+  const lista = el('div', 'fx-list');
+  const b = el('button', 'fx-item');
+  b.type = 'button';
+  b.append(el('span', 'fx-ico txt', ''), el('strong', null, 'ssd_backup.tmp'), el('small', null, 'Arquivo temporário · 4 KB'));
+  b.addEventListener('click', () => verTexto(body, 'ssd_backup.tmp', FALSAS['ssd_backup.tmp'], () => abrirDiscoC(body, voltar)));
+  lista.appendChild(b);
+  body.append(back, el('h3', 'os-h', 'Disco local (C:)'), lista, el('p', 'os-muted', 'As demais pastas estão bloqueadas no modo de segurança.'));
+}
+
 appById('computer').render = function (body) {
   body.classList.add('mc');
   const drives = [
@@ -502,10 +522,12 @@ appById('computer').render = function (body) {
       if (!atual) return;
       if (atual.id === 'E') abrirPendrive(body, lista);
       else if (atual.id === 'D') dkBalao('Meu Computador', 'Insira um disco na unidade D:.');
-      else dkBalao('Meu Computador', 'Acesso ao disco C: restrito no modo de segurança.');
+      else abrirDiscoC(body, lista);
     };
 
-    drives.forEach((d) => {
+    // o Disco removível (E:) só é detectado com o DMA online
+    const visiveis = drives.filter((d) => d.id !== 'E' || online('DMA'));
+    visiveis.forEach((d) => {
       const b = el('button', 'mc-drive');
       b.type = 'button';
       b.innerHTML = '<svg viewBox="0 0 40 28" aria-hidden="true"><rect x="2" y="6" width="36" height="16" rx="3" fill="#D3DBE8" stroke="#3A4F72" stroke-width="2"/><circle cx="31" cy="14" r="2" fill="' + (d.alerta && !eg.flashOk ? '#E8483C' : '#2FC46B') + '"/></svg>';
@@ -533,6 +555,10 @@ appById('computer').render = function (body) {
     btns.append(btnAbrir, btnProps);
     det.append(el('span', 'os-muted', 'Selecione uma unidade.'), btns);
     body.append(el('h3', 'os-h', 'Unidades de armazenamento'), grid, det, props);
+    if (!online('DMA')) {
+      body.appendChild(caixa('Dispositivos removíveis', ['Uma porta USB está com energia, mas nenhuma unidade foi montada.',
+        'Periféricos não conseguem copiar dados para a memória sem ocupar o processador: recurso desativado.'], true));
+    }
   }
   lista();
 };
@@ -671,7 +697,7 @@ appById('taskmgr').render = function (body) {
   clearInterval(graficoId);
   if (!online('UC')) {
     body.append(
-      caixa('Gerenciador de Tarefas', ['Erro: unidade de controle não responde.', 'Os processos não podem ser listados até a UC voltar a funcionar.'], true)
+      caixa('Gerenciador de Tarefas', ['Erro: nenhum componente está coordenando as instruções do processador.', 'Sem quem busque e decodifique as instruções, os processos não podem ser listados.'], true)
     );
     const tentar = el('button', 'os-btn', 'Tentar novamente');
     tentar.type = 'button';

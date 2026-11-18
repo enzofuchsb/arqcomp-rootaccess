@@ -68,6 +68,8 @@ minimizam para a barra de tarefas e, no celular, abrem em tela cheia.
 - Digite **qualquer resposta, em qualquer ordem**. Se bater com um módulo pendente,
   ele fica **ONLINE**. Dá até para acertar antes de achar a pista.
 - **BRUTE FORCE** e **SNIFF** agem sobre o **pacote selecionado** (clique nele na lista).
+- No Ato 2 as casinhas ficam **escondidas**: só aparecem depois de usar SNIFF ou BRUTE FORCE no pacote. Na barra lateral, os módulos pendentes aparecem como `▒▒▒`, sem indicar o tamanho.
+- Digitar uma resposta que **já está online** conta como erro (`módulo já está online`, +10%).
 
 **Enigmas** (valores sorteados a cada partida)
 
@@ -76,7 +78,7 @@ minimizam para a barra de tarefas e, no celular, abrem em tela cheia.
 | **Painel de Controle › Sistema** | Ordenar os cartões BUSCAR, DECODIFICAR, EXECUTAR, ARMAZENAR (arrastar ou ← →) e Aplicar. Errou: **+3%**. |
 | **notas_do_admin.txt + Painel de Controle › BIOS** | As notas têm um mini programa (MOV, ADD, SUB, MUL). O valor final de A é o PIN da BIOS. PIN errado: **+5%**. |
 | **Internet** | Sem a CACHE online, as páginas carregam lentas e cortadas. A página certa está no **Histórico**. Com a CACHE online, tudo carrega normal. |
-| **Disco removível (E:)** | `leia_me.txt` está em 4 blocos fora de ordem: ordenar pelo número do setor (arrastar ou ↑ ↓) e Montar arquivo. |
+| **Disco removível (E:)** | Só aparece com o DMA online. `leia_me.txt` está em 4 blocos fora de ordem: ordenar pelo número do setor (arrastar ou ↑ ↓) e Montar arquivo. |
 | **Gerenciador de Tarefas** | Só abre com a UC online. Em Desempenho, mover processos entre os núcleos até nenhum passar de 100%. |
 
 **LogicNão** (simulador de portas lógicas)
@@ -95,10 +97,11 @@ das portas do circuito aberto. Cada circuito libera o seguinte.
 
 | Onde | O que acontece |
 |:--|:--|
-| **Lixeira › relatorio_perifericos.txt** | Texto cifrado com **Cifra de César**. Gire a chave no **DECODIFICADOR** (− / +) ou use `decrypt --chave N` no Terminal. A pista só conta quando o texto fica legível. |
-| **Documentos › Confidencial** | Pasta com senha. Senha errada: **+5%** e "acesso negado". A dica está num e-mail do Admin. Dentro há um `postit.txt` com a chave da Lixeira. |
+| **Lixeira › relatorio_perifericos.txt** | Texto cifrado com **Cifra de César**. Gire a chave no **DECODIFICADOR** (− / +) ou use `decrypt --chave N` no Terminal. A chave é **sorteada a cada partida** e fica no arquivo oculto `.chave_lixeira` (use `ls -a` e `cat .chave_lixeira`). A pista só conta quando o texto fica legível. |
+| **Documentos › Confidencial** | Pasta com senha. Senha errada: **+5%** e "acesso negado". A dica está num e-mail do Admin, que só chega depois que a CACHE fica online. Dentro há a `tabela_morse.txt` (A–Z em Morse). |
 | **Documentos › NAO_ABRA.exe** | Armadilha (*honeypot*): a tela pisca em vermelho, o alarme toca, o Defender acusa **AMEAÇA DETECTADA** e o trace sobe **+15%**. |
-| **Novo hardware** | Quando os outros 9 módulos do Ato 2 estão online, aparece um dispositivo USB desconhecido no Gerenciador de Dispositivos. |
+| **Novo hardware** | Quando os outros 9 módulos do Ato 2 estão online, aparece um dispositivo USB desconhecido no Gerenciador de Dispositivos. O LED dele pisca uma palavra em **código Morse**: identifique a placa no campo abaixo. Errou: **+5%**. |
+| **Pistas falsas** | `ssd_backup.tmp` (Disco C:), `volatil.log` (Documentos) e `firmware_antigo.bin` (Lixeira) descrevem módulos que já estão online. Não entram nos pacotes. |
 
 ---
 
@@ -127,6 +130,7 @@ O antivírus do ROOT/OS fica na bandeja mostrando o mesmo % do trace.
 | BRUTE FORCE | `+10%` |
 | SNIFF | `+5%` |
 | Senha errada na pasta Confidencial | `+5%` |
+| Placa errada no dispositivo USB | `+5%` |
 | Ordem errada no ciclo de instrução (UC) | `+3%` |
 | PIN errado na BIOS | `+5%` |
 | Abrir NAO_ABRA.exe | `+15%` |
@@ -157,6 +161,9 @@ O antivírus do ROOT/OS fica na bandeja mostrando o mesmo % do trace.
 | `sniff` | mesmo que o botão SNIFF |
 | `decrypt --chave N` | aplica a chave N no arquivo cifrado da Lixeira (com ele aberto) |
 | `clear` | limpa o log |
+| `ls` | lista os arquivos do sistema (Ato 2) |
+| `ls -a` | lista também os arquivos ocultos, que começam com ponto |
+| `cat <arquivo>` | mostra o conteúdo de um arquivo |
 | `reboot` | reinicia o jogo |
 
 Qualquer outra coisa digitada é tratada como uma tentativa de chave.
