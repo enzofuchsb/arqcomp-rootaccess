@@ -6,7 +6,7 @@
 
 **`> jogo de terminal sobre Arquitetura Computacional`**
 
-[![JOGAR](https://img.shields.io/badge/%3E_JOGAR_AGORA-39FF88?style=for-the-badge&labelColor=06080A)](https://enzofuchsb.github.io/arqcomp-cruzadinha/)
+[![JOGAR](https://img.shields.io/badge/%3E_JOGAR_AGORA-39FF88?style=for-the-badge&labelColor=06080A)](reservado)
 ![HTML](https://img.shields.io/badge/HTML-puro-5CD8FF?style=for-the-badge&labelColor=0B1013)
 ![CSS](https://img.shields.io/badge/CSS-puro-5CD8FF?style=for-the-badge&labelColor=0B1013)
 ![JS](https://img.shields.io/badge/JavaScript-vanilla-FFB547?style=for-the-badge&labelColor=0B1013)
@@ -39,7 +39,7 @@ root@sys:~$ _
 5. Libere os 16 módulos e ganhe **ACESSO ROOT**.
 
 > Respostas são conferidas em MAIÚSCULAS, sem acento e sem espaço.
-> `memória de massa` vira `MEMORIADEMASSA`.
+> `arq. comp` vira `ARQCOMP`.
 
 <div align="center">
 <img src="assets/modules.svg" alt="Os 16 módulos ficando online em sequência" width="100%">
@@ -109,36 +109,6 @@ até o texto ficar legível. Só as letras A–Z mudam: acentos e pontuação fi
 | `reboot` | reinicia o jogo |
 
 Qualquer outra coisa digitada é tratada como uma tentativa de chave.
-
----
-
-## `[ DATA ]` Os 16 módulos
-
-<details>
-<summary><b>SPOILER: clique para ver as respostas</b></summary>
-
-<br>
-
-| # | Fase | Resposta | Pista principal |
-|:-:|:--|:--|:--|
-| 01 | Energia e Firmware | `CPU` | Chip principal que executa as instruções de todos os programas. |
-| 02 | Energia e Firmware | `ROM` | Memória só de leitura que guarda o programa de inicialização de fábrica. |
-| 03 | Energia e Firmware | `EEPROM` | Memória não volátil apagável eletricamente, que guarda configurações da BIOS. |
-| 04 | Energia e Firmware | `FLASH` | Memória não volátil regravável em blocos, usada em pendrives e cartões SD. |
-| 05 | Teste do Processador | `UC` | Parte da CPU que busca, decodifica instruções e coordena os outros componentes. |
-| 06 | Teste do Processador | `ULA` | Parte da CPU responsável pelos cálculos e pelas comparações lógicas. |
-| 07 | Teste do Processador | `REGISTRADORES` | Pequenas memórias dentro do processador, as mais rápidas do computador. |
-| 08 | Teste do Processador | `CACHE` | Memória ultrarrápida entre CPU e RAM que guarda o que é mais usado. |
-| 09 | Memória e Comunicação | `RAM` | Memória principal de trabalho, volátil: perde tudo quando o computador desliga. |
-| 10 | Memória e Comunicação | `ADDRESSBUS` | Vias que indicam qual posição da memória o processador quer acessar. |
-| 11 | Memória e Comunicação | `DATABUS` | Vias por onde as informações viajam entre processador, memória e periféricos. |
-| 12 | Memória e Comunicação | `DMA` | Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU. |
-| 13 | Sistema (cripto) | `MEMORIADEMASSA` | Onde arquivos e sistema ficam guardados mesmo desligado, como HDs e SSDs. |
-| 14 | Sistema (cripto) | `DUALCORE` | Processador com dois núcleos trabalhando ao mesmo tempo. |
-| 15 | Sistema (cripto) | `QUADCORE` | Processador com quatro núcleos trabalhando ao mesmo tempo. |
-| 16 | Sistema (cripto) | `MICROCONTROLADOR` | Chip com processador, memória e entradas/saídas juntos, como o do Arduino. |
-
-</details>
 
 ---
 
