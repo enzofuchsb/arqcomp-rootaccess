@@ -610,7 +610,8 @@ function abaDesempenho(area) {
     desenharNucleos(cores);
     area.append(el('h4', 'os-h', 'Histórico de uso da CPU'), cores, el('p', 'tm-info', 'Processador de quatro núcleos: 4 em uso.'));
     graficoId = setInterval(() => {
-      if (!cores.isConnected) { clearInterval(graficoId); return; }
+      // para se a janela fechou ou se o desktop saiu de cena (batalha, game over)
+      if (!cores.isConnected || !$('screen-desktop').classList.contains('active')) { clearInterval(graficoId); return; }
       desenharNucleos(cores);
     }, 1200);
     return;

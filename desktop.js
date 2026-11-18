@@ -18,6 +18,7 @@ const ICONES = {
   control: '<svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="3" fill="#E4EAF3" stroke="#3A4F72" stroke-width="2"/><path d="M14 13v22M24 13v22M34 13v22" stroke="#7E8FA8" stroke-width="3"/><rect x="10" y="17" width="8" height="5" rx="1" fill="#2F7BFF"/><rect x="20" y="27" width="8" height="5" rx="1" fill="#2FC46B"/><rect x="30" y="20" width="8" height="5" rx="1" fill="#E8A92A"/></svg>',
   taskmgr: '<svg viewBox="0 0 48 48"><rect x="5" y="7" width="38" height="34" rx="3" fill="#0E1A12" stroke="#3A4F72" stroke-width="2"/><path d="M9 14h30M9 22h30M9 30h30" stroke="#1F3A27" stroke-width="1"/><path d="M9 33l6-6 5 3 6-11 5 7 4-4 4 3" fill="none" stroke="#39FF88" stroke-width="2.5"/></svg>',
   logicbox: '<svg viewBox="0 0 48 48"><path d="M16 6v6M24 6v6M32 6v6M16 36v6M24 36v6M32 36v6M6 16h6M6 24h6M6 32h6M36 16h6M36 24h6M36 32h6" stroke="#C9A227" stroke-width="3"/><rect x="11" y="11" width="26" height="26" rx="3" fill="#1F2A33" stroke="#0B1013" stroke-width="2"/><rect x="17" y="17" width="14" height="14" rx="1" fill="#2E3D4A" stroke="#39FF88" stroke-width="1.5"/><circle cx="15" cy="15" r="1.6" fill="#C9A227"/></svg>',
+  defender: '<svg viewBox="0 0 48 48"><path d="M24 4 8 10v12c0 10 6.8 18.8 16 22 9.2-3.2 16-12 16-22V10L24 4z" fill="#2FC46B" stroke="#14632F" stroke-width="2"/><path d="M24 10v28c-6-2.6-10-8.8-10-16v-8l10-4z" fill="rgba(255,255,255,.35)"/></svg>',
   terminal: '<svg viewBox="0 0 48 48"><rect x="4" y="8" width="40" height="32" rx="3" fill="#06080A" stroke="#39FF88" stroke-width="2"/><rect x="4" y="8" width="40" height="6" rx="2" fill="#1B2A24"/><path d="M11 21l6 5-6 5" fill="none" stroke="#39FF88" stroke-width="2.5"/><path d="M20 32h10" stroke="#39FF88" stroke-width="2.5"/></svg>',
   notes: '<svg viewBox="0 0 48 48"><path d="M10 4h20l9 9v31H10z" fill="#fff" stroke="#3A4F72" stroke-width="2"/><path d="M30 4v9h9" fill="#DCE4EF" stroke="#3A4F72" stroke-width="2"/><path d="M15 20h18M15 26h18M15 32h18M15 38h12" stroke="#7E97AE" stroke-width="2"/></svg>'
 };
@@ -32,6 +33,7 @@ const APPS = [
   { id: 'control',  nome: 'Painel de Controle',      titulo: 'Painel de Controle',                   w: 500, h: 360 },
   { id: 'taskmgr',  nome: 'Gerenciador de Tarefas',  titulo: 'Gerenciador de Tarefas',               w: 480, h: 380 },
   { id: 'logicbox', nome: 'LogicNão',                titulo: 'LogicNão — simulador de portas lógicas', w: 700, h: 540 },
+  { id: 'defender', nome: 'ROOT Defender', titulo: 'ROOT Defender', w: 440, h: 360, oculto: true },
   { id: 'terminal', nome: 'Terminal (root.exe)',     titulo: 'root.exe — Terminal',                  w: 640, h: 440 },
   { id: 'notes',    nome: 'notas_do_admin.txt',      titulo: 'notas_do_admin.txt — Bloco de Notas', w: 420, h: 280 }
 ];
@@ -64,6 +66,7 @@ function montarIcones() {
   const box = $('dk-icons');
   box.textContent = '';
   APPS.forEach((app) => {
+    if (app.oculto) return;   // apps sem ícone (ex.: ROOT Defender, aberto pela bandeja)
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'dk-icon';
@@ -98,6 +101,7 @@ function montarMenu() {
   const list = $('dk-start-list');
   list.textContent = '';
   APPS.forEach((app) => {
+    if (app.oculto) return;
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'dk-start-item';
@@ -327,6 +331,7 @@ window.desktopReset = function () {
   dk.janelas.clear();
   dk.ativa = null;
   dk.cascata = 0;
+  montarIcones();   // desfaz a bagunça do firewall
   fecharMenu();
   $('dk-balloon').hidden = true;
   $('screen-desktop').classList.remove('optimized');
@@ -369,9 +374,25 @@ $('dk-area').addEventListener('pointerdown', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && !$('dk-start').hidden) { fecharMenu(); $('dk-start-btn').focus(); }
 });
-$('tray-defender').addEventListener('click', () => {
-  balao('ROOT Defender', 'Proteção ativa. Rastreamento atual: ' + Math.round(state.trace) + '%. Varreduras e verificações de integridade acontecem sem aviso.');
-});
+$('tray-defender').addEventListener('click', () => abrirApp('defender'));
+
+/* Firewall reagindo (trace ≥ 70%): fecha uma janela aleatória e embaralha os ícones */
+window.dkFirewall = function () {
+  const abertas = [...dk.janelas.keys()];
+  let fechada = null;
+  if (abertas.length) {
+    fechada = abertas[Math.floor(Math.random() * abertas.length)];
+    fechar(fechada);
+  }
+  const box = $('dk-icons');
+  const icones = [...box.children];
+  for (let i = icones.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [icones[i], icones[j]] = [icones[j], icones[i]];
+  }
+  icones.forEach((ic) => box.appendChild(ic));
+  return fechada ? appById(fechada).nome : null;
+};
 
 montarIcones();
 montarMenu();

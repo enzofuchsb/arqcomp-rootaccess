@@ -1,0 +1,208 @@
+/* =========================================================
+   ROOT ACCESS — final.css
+   Final cinematográfico, créditos, título de hacker, LED em Morse
+   e cena pós-créditos.
+   ========================================================= */
+
+/* ---------- 1. último golpe ---------- */
+#screen-batalha.fn-final .bt-top,
+#screen-batalha.fn-final .bt-dialogo,
+#screen-batalha.fn-final .bt-painel { visibility: hidden; }
+.bt-raio.fn-lento { animation-duration: 2.4s; animation-timing-function: cubic-bezier(.25, .1, .25, 1); }
+.bt-raio.fn-atravessa { transition: top 0.4s ease-in, height 0.4s ease-in; width: 34px; box-shadow: 0 0 50px 18px rgba(57, 255, 136, 0.8); }
+.fn-branco {
+  position: fixed;
+  inset: 0;
+  z-index: 8500;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease-out;
+}
+.fn-branco.on { opacity: 1; }
+.fn-branco.sai { opacity: 0; transition: opacity 1.2s ease-in; }
+
+/* ---------- 2. desmoronamento ---------- */
+.bt-chama.fumaca { animation: fnFumaca 1.8s ease-out forwards; }
+.bt-chama.fumaca .c1, .bt-chama.fumaca .c2 { fill: #7C8288; }
+.bt-boss.sem-olho #bt-olho,
+.bt-boss.sem-olho .bt-orbita,
+.bt-boss.sem-olho #bt-sobr,
+.bt-boss.sem-olho #bt-carga { opacity: 0; }
+.fn-olho { position: absolute; z-index: 3; transition: top 0.9s cubic-bezier(.55, 0, 1, .45); }
+.fn-olho svg { width: 100%; height: 100%; display: block; overflow: visible; transform-origin: center; transition: transform 0.4s ease; }
+.fn-olho.rola { transition: transform 1.8s cubic-bezier(.15, .7, .3, 1); transform: translateX(140px) rotate(540deg); }
+.fn-olho.piscada-lenta svg { animation: fnPiscaLenta 1.4s ease-in-out; }
+.fn-olho.fechado svg { transform: scaleY(0.06); transition-duration: 1.2s; }
+.fn-esclera { fill: #F4EEE0; stroke: #1A0D08; stroke-width: 4; }
+.fn-iris { fill: #5CD8FF; stroke: #1A0D08; stroke-width: 2; }
+.fn-pupila { fill: #050505; }
+.fn-sussurro {
+  position: absolute;
+  z-index: 3;
+  margin: 0;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+/* ---------- 3 e 4. terminal root e créditos ---------- */
+#screen-final.active { display: flex; }
+#screen-final {
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  flex-direction: column;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+}
+.fn-term {
+  width: min(900px, 100%);
+  max-height: 100%;
+  margin: 0 auto;
+  padding: 24px 20px;
+  overflow: hidden;
+  font: 15px/1.7 var(--mono);
+  color: var(--text);
+  transition: opacity 1s;
+}
+.fn-term.some { opacity: 0; }
+.fn-linha { white-space: pre-wrap; word-break: break-word; }
+.fn-linha .ok { color: var(--green); }
+.fn-prompt { color: var(--green); font-weight: 700; }
+.fn-sinal { color: var(--green); font-weight: 700; }
+.fn-sinal.pisca { animation: blink 0.5s steps(1) infinite; }
+.fn-sinal.root { color: var(--green); text-shadow: 0 0 8px rgba(57, 255, 136, 0.8); }
+.fn-cursor { color: var(--green); animation: blink 1s steps(1) infinite; }
+.fn-ameaca { color: var(--red); }
+#screen-final.fn-crt-off .fn-term { animation: crt-off 0.65s ease-in forwards; }
+#screen-final.fn-crt-on .fn-term { animation: fnCrtOn 0.6s ease-out; }
+.fn-creditos {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  text-align: center;
+  animation: fadeIn 1.4s ease-out;
+}
+.fn-creditos.hidden { display: none; }
+.fn-titulo {
+  margin: 0;
+  font-family: var(--display);
+  font-size: clamp(56px, 12vw, 120px);
+  font-weight: 400;
+  line-height: 1;
+  color: var(--green);
+  text-shadow: 0 0 12px rgba(57, 255, 136, 0.6), 0 0 32px rgba(57, 255, 136, 0.3);
+}
+.fn-sub { margin: 0; color: var(--muted); font-size: 14px; letter-spacing: 0.04em; }
+
+/* ---------- 6. pós-créditos: o último tijolo ---------- */
+.fn-tijolo { position: absolute; left: 28px; bottom: 28px; width: 72px; }
+.fn-tijolo.hidden { display: none; }
+.fn-tijolo svg { width: 100%; height: auto; display: block; }
+.fn-tij-corpo { fill: #7A3E28; stroke: #2A140C; stroke-width: 2; }
+.fn-tij-rach { fill: none; stroke: #120804; stroke-width: 1.5; }
+.fn-tij-olho { transform-box: fill-box; transform-origin: center; transform: scaleY(0.05); transition: transform 0.5s ease; }
+.fn-tij-esclera { fill: #F4EEE0; stroke: #120804; stroke-width: 1; }
+.fn-tij-pupila { fill: #FF5468; }
+.fn-tijolo.acordado .fn-tij-olho { transform: scaleY(1); }
+.fn-tijolo.treme { animation: btTreme 0.12s linear infinite; }
+#screen-final.pos .fn-term {
+  position: absolute;
+  left: 116px;
+  bottom: 30px;
+  width: auto;
+  padding: 0;
+  font-size: 14px;
+}
+
+/* ---------- 5. tela de vitória: título de hacker e LED ---------- */
+.win-titulo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 4px 0 18px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  text-align: center;
+}
+.win-titulo-label { font-size: 11px; letter-spacing: 0.2em; color: var(--muted); }
+.win-titulo-nome { font-family: var(--display); font-size: clamp(34px, 6vw, 52px); font-weight: 400; line-height: 1; }
+.win-titulo-frase { margin: 0; font-size: 14px; color: var(--text); }
+.win-titulo.lendario { border-color: var(--green); }
+.win-titulo.lendario .win-titulo-nome { color: var(--green); text-shadow: 0 0 10px rgba(57, 255, 136, 0.6); }
+.win-titulo.hacker { border-color: var(--cyan); }
+.win-titulo.hacker .win-titulo-nome { color: var(--cyan); }
+.win-titulo.kiddie { border-color: var(--amber); }
+.win-titulo.kiddie .win-titulo-nome { color: var(--amber); }
+.win-titulo.entra { animation: fnTitulo 0.9s cubic-bezier(.2, .8, .3, 1.2); }
+
+#screen-win { position: relative; }
+.win-led {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  margin: 0;
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.win-led svg { width: 100%; height: auto; display: block; }
+.win-led figcaption { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 0.04em; }
+.wl-placa { fill: #0F5E6E; stroke: #0A3D48; stroke-width: 2; }
+.wl-furo { fill: #06080A; stroke: #C9A227; stroke-width: 1.5; }
+.wl-usb { fill: #B8BEC6; stroke: #5E656E; stroke-width: 1; }
+.wl-chip { fill: #14181C; }
+.wl-pino { stroke: #B8BEC6; stroke-width: 2; }
+.wl-header rect { fill: #14181C; stroke: #C9A227; stroke-width: 0.8; }
+.wl-txt { font: 700 7px var(--mono); fill: #D6F6FF; text-anchor: middle; }
+.win-led-luz { fill: #3B4A3F; stroke: #0A3D48; stroke-width: 1.5; }
+.win-led-luz.on { fill: #39FF88; filter: drop-shadow(0 0 4px #39FF88) drop-shadow(0 0 8px rgba(57, 255, 136, 0.7)); }
+
+.fn-debug { bottom: 46px; }
+
+/* ---------- keyframes ---------- */
+@keyframes fnFumaca {
+  to { transform: translateY(-46px) scale(1.5, 1.2); opacity: 0; }
+}
+@keyframes fnPiscaLenta { 50% { transform: scaleY(0.08); } }
+@keyframes fnCrtOn {
+  0% { transform: scaleY(0.01) scaleX(0.4); opacity: 0.4; filter: brightness(3); }
+  60% { transform: scaleY(1.02) scaleX(1); opacity: 1; }
+  100% { transform: none; filter: none; }
+}
+@keyframes fnTitulo {
+  0% { transform: scale(0.6); opacity: 0; letter-spacing: 0.4em; }
+  100% { transform: none; opacity: 1; }
+}
+
+/* ---------- celular ---------- */
+@media (max-width: 700px) {
+  .fn-term { font-size: 13px; padding: 16px 12px; }
+  .fn-olho.rola { transform: translateX(70px) rotate(360deg); }
+  .win-led { position: static; margin: 18px auto 8px; width: 120px; }
+  #screen-final.pos .fn-term { left: 16px; right: 16px; bottom: 88px; }
+  .fn-tijolo { left: 16px; bottom: 20px; width: 60px; }
+}
+
+/* ---------- menos movimento: troca rolagem, tremida e flash por fades ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .fn-olho.rola { transform: none; }
+  .fn-tijolo.treme { animation: none !important; }
+  .fn-branco.on { transition: opacity 0.6s; }
+  .bt-chama.fumaca { animation: none !important; opacity: 0; transition: opacity 1s !important; }
+}

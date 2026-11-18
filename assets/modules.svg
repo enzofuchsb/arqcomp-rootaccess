@@ -1,98 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-label="16 módulos ficando online em sequência">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="280" viewBox="0 0 900 280" role="img" aria-label="Os 16 módulos do sistema, divididos em dois atos, ficando online um a um">
 <defs><pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="#ffffff" opacity="0.035"/></pattern></defs>
-<style>
-.mono{font-family:"JetBrains Mono",Consolas,"Courier New",monospace}
-.cell rect{animation:box 12s infinite}
-.cell .off{animation:off 12s infinite}
-.cell .on{opacity:0;animation:on 12s infinite}
-@keyframes box{0%,3%{stroke:#1B2A24}4%,80%{stroke:#39FF88}81%,100%{stroke:#1B2A24}}
-@keyframes off{0%,3%{opacity:1}4%,80%{opacity:0}81%,100%{opacity:1}}
-@keyframes on{0%,3%{opacity:0}4%,80%{opacity:1}81%,100%{opacity:0}}
-</style>
-<rect width="900" height="300" fill="#06080A"/><rect x=".5" y=".5" width="899" height="299" fill="none" stroke="#1B2A24"/>
+<style>.mono{font-family:"JetBrains Mono",Consolas,"Courier New",monospace}.cell rect{animation:box 14s infinite}.cell .off{animation:off 14s infinite}.cell .on{opacity:0;animation:on 14s infinite}@keyframes box{0%,2%{stroke:#1B2A24}3%,82%{stroke:#39FF88}83%,100%{stroke:#1B2A24}}@keyframes off{0%,2%{opacity:1}3%,82%{opacity:0}83%,100%{opacity:1}}@keyframes on{0%,2%{opacity:0}3%,82%{opacity:1}83%,100%{opacity:0}}.lock{animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}</style>
+<rect width="900" height="280" fill="#06080A"/><rect x=".5" y=".5" width="899" height="279" fill="none" stroke="#1B2A24"/>
 <text x="24" y="32" class="mono" font-size="13" fill="#7C9488" letter-spacing="2">MÓDULOS DO SISTEMA</text>
-<text x="24" y="64" class="mono" font-size="11" fill="#FFB547">FASE 1</text><text x="24" y="80" class="mono" font-size="10" fill="#7C9488">ENERGIA E FIRMWARE</text>
-<g class="cell" style="animation-delay:0.0s"><rect x="24" y="96" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:0.0s"/>
-<text x="34" y="120" class="mono" font-size="11" fill="#7C9488">01</text>
-<g class="off" style="animation-delay:0.0s"><text x="60" y="120" class="mono" font-size="11" fill="#7C9488">▒▒▒</text></g>
-<g class="on" style="animation-delay:0.0s"><text x="60" y="120" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:0.5s"><rect x="24" y="144" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:0.5s"/>
-<text x="34" y="168" class="mono" font-size="11" fill="#7C9488">02</text>
-<g class="off" style="animation-delay:0.5s"><text x="60" y="168" class="mono" font-size="11" fill="#7C9488">▒▒▒</text></g>
-<g class="on" style="animation-delay:0.5s"><text x="60" y="168" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:1.0s"><rect x="24" y="192" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:1.0s"/>
-<text x="34" y="216" class="mono" font-size="11" fill="#7C9488">03</text>
-<g class="off" style="animation-delay:1.0s"><text x="60" y="216" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:1.0s"><text x="60" y="216" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:1.5s"><rect x="24" y="240" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:1.5s"/>
-<text x="34" y="264" class="mono" font-size="11" fill="#7C9488">04</text>
-<g class="off" style="animation-delay:1.5s"><text x="60" y="264" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:1.5s"><text x="60" y="264" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<text x="240" y="64" class="mono" font-size="11" fill="#FFB547">FASE 2</text><text x="240" y="80" class="mono" font-size="10" fill="#7C9488">TESTE DO PROCESSADOR</text>
-<g class="cell" style="animation-delay:2.0s"><rect x="240" y="96" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:2.0s"/>
-<text x="250" y="120" class="mono" font-size="11" fill="#7C9488">05</text>
-<g class="off" style="animation-delay:2.0s"><text x="276" y="120" class="mono" font-size="11" fill="#7C9488">▒▒</text></g>
-<g class="on" style="animation-delay:2.0s"><text x="276" y="120" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:2.5s"><rect x="240" y="144" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:2.5s"/>
-<text x="250" y="168" class="mono" font-size="11" fill="#7C9488">06</text>
-<g class="off" style="animation-delay:2.5s"><text x="276" y="168" class="mono" font-size="11" fill="#7C9488">▒▒▒</text></g>
-<g class="on" style="animation-delay:2.5s"><text x="276" y="168" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:3.0s"><rect x="240" y="192" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:3.0s"/>
-<text x="250" y="216" class="mono" font-size="11" fill="#7C9488">07</text>
-<g class="off" style="animation-delay:3.0s"><text x="276" y="216" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:3.0s"><text x="276" y="216" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:3.5s"><rect x="240" y="240" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:3.5s"/>
-<text x="250" y="264" class="mono" font-size="11" fill="#7C9488">08</text>
-<g class="off" style="animation-delay:3.5s"><text x="276" y="264" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:3.5s"><text x="276" y="264" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<text x="456" y="64" class="mono" font-size="11" fill="#FFB547">FASE 3</text><text x="456" y="80" class="mono" font-size="10" fill="#7C9488">MEMÓRIA E COMUNICAÇÃO</text>
-<g class="cell" style="animation-delay:4.0s"><rect x="456" y="96" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:4.0s"/>
-<text x="466" y="120" class="mono" font-size="11" fill="#7C9488">09</text>
-<g class="off" style="animation-delay:4.0s"><text x="492" y="120" class="mono" font-size="11" fill="#7C9488">▒▒▒</text></g>
-<g class="on" style="animation-delay:4.0s"><text x="492" y="120" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:4.5s"><rect x="456" y="144" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:4.5s"/>
-<text x="466" y="168" class="mono" font-size="11" fill="#7C9488">10</text>
-<g class="off" style="animation-delay:4.5s"><text x="492" y="168" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:4.5s"><text x="492" y="168" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:5.0s"><rect x="456" y="192" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:5.0s"/>
-<text x="466" y="216" class="mono" font-size="11" fill="#7C9488">11</text>
-<g class="off" style="animation-delay:5.0s"><text x="492" y="216" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:5.0s"><text x="492" y="216" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:5.5s"><rect x="456" y="240" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:5.5s"/>
-<text x="466" y="264" class="mono" font-size="11" fill="#7C9488">12</text>
-<g class="off" style="animation-delay:5.5s"><text x="492" y="264" class="mono" font-size="11" fill="#7C9488">▒▒▒</text></g>
-<g class="on" style="animation-delay:5.5s"><text x="492" y="264" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<text x="672" y="64" class="mono" font-size="11" fill="#FFB547">FASE 4</text><text x="672" y="80" class="mono" font-size="10" fill="#7C9488">SISTEMA · CRIPTO</text>
-<g class="cell" style="animation-delay:6.0s"><rect x="672" y="96" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:6.0s"/>
-<text x="682" y="120" class="mono" font-size="11" fill="#7C9488">13</text>
-<g class="off" style="animation-delay:6.0s"><text x="708" y="120" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:6.0s"><text x="708" y="120" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:6.5s"><rect x="672" y="144" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:6.5s"/>
-<text x="682" y="168" class="mono" font-size="11" fill="#7C9488">14</text>
-<g class="off" style="animation-delay:6.5s"><text x="708" y="168" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:6.5s"><text x="708" y="168" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:7.0s"><rect x="672" y="192" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:7.0s"/>
-<text x="682" y="216" class="mono" font-size="11" fill="#7C9488">15</text>
-<g class="off" style="animation-delay:7.0s"><text x="708" y="216" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:7.0s"><text x="708" y="216" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<g class="cell" style="animation-delay:7.5s"><rect x="672" y="240" width="204" height="38" fill="#0B1013" stroke="#1B2A24" style="animation-delay:7.5s"/>
-<text x="682" y="264" class="mono" font-size="11" fill="#7C9488">16</text>
-<g class="off" style="animation-delay:7.5s"><text x="708" y="264" class="mono" font-size="11" fill="#7C9488">▒▒▒▒▒▒▒▒▒▒▒▒</text></g>
-<g class="on" style="animation-delay:7.5s"><text x="708" y="264" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g>
-</g>
-<rect width="900" height="300" fill="url(#scan)"/></svg>
+<text x="876" y="32" class="mono lock" font-size="12" fill="#FFB547" text-anchor="end">[ LOCK ] firewall ativo</text>
+<text x="24" y="66" class="mono" font-size="11" fill="#FFB547">ATO 1 · PARTIDA</text><text x="140" y="66" class="mono" font-size="10" fill="#7C9488">em ordem, no terminal</text>
+<g class="cell"><rect x="24.0" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:0.00s"/><text x="34.0" y="99" class="mono" font-size="11" fill="#7C9488">01</text><g class="off" style="animation-delay:0.00s"><text x="58.0" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="149.33333333333334" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:0.00s"><text x="58.0" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="167.33333333333334" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:0.55s"/><text x="177.33333333333334" y="99" class="mono" font-size="11" fill="#7C9488">02</text><g class="off" style="animation-delay:0.55s"><text x="201.33333333333334" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="292.6666666666667" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:0.55s"><text x="201.33333333333334" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="310.6666666666667" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:1.10s"/><text x="320.6666666666667" y="99" class="mono" font-size="11" fill="#7C9488">03</text><g class="off" style="animation-delay:1.10s"><text x="344.6666666666667" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="436.0" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:1.10s"><text x="344.6666666666667" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="454.0" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:1.65s"/><text x="464.0" y="99" class="mono" font-size="11" fill="#7C9488">04</text><g class="off" style="animation-delay:1.65s"><text x="488.0" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="579.3333333333334" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:1.65s"><text x="488.0" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="597.3333333333334" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:2.20s"/><text x="607.3333333333334" y="99" class="mono" font-size="11" fill="#7C9488">05</text><g class="off" style="animation-delay:2.20s"><text x="631.3333333333334" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="722.6666666666667" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:2.20s"><text x="631.3333333333334" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="740.6666666666667" y="76" width="135.33333333333334" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:2.75s"/><text x="750.6666666666667" y="99" class="mono" font-size="11" fill="#7C9488">06</text><g class="off" style="animation-delay:2.75s"><text x="774.6666666666667" y="99" class="mono" font-size="11" fill="#7C9488">▒▒▒▒</text><text x="866.0000000000001" y="99" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:2.75s"><text x="774.6666666666667" y="99" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<text x="24" y="146" class="mono" font-size="11" fill="#5CD8FF">ATO 2 · SISTEMA</text><text x="140" y="146" class="mono" font-size="10" fill="#7C9488">em qualquer ordem, escondidos no desktop</text>
+<g class="cell"><rect x="24.0" y="156" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:4.40s"/><text x="34.0" y="179" class="mono" font-size="11" fill="#7C9488">07</text><g class="off" style="animation-delay:4.40s"><text x="58.0" y="179" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="178.0" y="179" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:4.40s"><text x="58.0" y="179" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="196.0" y="156" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:6.05s"/><text x="206.0" y="179" class="mono" font-size="11" fill="#7C9488">08</text><g class="off" style="animation-delay:6.05s"><text x="230.0" y="179" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="350.0" y="179" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:6.05s"><text x="230.0" y="179" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="368.0" y="156" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:7.70s"/><text x="378.0" y="179" class="mono" font-size="11" fill="#7C9488">09</text><g class="off" style="animation-delay:7.70s"><text x="402.0" y="179" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="522.0" y="179" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:7.70s"><text x="402.0" y="179" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="540.0" y="156" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:3.30s"/><text x="550.0" y="179" class="mono" font-size="11" fill="#7C9488">10</text><g class="off" style="animation-delay:3.30s"><text x="574.0" y="179" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="694.0" y="179" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:3.30s"><text x="574.0" y="179" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="712.0" y="156" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:7.15s"/><text x="722.0" y="179" class="mono" font-size="11" fill="#7C9488">11</text><g class="off" style="animation-delay:7.15s"><text x="746.0" y="179" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="866.0" y="179" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:7.15s"><text x="746.0" y="179" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="24.0" y="200" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:5.50s"/><text x="34.0" y="223" class="mono" font-size="11" fill="#7C9488">12</text><g class="off" style="animation-delay:5.50s"><text x="58.0" y="223" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="178.0" y="223" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:5.50s"><text x="58.0" y="223" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="196.0" y="200" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:8.25s"/><text x="206.0" y="223" class="mono" font-size="11" fill="#7C9488">13</text><g class="off" style="animation-delay:8.25s"><text x="230.0" y="223" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="350.0" y="223" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:8.25s"><text x="230.0" y="223" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="368.0" y="200" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:3.85s"/><text x="378.0" y="223" class="mono" font-size="11" fill="#7C9488">14</text><g class="off" style="animation-delay:3.85s"><text x="402.0" y="223" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="522.0" y="223" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:3.85s"><text x="402.0" y="223" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="540.0" y="200" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:6.60s"/><text x="550.0" y="223" class="mono" font-size="11" fill="#7C9488">15</text><g class="off" style="animation-delay:6.60s"><text x="574.0" y="223" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="694.0" y="223" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:6.60s"><text x="574.0" y="223" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<g class="cell"><rect x="712.0" y="200" width="164.0" height="36" fill="#0B1013" stroke="#1B2A24" style="animation-delay:4.95s"/><text x="722.0" y="223" class="mono" font-size="11" fill="#7C9488">16</text><g class="off" style="animation-delay:4.95s"><text x="746.0" y="223" class="mono" font-size="11" fill="#7C9488">▒▒▒</text><text x="866.0" y="223" class="mono" font-size="10" fill="#7C9488" text-anchor="end">OFFLINE</text></g><g class="on" style="animation-delay:4.95s"><text x="746.0" y="223" class="mono" font-size="11" fill="#39FF88">ONLINE</text></g></g>
+<text x="24" y="264" class="mono" font-size="11" fill="#7C9488">16/16 online... e depois?</text>
+<rect width="900" height="280" fill="url(#scan)"/>
+</svg>

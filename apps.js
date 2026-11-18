@@ -28,6 +28,8 @@ const pkt = (i) => 'PKT#' + pad2(i + 1);
 /* ---------- Estado do Ato 2 ---------- */
 const a2 = {
   coletados: new Map(),   // índice → horário em que foi coletado
+  coletadoEm: new Map(),  // índice → Date.now() da coleta/restauração (timer da quarentena)
+  quarentena: new Set(),  // índices que o ROOT Defender tirou da lista
   sel: null,              // índice do pacote selecionado no Terminal
   revelados: {},          // índice → posições reveladas pelo BRUTE FORCE
   sniffs: new Set(),      // índices que já usaram SNIFF
@@ -44,6 +46,7 @@ function coletar(resposta) {
   const i = idxDe(resposta);
   if (i < 0 || a2.coletados.has(i) || !state.rodando) return;
   a2.coletados.set(i, clock());
+  a2.coletadoEm.set(i, Date.now());
   somPacote();
   dkBalao('Pacote interceptado: ' + pkt(i), ETAPAS[i].local + ' — abra o Terminal (root.exe) para usar.');
   logLine('[ INFO ]', 'info', 'Pacote ' + pkt(i) + ' interceptado em ' + ETAPAS[i].local);
@@ -95,8 +98,8 @@ function montarTerminal() {
 
   const actions = el('div', 'actions');
   t2.scan = el('button', 'btn btn-primary act', '> EXECUTAR SCAN');
-  t2.brute = el('button', 'btn btn-amber act', 'BRUTE FORCE · +10%');
-  t2.brute.appendChild(el('small', null, 'revela uma letra do pacote'));
+  t2.brute = el('button', 'btn btn-amber act', 'BRUTE FORCE');
+  t2.brute.appendChild(el('small', null, '+10% · revela uma letra do pacote'));
   t2.sniffBtn = el('button', 'btn btn-cyan act', 'SNIFF · +5%');
   t2.sniffBtn.appendChild(el('small', null, 'dica extra do pacote'));
   [t2.scan, t2.brute, t2.sniffBtn].forEach((b) => { b.type = 'button'; actions.appendChild(b); });
@@ -137,7 +140,8 @@ function renderPacotes() {
   let n = 0;
   ATO2_IDX.forEach((i) => {
     const et = ETAPAS[i];
-    const achado = a2.coletados.has(i);
+    // pacote em quarentena some da lista (volta pelo ROOT Defender)
+    const achado = a2.coletados.has(i) && !a2.quarentena.has(i);
     const online = state.online.has(i);
     if (achado) n++;
     const b = el('button', 't2-pkt');
@@ -183,11 +187,10 @@ function renderSelecao() {
     t2.sniff.textContent = usou ? '> SNIFF: ' + ETAPAS[i].sniff : '';
     t2.sniff.classList.toggle('hidden', !usou);
     t2.sniffBtn.disabled = usou;
-    t2.brute.disabled = faltando(i).length <= 1;
+    t2.brute.disabled = faltando(i).length <= 1 || state.brutesRestantes <= 0;
   }
-  // mostra quantos BRUTE FORCE grátis o jogador tem
-  const g = a2.bruteGratis || 0;
-  t2.brute.firstChild.textContent = g > 0 ? 'BRUTE FORCE · grátis (' + g + ')' : 'BRUTE FORCE · +10%';
+  // usos restantes (e quantos deles são grátis, do LogicNão)
+  t2.brute.firstChild.textContent = rotuloBrute(a2.bruteGratis || 0);
   renderSlots2();
 }
 
@@ -226,6 +229,10 @@ window.t2Brute = function () {
     logLine('[ INFO ]', 'info', 'BRUTE FORCE: selecione um pacote coletado na lista.');
     return;
   }
+  if (state.brutesRestantes <= 0) {
+    logLine('[ INFO ]', 'info', 'BRUTE FORCE esgotado: não restam usos neste jogo.');
+    return;
+  }
   const f = faltando(i);
   if (f.length <= 1) {
     logLine('[ INFO ]', 'info', 'BRUTE FORCE recusado: a última letra você precisa digitar.');
@@ -233,7 +240,8 @@ window.t2Brute = function () {
   }
   const k = f[Math.floor(Math.random() * f.length)];
   (a2.revelados[i] = a2.revelados[i] || []).push(k);
-  state.dicas++;
+  state.brutesRestantes--;
+  registrarDica('brute', ETAPAS[i].resposta);
   updateStats();
   // BRUTE FORCE grátis ganho no LogicNão (circuito 2): não sobe o trace
   const gratis = (a2.bruteGratis || 0) > 0;
@@ -257,7 +265,7 @@ window.t2Sniff = function () {
     return;
   }
   a2.sniffs.add(i);
-  state.dicas++;
+  registrarDica('sniff', ETAPAS[i].resposta);
   updateStats();
   logLine('[ WARN ]', 'warn', 'SNIFF ' + pkt(i) + ': pacote extra capturado — trace +5%');
   renderSelecao();
@@ -286,6 +294,7 @@ function scan2() {
 
 function acertou2(i) {
   state.online.add(i);
+  a2.quarentena.delete(i);
   logLine('[  OK  ]', 'ok', ETAPAS[i].logOk);
   somAcerto();
   if (a2.sel === i) a2.sel = null;
@@ -314,6 +323,9 @@ function sistemaOtimizado() {
   dkBalao('Sistema otimizado', 'Todos os 16 módulos estão online. 4 núcleos ativos. Firewall desativado.', 4000);
   bipe(659, 0.1, 'square', 0.05); bipe(988, 0.16, 'square', 0.05, 0.12);
 
+  // falsa vitória → batalha final contra FIREWALL.EXE (batalha.js)
+  if (typeof window.batalhaIniciar === 'function') { window.batalhaIniciar(); return; }
+
   setTimeout(() => {
     const scr = $('screen-desktop');
     scr.classList.add('glitch-out');
@@ -323,17 +335,17 @@ function sistemaOtimizado() {
 }
 
 function errou2(bruto, jaOnline) {
-  state.erros++;
+  const custo = registrarErro(a2.sel != null ? ETAPAS[a2.sel].resposta : null);
   somErro();
   updateStats();
   logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada — ' +
-    (jaOnline ? 'módulo já está online' : 'nenhum módulo pendente corresponde') + ' — trace +10%');
+    (jaOnline ? 'módulo já está online' : 'nenhum módulo pendente corresponde') + ' — trace +' + custo + '%');
   const s = t2.slots;
   s.classList.remove('error');
   void s.offsetWidth;
   s.classList.add('error');
   setTimeout(() => s.classList.remove('error'), 450);
-  addTrace(10);
+  addTrace(custo);
 }
 
 /* =========================================================
@@ -1059,7 +1071,7 @@ function painelMorse() {
   const seq = sequenciaMorse(PLACA);
   let k = 0;
   (function passo() {
-    if (!led.isConnected && k > 0) return;   // janela fechada: para o loop
+    if ((!led.isConnected || !state.rodando) && k > 0) return;   // janela fechada ou jogo parado: para o loop
     const [aceso, ms] = seq[k % seq.length];
     led.classList.toggle('on', aceso);
     k++;
@@ -1133,6 +1145,8 @@ window.fsComando = function (cmd, args) {
 /* ---------- Reset (nova invasão) ---------- */
 window.appsReset = function () {
   a2.coletados.clear();
+  a2.coletadoEm.clear();
+  a2.quarentena.clear();
   a2.sel = null;
   a2.revelados = {};
   a2.sniffs.clear();

@@ -101,6 +101,7 @@ const CIRCUITOS = [
     saida: { de: 'g6' },
     recompensa: () => {
       a2.bruteGratis = (a2.bruteGratis || 0) + 1;
+      state.brutesRestantes++;          // +1 uso além do limite de 3
       if (typeof window.appsRenderPacotes === 'function') window.appsRenderPacotes();
       logLine('[  OK  ]', 'ok', 'LogicNão: +1 BRUTE FORCE grátis (não aumenta o trace)');
       dkBalao('Circuito estabilizado', 'Você ganhou 1 BRUTE FORCE grátis no Terminal: o trace não sobe ao usá-lo.', 5000);

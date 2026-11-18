@@ -508,7 +508,13 @@ body.crt-dark { background: #000; overflow: hidden; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; transition: none !important; }
+  /* sem movimento: animações rodam uma vez só (nada de pisca-pisca infinito acelerado)
+     e só sobram transições de opacidade, ou seja, fades simples */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-property: opacity !important;
+  }
 }
 .hall-table .dim { color: var(--muted); }
 

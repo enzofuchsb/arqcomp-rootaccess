@@ -129,8 +129,55 @@ const state = {
   segundos: 0,
   revelados: [],   // índices de letras reveladas pelo BRUTE FORCE
   sniffUsado: false,
+  brutesRestantes: 3,  // BRUTE FORCE do jogo inteiro (+1 pelo circuito 2 do LogicNão)
+  stats: null,         // estatísticas da partida (novaEstatistica)
   rodando: false
 };
+
+/* ---------- Pressão: erro progressivo, limite de BRUTE FORCE, estatísticas ---------- */
+const CUSTO_ERRO = [10, 12, 15, 18, 20];   // 1º, 2º, 3º, 4º erro e depois 20% fixo
+const BRUTE_LIMITE = 3;
+
+/* Estatísticas da partida (usadas pelo chefe final e pelo título final) */
+function novaEstatistica() {
+  return {
+    erros: 0,              // respostas erradas no jogo inteiro
+    sniffs: 0,             // SNIFF usados
+    brutes: 0,             // BRUTE FORCE usados
+    tempo: 0,              // segundos (preenchido no game over / vitória)
+    errosPorPalavra: {},   // RESPOSTA → nº de erros (Ato 2: palavra do pacote selecionado)
+    errosSemPalavra: 0,    // erros no Ato 2 sem pacote selecionado
+    dicasPorPalavra: {}    // RESPOSTA → { sniff, brute }
+  };
+}
+
+const custoProximoErro = () => CUSTO_ERRO[Math.min(state.erros, CUSTO_ERRO.length - 1)];
+
+/* registra uma resposta errada e devolve quanto de trace ela custa */
+function registrarErro(resposta) {
+  const custo = custoProximoErro();
+  state.erros++;
+  state.stats.erros++;
+  if (resposta) state.stats.errosPorPalavra[resposta] = (state.stats.errosPorPalavra[resposta] || 0) + 1;
+  else state.stats.errosSemPalavra++;
+  return custo;
+}
+
+/* registra uma dica (tipo 'sniff' ou 'brute') usada numa palavra */
+function registrarDica(tipo, resposta) {
+  state.dicas++;
+  state.stats[tipo === 'brute' ? 'brutes' : 'sniffs']++;
+  const d = state.stats.dicasPorPalavra[resposta] || (state.stats.dicasPorPalavra[resposta] = { sniff: 0, brute: 0 });
+  d[tipo]++;
+}
+
+function rotuloBrute(gratis) {
+  const n = state.brutesRestantes;
+  return 'BRUTE FORCE · ' + n + (n === 1 ? ' restante' : ' restantes') + (gratis ? ' · ' + gratis + ' grátis' : '');
+}
+window.rotuloBrute = rotuloBrute;
+window.registrarErro = registrarErro;
+window.registrarDica = registrarDica;
 let timerId = null;
 let traceId = null;
 let loadingTimers = [];
@@ -302,6 +349,7 @@ function renderTrace() {
   fill.parentElement.setAttribute('aria-valuenow', v);
   // espelho do trace no desktop (barra do topo + escudo da bandeja)
   if (typeof window.desktopTrace === 'function') window.desktopTrace(v, nivel);
+  if (typeof window.batalhaTrace === 'function') window.batalhaTrace(v, nivel);
 }
 
 function addTrace(qtd) {
@@ -377,6 +425,7 @@ function toggleSom() {
   try { localStorage.setItem('rootaccess-som', somLigado ? 'on' : 'off'); } catch (e) { /* ignora */ }
   renderSom();
   if (somLigado) bipe(1000, 0.06, 'square', 0.05);
+  if (typeof window.batalhaSom === 'function') window.batalhaSom(somLigado);
 }
 
 /* ---------- Hall dos Invasores (localStorage) ---------- */
@@ -409,7 +458,7 @@ function renderHall() {
   if (!top.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 3;
+    td.colSpan = 4;
     td.className = 'dim';
     td.textContent = 'nenhum invasor registrado ainda';
     tr.appendChild(td);
@@ -419,7 +468,7 @@ function renderHall() {
   top.forEach((r, i) => {
     const tr = document.createElement('tr');
     if (hallUltimo && r.id === hallUltimo) tr.className = 'me';
-    [pad2(i + 1), r.nome, formatTime(r.tempo)].forEach((v) => {
+    [pad2(i + 1), r.nome, typeof r.titulo === 'string' && r.titulo ? r.titulo : '—', formatTime(r.tempo)].forEach((v) => {
       const td = document.createElement('td');
       td.textContent = v;
       tr.appendChild(td);
@@ -433,7 +482,8 @@ function onSalvarHall(e) {
   if (hallSalvo) return;
   const nome = $('hall-name').value.trim().replace(/\s+/g, '_').slice(0, 16);
   if (!nome) { $('hall-msg').textContent = 'digite um codinome.'; return; }
-  const reg = { id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), nome, tempo: state.segundos };
+  const reg = { id: Date.now() + '-' + Math.random().toString(36).slice(2, 7), nome, tempo: state.segundos,
+    titulo: tituloAtual ? tituloAtual.nome : '' };
   const lista = lerHall();
   lista.push(reg);
   if (salvarHall(lista)) {
@@ -456,6 +506,8 @@ function crtReboot() {
   rebootando = true;
   state.rodando = false;
   stopTimer();
+  if (typeof window.defenderStop === 'function') window.defenderStop();
+  if (typeof window.batalhaParar === 'function') window.batalhaParar();
   bipe(220, 0.4, 'sine', 0.05);
   const app = $('app');
   document.body.classList.add('crt-dark');
@@ -472,6 +524,10 @@ function crtReboot() {
 function bruteForce() {
   if (!state.rodando) return;
   if (state.ato === 2) { if (window.t2Brute) window.t2Brute(); return; }
+  if (state.brutesRestantes <= 0) {
+    logLine('[ INFO ]', 'info', 'BRUTE FORCE esgotado: os 3 usos do jogo já foram gastos.');
+    return;
+  }
   const et = ETAPAS[state.etapa];
   const faltando = [];
   for (let i = 0; i < et.resposta.length; i++) {
@@ -483,9 +539,12 @@ function bruteForce() {
   }
   const idx = faltando[Math.floor(Math.random() * faltando.length)];
   state.revelados.push(idx);
-  state.dicas++;
+  state.brutesRestantes--;
+  registrarDica('brute', et.resposta);
   updateStats();
   renderSlots();
+  $('btn-brute').firstChild.textContent = rotuloBrute(0);
+  if (state.brutesRestantes <= 0) $('btn-brute').disabled = true;
   logLine('[ WARN ]', 'warn', 'BRUTE FORCE: posição ' + (idx + 1) + ' = "' + et.resposta[idx] + '" — trace +10%');
   if (faltando.length - 1 <= 1) $('btn-brute').disabled = true;
   addTrace(10);
@@ -496,7 +555,7 @@ function sniff() {
   if (state.rodando && state.ato === 2) { if (window.t2Sniff) window.t2Sniff(); return; }
   if (!state.rodando || state.sniffUsado) return;
   state.sniffUsado = true;
-  state.dicas++;
+  registrarDica('sniff', ETAPAS[state.etapa].resposta);
   updateStats();
   const linha = $('sniff-line');
   linha.textContent = '> SNIFF: ' + ETAPAS[state.etapa].sniff;
@@ -511,7 +570,10 @@ function sniff() {
 function gameOver() {
   state.rodando = false;
   stopTimer();
+  if (typeof window.defenderStop === 'function') window.defenderStop();
+  if (typeof window.batalhaParar === 'function') window.batalhaParar();
   state.segundos = Math.floor((Date.now() - state.inicio) / 1000);
+  if (state.stats) state.stats.tempo = state.segundos;
   $('over-mods').textContent = state.online.size + '/16';
   $('over-time').textContent = formatTime(state.segundos);
   $('over-errors').textContent = state.erros;
@@ -607,7 +669,8 @@ function loadStage() {
   state.revelados = [];
   state.sniffUsado = false;
   $('btn-sniff').disabled = false;
-  $('btn-brute').disabled = et.resposta.length <= 1;
+  $('btn-brute').disabled = et.resposta.length <= 1 || state.brutesRestantes <= 0;
+  $('btn-brute').firstChild.textContent = rotuloBrute(0);
 
   $('phase-label').textContent = 'ATO 1 · PARTIDA — MÓDULO ' + n + '/16';
 
@@ -664,6 +727,8 @@ function executarComando(txt) {
       logLine('[ INFO ]', 'info',
         'módulos ' + state.online.size + '/16 · trace ' + Math.round(state.trace) + '% · erros ' + state.erros +
         ' · dicas ' + state.dicas + ' · tempo ' + formatTime(state.segundos));
+      logLine('[ INFO ]', 'info',
+        'BRUTE FORCE restantes: ' + state.brutesRestantes + ' · próximo erro custa +' + custoProximoErro() + '%');
       break;
     case 'brute':
       bruteForce();
@@ -786,13 +851,15 @@ function iniciarAto2() {
   updateStats();
   showScreen('desktop');
   if (typeof window.desktopStart === 'function') window.desktopStart();
+  // pré-carrega a música da batalha final em segundo plano
+  if (typeof window.batalhaPreload === 'function') window.batalhaPreload();
 }
 
 function errou(bruto) {
-  state.erros++;
+  const custo = registrarErro(ETAPAS[state.etapa].resposta);
   somErro();
   updateStats();
-  logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada no módulo ' + pad2(state.etapa + 1) + ' — trace +10%');
+  logLine('[ FAIL ]', 'fail', 'chave "' + bruto.toUpperCase() + '" rejeitada no módulo ' + pad2(state.etapa + 1) + ' — trace +' + custo + '%');
 
   const slots = $('slots');
   slots.classList.remove('error');
@@ -801,7 +868,7 @@ function errou(bruto) {
   setTimeout(() => slots.classList.remove('error'), 450);
 
   $('term-input').select();
-  addTrace(10);
+  addTrace(custo);
 }
 
 /* ---------- Início / fim ---------- */
@@ -816,7 +883,11 @@ function startGame() {
   state.erros = 0;
   state.dicas = 0;
   state.trace = 0;
+  state.brutesRestantes = BRUTE_LIMITE;
+  state.stats = novaEstatistica();
+  state.tempoFinal = false;
   state.rodando = true;
+  if (typeof window.batalhaParar === 'function') window.batalhaParar();
   if (typeof window.desktopReset === 'function') window.desktopReset();
   renderTrace();
 
@@ -830,10 +901,23 @@ function startGame() {
   loadStage();
 }
 
+/* TÍTULO DE HACKER pelo desempenho (erros incluem os da batalha; dicas = sniff + brute force) */
+function tituloHacker() {
+  const st = state.stats || {};
+  const erros = state.erros + ((st.batalha && st.batalha.erros) || 0);
+  const dicas = (st.sniffs || 0) + (st.brutes || 0);
+  if (erros <= 3 && dicas <= 2) return { nome: 'ROOT LENDÁRIO', frase: 'O firewall nem viu você passar.', cls: 'lendario', erros, dicas };
+  if (erros <= 8 && dicas <= 6) return { nome: 'HACKER', frase: 'Invasão limpa. Quase.', cls: 'hacker', erros, dicas };
+  return { nome: 'SCRIPT KIDDIE', frase: 'Você entrou. Mas o sistema viu tudo.', cls: 'kiddie', erros, dicas };
+}
+let tituloAtual = null;
+
 function vitoria() {
   state.rodando = false;
   stopTimer();
-  state.segundos = Math.floor((Date.now() - state.inicio) / 1000);
+  // se o final cinematográfico já congelou o tempo no último golpe, mantém esse valor
+  if (!state.tempoFinal) state.segundos = Math.floor((Date.now() - state.inicio) / 1000);
+  if (state.stats) state.stats.tempo = state.segundos;
 
   const winLog = $('win-log');
   winLog.textContent = '';
@@ -855,8 +939,15 @@ function vitoria() {
 
   $('win-time').textContent = formatTime(state.segundos);
   $('win-trace').textContent = Math.round(state.trace) + '%';
-  $('win-errors').textContent = state.erros;
-  $('win-hints').textContent = state.dicas;
+  tituloAtual = tituloHacker();
+  $('win-errors').textContent = tituloAtual.erros;
+  $('win-hints').textContent = tituloAtual.dicas;
+  const tit = $('win-titulo');
+  tit.className = 'win-titulo ' + tituloAtual.cls;
+  void tit.offsetWidth;                 // reinicia a animação de entrada
+  tit.classList.add('entra');
+  $('win-titulo-nome').textContent = tituloAtual.nome;
+  $('win-titulo-frase').textContent = tituloAtual.frase;
 
   hallSalvo = false;
   hallUltimo = null;
@@ -869,6 +960,8 @@ function vitoria() {
 
   showScreen('win');
   $('btn-win-reboot').focus();
+  // LED da plaquinha piscando em Morse (final.js)
+  if (typeof window.finalLed === 'function') window.finalLed();
 }
 
 /* ---------- Eventos ---------- */
@@ -901,10 +994,38 @@ $('term').addEventListener('click', () => $('term-input').focus());
 $('btn-brute').addEventListener('click', bruteForce);
 $('btn-sniff').addEventListener('click', sniff);
 
-$('btn-win-reboot').addEventListener('click', crtReboot);
+// REBOOT da vitória abre a cena pós-créditos (final.js) antes de voltar ao boot
+$('btn-win-reboot').addEventListener('click', () => {
+  if (typeof window.finalPosCreditos === 'function') window.finalPosCreditos();
+  else crtReboot();
+});
 $('btn-over-reboot').addEventListener('click', crtReboot);
 document.querySelectorAll('.btn-sound').forEach((b) => b.addEventListener('click', toggleSom));
 $('hall-form').addEventListener('submit', onSalvarHall);
 
 renderSom();
 runBoot();
+
+/* ---------- Easter egg: quem abre o console (F12) dá de cara com o FIREWALL.EXE ---------- */
+(function easterEggConsole() {
+  const arte = [
+    '        (  )   )   (  (    )    ',
+    '      ( ) ( ) ( ) ( ) ( ) ( )   ',
+    '     |__|___|___|___|___|___|   ',
+    '     |___|___|___|___|___|__|   ',
+    '     |__|___.--------.___|__|   ',
+    '  o--|___|_/  .----.  \\_|__|--o ',
+    '  |  |__|_|  ( (@) )  |_|__|  | ',
+    '  |  |___|_\\  \'----\'  /_|___|  | ',
+    ' [=] |__|___\'--------\'___|__| [=]',
+    '     |___|___|___|___|___|__|   ',
+    '     |__|___|___|___|___|___|   ',
+    '     ^^^^^^^^^^^^^^^^^^^^^^^^   '
+  ].join('\n');
+  try {
+    console.log('%c' + arte, 'color:#FF5468;font-family:monospace;font-size:13px;line-height:1.15;');
+    console.log('%cFIREWALL.EXE  (PID 0)', 'color:#FFB547;font-family:monospace;font-size:12px;font-weight:bold;');
+    console.log('%co firewall está te vigiando...',
+      'color:#FF5468;background:#06080A;font-family:monospace;font-size:18px;font-weight:bold;padding:6px 10px;text-shadow:0 0 6px #FF5468;');
+  } catch (e) { /* console indisponível: ignora */ }
+})();

@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="400" viewBox="0 0 900 400" role="img" aria-label="Área de trabalho do ROOT/OS 2002 em modo de segurança, com o Terminal root.exe aberto">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1452C2"/><stop offset="0.45" stop-color="#0B3A8F"/><stop offset="1" stop-color="#072663"/>
+    </linearGradient>
+    <radialGradient id="luz" cx="0.3" cy="0.25" r="0.6">
+      <stop offset="0" stop-color="#6EB4FF" stop-opacity="0.35"/><stop offset="1" stop-color="#6EB4FF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="placa" width="160" height="160" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#7FB6FF" stroke-opacity=".22" stroke-width="2">
+        <path d="M0 30h40l20 20h50l20-20h30"/><path d="M30 160v-40l20-20V60"/><path d="M110 0v30M110 50v30l20 20h30"/>
+        <path d="M0 120h20l20 20h40v20"/><path d="M80 50v40l-20 20H0"/><path d="M130 160v-30l10-10V80"/>
+      </g>
+      <g fill="#A9D0FF" fill-opacity=".35"><circle cx="40" cy="30" r="4"/><circle cx="110" cy="50" r="4"/><circle cx="50" cy="60" r="4"/><circle cx="140" cy="80" r="4"/></g>
+    </pattern>
+    <linearGradient id="barra" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3C80F0"/><stop offset="0.15" stop-color="#2459D0"/><stop offset="1" stop-color="#1A44A8"/>
+    </linearGradient>
+    <linearGradient id="titulo" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5A9CFF"/><stop offset="0.15" stop-color="#2E6EEB"/><stop offset="1" stop-color="#1A4CC4"/>
+    </linearGradient>
+    <linearGradient id="iniciar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5FC46A"/><stop offset="1" stop-color="#23862F"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .t { font-family: Tahoma, Verdana, sans-serif; }
+    .m { font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace; }
+    .rotulo { font-size: 11px; fill: #fff; text-anchor: middle; }
+    .balao { opacity: 0; animation: balao 9s infinite; }
+    @keyframes balao { 0%, 30% { opacity: 0; } 34%, 70% { opacity: 1; } 74%, 100% { opacity: 0; } }
+    .pkt { opacity: 0; animation: pkt 9s infinite; }
+    @keyframes pkt { 0%, 33% { opacity: 0; } 36%, 100% { opacity: 1; } }
+    .cursor { animation: pisca 1s steps(1) infinite; }
+    @keyframes pisca { 50% { opacity: 0; } }
+    .tr { animation: tr 9s linear infinite; }
+    @keyframes tr { from { width: 70px; } to { width: 120px; } }
+  </style>
+
+  <!-- papel de parede: trilhas de placa de circuito -->
+  <rect width="900" height="400" fill="url(#bg)"/>
+  <rect width="900" height="400" fill="url(#placa)"/>
+  <rect width="900" height="400" fill="url(#luz)"/>
+
+  <!-- topo com o TRACE (visual de terminal) -->
+  <rect width="900" height="30" fill="#06080A"/>
+  <text x="14" y="21" class="m" font-size="16" fill="#39FF88">ROOT ACCESS</text>
+  <text x="450" y="20" class="m" font-size="11" fill="#7C9488" text-anchor="middle">ATO 2 · SISTEMA</text>
+  <text x="680" y="20" class="m" font-size="11" fill="#7C9488">TRACE</text>
+  <rect x="724" y="11" width="150" height="10" fill="#0B1013" stroke="#1B2A24"/>
+  <rect x="726" y="13" width="70" height="6" fill="#39FF88" class="tr"/>
+
+  <!-- "Modo de segurança" nos 4 cantos -->
+  <g class="t" font-size="13" font-weight="700" fill="#fff">
+    <text x="10" y="48">Modo de segurança</text>
+    <text x="890" y="48" text-anchor="end">Modo de segurança</text>
+    <text x="10" y="352">Modo de segurança</text>
+    <text x="890" y="352" text-anchor="end">Modo de segurança</text>
+  </g>
+
+  <!-- ícones da área de trabalho (genéricos) -->
+  <g class="t">
+    <g transform="translate(18 64)">
+      <rect x="10" y="2" width="36" height="26" rx="3" fill="#D9E2F0" stroke="#3A4F72" stroke-width="2"/><rect x="14" y="6" width="28" height="17" fill="#1B5FD9"/>
+      <rect x="20" y="30" width="16" height="4" fill="#9AA9C0"/><text x="28" y="50" class="rotulo">Meu Computador</text>
+    </g>
+    <g transform="translate(18 128)">
+      <path d="M8 8a3 3 0 0 1 3-3h10l4 4h17a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3z" fill="#F7C64B" stroke="#8A5B0C" stroke-width="2"/>
+      <text x="28" y="50" class="rotulo">Documentos</text>
+    </g>
+    <g transform="translate(18 192)">
+      <path d="M16 8h24l-3 26H19z" fill="#CFE0EE" stroke="#46607A" stroke-width="2"/><rect x="13" y="4" width="30" height="5" rx="2" fill="#E6EFF7" stroke="#46607A" stroke-width="2"/>
+      <text x="28" y="50" class="rotulo">Lixeira</text>
+    </g>
+    <g transform="translate(18 256)">
+      <rect x="8" y="6" width="40" height="26" rx="3" fill="#F4F7FB" stroke="#3A4F72" stroke-width="2"/><path d="M9 8l19 14 19-14" fill="none" stroke="#3A4F72" stroke-width="2"/>
+      <circle cx="46" cy="8" r="5" fill="#E8483C" stroke="#fff" stroke-width="2"/>
+      <text x="28" y="50" class="rotulo">E-mail</text>
+    </g>
+    <g transform="translate(100 64)">
+      <rect x="10" y="4" width="36" height="28" rx="3" fill="#06080A" stroke="#39FF88" stroke-width="2"/>
+      <path d="M16 14l5 4-5 4" fill="none" stroke="#39FF88" stroke-width="2"/><path d="M24 24h8" stroke="#39FF88" stroke-width="2"/>
+      <text x="28" y="50" class="rotulo">Terminal</text>
+    </g>
+    <g transform="translate(100 128)">
+      <path d="M18 2v6M28 2v6M38 2v6M18 30v6M28 30v6M38 30v6" stroke="#C9A227" stroke-width="3"/>
+      <rect x="12" y="7" width="32" height="24" rx="3" fill="#1F2A33" stroke="#0B1013" stroke-width="2"/><rect x="20" y="13" width="16" height="12" fill="#2E3D4A" stroke="#39FF88" stroke-width="1.5"/>
+      <text x="28" y="50" class="rotulo">LogicNão</text>
+    </g>
+    <g transform="translate(100 192)">
+      <path d="M12 2h20l9 9v24H12z" fill="#fff" stroke="#3A4F72" stroke-width="2"/><path d="M17 16h18M17 22h18M17 28h12" stroke="#7E97AE" stroke-width="2"/>
+      <text x="28" y="50" class="rotulo">notas.txt</text>
+    </g>
+  </g>
+
+  <!-- janela do Terminal root.exe -->
+  <g transform="translate(250 70)">
+    <rect x="0" y="0" width="520" height="250" rx="8" fill="#2459D0" stroke="#0B2E87"/>
+    <rect x="0" y="0" width="520" height="28" rx="8" fill="url(#titulo)"/>
+    <text x="12" y="19" class="t" font-size="13" font-weight="700" fill="#fff">root.exe — Terminal</text>
+    <rect x="466" y="5" width="20" height="18" rx="3" fill="#2B63D9" stroke="#fff"/><rect x="471" y="16" width="10" height="3" fill="#fff"/>
+    <rect x="492" y="5" width="20" height="18" rx="3" fill="#D2422A" stroke="#fff"/><path d="M497 9l10 10M507 9l-10 10" stroke="#fff" stroke-width="2"/>
+    <rect x="3" y="28" width="514" height="219" fill="#06080A"/>
+    <!-- pacotes coletados -->
+    <rect x="3" y="28" width="170" height="219" fill="#0B1013"/>
+    <text x="12" y="46" class="m" font-size="9" fill="#7C9488" letter-spacing="1">PACOTES COLETADOS</text>
+    <g class="m" font-size="9">
+      <rect x="10" y="54" width="156" height="26" fill="none" stroke="#5CD8FF" class="pkt"/>
+      <text x="16" y="70" fill="#5CD8FF" class="pkt">PKT#?? · pista encontrada</text>
+      <g fill="#7C9488">
+        <rect x="10" y="86" width="156" height="22" fill="none" stroke="#1B2A24" stroke-dasharray="3 2"/><text x="16" y="101">PKT#?? — não encontrado</text>
+        <rect x="10" y="114" width="156" height="22" fill="none" stroke="#1B2A24" stroke-dasharray="3 2"/><text x="16" y="129">PKT#?? — não encontrado</text>
+        <rect x="10" y="142" width="156" height="22" fill="none" stroke="#1B2A24" stroke-dasharray="3 2"/><text x="16" y="157">PKT#?? — não encontrado</text>
+        <rect x="10" y="170" width="156" height="22" fill="none" stroke="#1B2A24" stroke-dasharray="3 2"/><text x="16" y="185">PKT#?? — não encontrado</text>
+      </g>
+    </g>
+    <!-- log -->
+    <g class="m" font-size="10">
+      <text x="186" y="48"><tspan fill="#39FF88">[  OK  ]</tspan><tspan fill="#C9F5DA"> root.exe conectado ao ROOT/OS 2002</tspan></text>
+      <text x="186" y="64"><tspan fill="#5CD8FF">[ INFO ]</tspan><tspan fill="#C9F5DA"> explore o sistema e colete as pistas</tspan></text>
+      <text x="186" y="80" class="pkt"><tspan fill="#5CD8FF">[ INFO ]</tspan><tspan fill="#C9F5DA"> pacote interceptado</tspan></text>
+    </g>
+    <rect x="186" y="200" width="320" height="30" fill="none" stroke="#1B2A24"/>
+    <text x="196" y="220" class="m" font-size="11"><tspan fill="#39FF88" font-weight="700">root@sys:~$</tspan></text>
+    <rect x="286" y="208" width="7" height="14" fill="#39FF88" class="cursor"/>
+  </g>
+
+  <!-- balão da bandeja -->
+  <g class="balao">
+    <rect x="636" y="292" width="250" height="44" rx="8" fill="#FFFFE1" stroke="#333"/>
+    <text x="648" y="310" class="t" font-size="12" font-weight="700" fill="#111">Pacote interceptado: PKT#??</text>
+    <text x="648" y="326" class="t" font-size="11" fill="#333">abra o Terminal para usar</text>
+  </g>
+
+  <!-- barra de tarefas -->
+  <rect x="0" y="360" width="900" height="40" fill="url(#barra)"/>
+  <path d="M0 360h110a20 20 0 0 1 0 40H0z" fill="url(#iniciar)"/>
+  <g transform="translate(14 371)"><rect width="8" height="8" rx="2" fill="#2F7BFF"/><rect x="10" width="8" height="8" rx="2" fill="#39C7FF"/><rect y="10" width="8" height="8" rx="2" fill="#1FBF6A"/><rect x="10" y="10" width="8" height="8" rx="2" fill="#E8B530"/></g>
+  <text x="40" y="386" class="t" font-size="17" font-style="italic" font-weight="700" fill="#fff">Iniciar</text>
+  <rect x="140" y="366" width="160" height="28" rx="3" fill="#1A44A8" stroke="#1B3E98"/>
+  <text x="152" y="385" class="t" font-size="12" fill="#fff">root.exe — Terminal</text>
+  <rect x="760" y="360" width="140" height="40" fill="#0E7FD6"/>
+  <path d="M782 368l-8 3v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11v-6z" fill="#7DFFB1"/>
+  <text x="796" y="385" class="t" font-size="12" font-weight="700" fill="#fff">23%</text>
+  <text x="884" y="385" class="t" font-size="12" fill="#fff" text-anchor="end">23:41</text>
+</svg>

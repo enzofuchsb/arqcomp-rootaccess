@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="batalha.css">
+  <link rel="stylesheet" href="final.css">
 </head>
 <body>
   <div class="scanlines" aria-hidden="true"></div>
@@ -86,7 +88,7 @@
 
           <div class="actions">
             <button id="btn-scan" class="btn btn-primary act" type="button">&gt; EXECUTAR SCAN</button>
-            <button id="btn-brute" class="btn btn-amber act" type="button">BRUTE FORCE · +10%<small>revela uma letra</small></button>
+            <button id="btn-brute" class="btn btn-amber act" type="button">BRUTE FORCE · 3 restantes<small>+10% · revela uma letra</small></button>
             <button id="btn-sniff" class="btn btn-cyan act" type="button">SNIFF · +5%<small>dica extra sobre a palavra</small></button>
           </div>
         </div>
@@ -200,6 +202,11 @@
         <div id="win-log" class="log end-log"></div>
         <p class="whoami">root@sys:~# whoami</p>
         <h1 class="title-giant title-win">ACESSO ROOT CONCEDIDO</h1>
+        <div id="win-titulo" class="win-titulo" aria-live="polite">
+          <span class="win-titulo-label">TÍTULO DE HACKER</span>
+          <strong id="win-titulo-nome" class="win-titulo-nome"></strong>
+          <p id="win-titulo-frase" class="win-titulo-frase"></p>
+        </div>
         <div class="win-grid">
           <div>
             <div class="end-cards">
@@ -222,7 +229,7 @@
               <p id="hall-msg" class="hall-msg" aria-live="polite"></p>
             </form>
             <table class="hall-table">
-              <thead><tr><th scope="col">#</th><th scope="col">CODINOME</th><th scope="col">TEMPO</th></tr></thead>
+              <thead><tr><th scope="col">#</th><th scope="col">CODINOME</th><th scope="col">TÍTULO</th><th scope="col">TEMPO</th></tr></thead>
               <tbody id="hall-body"></tbody>
             </table>
           </section>
@@ -237,5 +244,7 @@
   <script src="enigmas.js"></script>
   <script src="circuitos.js"></script>
   <script src="defender.js"></script>
+  <script src="batalha.js"></script>
+  <script src="final.js"></script>
 </body>
 </html>

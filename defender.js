@@ -206,10 +206,105 @@ function verificacao() {
 }
 
 /* ---------- Ganchos ---------- */
+/* ---------- Quarentena: pacote coletado há 3 min sem resposta ---------- */
+const QUARENTENA_MS = 180000;
+
+function checarQuarentena() {
+  if (!ativo()) return;
+  const a2 = window.appsA2;
+  const agora = Date.now();
+  let mudou = false;
+  a2.coletadoEm.forEach((t, i) => {
+    if (state.online.has(i) || a2.quarentena.has(i) || agora - t < QUARENTENA_MS) return;
+    a2.quarentena.add(i);
+    if (a2.sel === i) a2.sel = null;
+    mudou = true;
+    const nome = 'PKT#' + pad2(i + 1);
+    logLine('[ WARN ]', 'warn', 'ROOT Defender: ' + nome + ' colocado em quarentena (3 min sem resposta)');
+    window.dkBalao('ROOT Defender', 'Pacote ' + nome + ' colocado em quarentena', 5000);
+    bipe(330, 0.12, 'square', 0.04); bipe(247, 0.16, 'square', 0.04, 0.12);
+  });
+  if (mudou) { window.appsRenderPacotes(); renderDefender(); }
+}
+
+function restaurarQuarentena(i) {
+  const a2 = window.appsA2;
+  if (!ativo() || !a2.quarentena.has(i)) return;
+  a2.quarentena.delete(i);
+  a2.coletadoEm.set(i, Date.now());   // timer zerado
+  logLine('[ INFO ]', 'info', 'ROOT Defender: PKT#' + pad2(i + 1) + ' restaurado da quarentena — trace +3%');
+  window.appsRenderPacotes();
+  renderDefender();
+  addTrace(3);
+}
+
+/* ---------- Janela do ROOT Defender (aberta pelo escudo da bandeja) ---------- */
+let defBody = null;
+
+function renderDefender() {
+  if (!defBody || !defBody.isConnected) return;
+  defBody.textContent = '';
+  abas(defBody, ['Status', 'Quarentena'], (k, area) => {
+    if (k === 0) {
+      area.append(
+        caixa('Proteção ativa', [
+          'Rastreamento atual: ' + Math.round(state.trace) + '%.',
+          'Varreduras e verificações de integridade acontecem sem aviso.',
+          'Pacotes parados por mais de 3 minutos vão para a quarentena.'
+        ]),
+        el('p', 'os-muted', 'Com o rastreamento acima de 70%, o firewall começa a interferir no sistema.')
+      );
+      return;
+    }
+    const a2 = window.appsA2;
+    const lista = [...a2.quarentena];
+    if (!lista.length) { area.appendChild(el('p', 'os-muted', 'Nenhum pacote em quarentena.')); return; }
+    const box = el('div', 'fx-list');
+    lista.forEach((i) => {
+      const row = el('div', 'fx-item def-q');
+      const b = el('button', 'os-btn', 'Restaurar (+3%)');
+      b.type = 'button';
+      b.addEventListener('click', () => restaurarQuarentena(i));
+      row.append(el('span', 'fx-ico bin', ''), el('strong', null, 'PKT#' + pad2(i + 1)), b);
+      box.appendChild(row);
+    });
+    area.appendChild(box);
+  });
+  // se há algo na quarentena, abre direto nessa aba
+  if (window.appsA2.quarentena.size) {
+    const aba = [...defBody.querySelectorAll('.os-tab')].find((t) => t.textContent === 'Quarentena');
+    if (aba) aba.click();
+  }
+}
+
+appById('defender').render = function (body) {
+  defBody = body;
+  renderDefender();
+};
+
+/* ---------- Firewall reagindo (trace ≥ 70%) ---------- */
+function agendarFirewall() {
+  clearTimeout(def.fwTimer);
+  def.fwTimer = setTimeout(firewall, aleatorio(25, 35));
+}
+
+function firewall() {
+  if (!ativo()) return;
+  if (state.trace >= 70) {
+    const fechada = window.dkFirewall();
+    alarme();
+    window.dkBalao('Firewall interferindo no sistema', fechada ? 'A janela "' + fechada + '" foi fechada e os ícones mudaram de lugar.' : 'Os ícones da área de trabalho mudaram de lugar.', 5000);
+    logLine('[ WARN ]', 'warn', 'Firewall interferindo no sistema (trace ' + Math.round(state.trace) + '%)');
+  }
+  agendarFirewall();
+}
+
 window.defenderStart = function () {
   window.defenderStop();
   agendarScan();
   agendarQuiz();
+  agendarFirewall();
+  def.qId = setInterval(checarQuarentena, 5000);
 };
 
 window.defenderStop = function () {
@@ -217,6 +312,9 @@ window.defenderStop = function () {
   clearTimeout(def.quizTimer);
   clearInterval(def.boostId);
   clearInterval(def.tickId);
+  clearTimeout(def.fwTimer);
+  clearInterval(def.qId);
+  def.scanTimer = def.quizTimer = def.fwTimer = def.qId = def.tickId = null;
   def.boostId = null;
   def.scanAtivo = false;
   def.quizAtivo = false;

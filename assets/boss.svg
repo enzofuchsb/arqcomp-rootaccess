@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="220" viewBox="0 0 900 220" role="img" aria-label="Algo observa do escuro">
+  <defs>
+    <pattern id="scan" width="4" height="3" patternUnits="userSpaceOnUse">
+      <rect width="4" height="1" fill="#ffffff" opacity="0.035"/>
+    </pattern>
+    <pattern id="tijolos" width="60" height="26" patternUnits="userSpaceOnUse">
+      <path d="M0 0h60M0 13h60M30 0v13M0 13v13M60 13v13" fill="none" stroke="#FF5468" stroke-opacity="0.07" stroke-width="1.5"/>
+    </pattern>
+    <radialGradient id="aura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FF5468" stop-opacity="0.22"/><stop offset="1" stop-color="#FF5468" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="palpebra"><ellipse cx="450" cy="96" rx="64" ry="30"/></clipPath>
+  </defs>
+  <style>
+    .m { font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace; }
+    .olho { transform-box: fill-box; transform-origin: center; animation: abre 7s ease-in-out infinite; }
+    @keyframes abre {
+      0%, 18% { transform: scaleY(0.04); }
+      26%, 60% { transform: scaleY(1); }
+      62% { transform: scaleY(0.08); }
+      64%, 88% { transform: scaleY(1); }
+      96%, 100% { transform: scaleY(0.04); }
+    }
+    .pupila { animation: olha 7s ease-in-out infinite; }
+    @keyframes olha {
+      0%, 30% { transform: translateX(0); }
+      38% { transform: translateX(-24px); }
+      48% { transform: translateX(22px); }
+      58%, 100% { transform: translateX(0); }
+    }
+    .aura { animation: pulsa 7s ease-in-out infinite; }
+    @keyframes pulsa { 0%, 18%, 96%, 100% { opacity: 0; } 30%, 88% { opacity: 1; } }
+    .l1 { opacity: 0; animation: mostra 7s steps(1) infinite; }
+    .l2 { opacity: 0; animation: mostra2 7s steps(1) infinite; }
+    @keyframes mostra { 0% { opacity: 0; } 28% { opacity: 1; } 96% { opacity: 0; } }
+    @keyframes mostra2 { 0% { opacity: 0; } 50% { opacity: 1; } 96% { opacity: 0; } }
+    .cursor { animation: pisca 1s steps(1) infinite; }
+    @keyframes pisca { 50% { opacity: 0; } }
+  </style>
+
+  <rect width="900" height="220" fill="#06080A"/>
+  <rect width="900" height="220" fill="url(#tijolos)"/>
+  <rect x="0.5" y="0.5" width="899" height="219" fill="none" stroke="#1B2A24"/>
+
+  <!-- um olho no escuro -->
+  <ellipse class="aura" cx="450" cy="96" rx="170" ry="80" fill="url(#aura)"/>
+  <g class="olho">
+    <ellipse cx="450" cy="96" rx="64" ry="30" fill="#F4EEE0" stroke="#1A0D08" stroke-width="4"/>
+    <g clip-path="url(#palpebra)">
+      <g class="pupila">
+        <circle cx="450" cy="96" r="20" fill="#FF5468" stroke="#1A0D08" stroke-width="2"/>
+        <circle cx="450" cy="96" r="9" fill="#050505"/>
+        <circle cx="444" cy="90" r="3.5" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- terminal -->
+  <g class="m" font-size="13">
+    <text x="24" y="172" class="l1" fill="#FF5468">&gt; processo desconhecido detectado (PID 0)</text>
+    <text x="24" y="194" class="l2" fill="#C9F5DA">&gt; você realmente achou que 16 módulos bastariam?</text>
+  </g>
+  <rect x="24" y="202" width="8" height="12" fill="#FF5468" class="cursor"/>
+  <rect width="900" height="220" fill="url(#scan)"/>
+</svg>
