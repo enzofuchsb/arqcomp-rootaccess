@@ -553,7 +553,10 @@ function abaProcessos(area) {
     ['shell_desk.exe', '01', '8.540 K', 'Executando', 'Área de trabalho e barra de tarefas.'],
     ['root.exe', '00', '1.024 K', 'Executando', 'Terminal de acesso remoto.'],
     ['defender.exe', '04', '6.200 K', 'Executando', 'ROOT Defender: monitor de ameaças.'],
-    ['calc_unit.exe', '00', '0 K', 'Não respondendo', 'Responsável pelos cálculos e pelas comparações lógicas do processador.']
+    // calc_unit.exe só volta a responder depois do Circuito 1 do LogicNão (pista da ULA)
+    window.lbResolvido && window.lbResolvido(0)
+      ? ['calc_unit.exe', '03', '2.048 K', 'Executando', 'Responsável pelos cálculos e pelas comparações lógicas do processador.']
+      : ['calc_unit.exe', '00', '0 K', 'Não respondendo', 'Não respondendo. O circuito de cálculo do processador está instável.']
   ].forEach(([nome, cpu, mem, st, desc]) => {
     const tr = el('tr', st === 'Não respondendo' ? 'hung' : null);
     tr.tabIndex = 0;
@@ -562,8 +565,7 @@ function abaProcessos(area) {
       tb.querySelectorAll('tr').forEach((r) => r.classList.remove('sel'));
       tr.classList.add('sel');
       info.textContent = nome + ' — ' + desc;
-      info.classList.toggle('alert', nome === 'calc_unit.exe');
-      if (nome === 'calc_unit.exe') coletar('ULA');
+      info.classList.toggle('alert', nome === 'calc_unit.exe' && st === 'Não respondendo');
     };
     tr.addEventListener('click', ver);
     tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') ver(); });

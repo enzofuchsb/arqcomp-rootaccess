@@ -79,6 +79,18 @@ minimizam para a barra de tarefas e, no celular, abrem em tela cheia.
 | **Disco removível (E:)** | `leia_me.txt` está em 4 blocos fora de ordem: ordenar pelo número do setor (arrastar ou ↑ ↓) e Montar arquivo. |
 | **Gerenciador de Tarefas** | Só abre com a UC online. Em Desempenho, mover processos entre os núcleos até nenhum passar de 100%. |
 
+**LogicNão** (simulador de portas lógicas)
+
+Circuitos já montados: o jogador só liga e desliga as entradas até o LED acender.
+Fios verdes carregam 1, cinza carregam 0. O botão **Ajuda** mostra a tabela verdade
+das portas do circuito aberto. Cada circuito libera o seguinte.
+
+| Circuito | Expressão | Recompensa |
+|:--|:--|:--|
+| 1 | `(A OR B) AND (NOT C)` | `calc_unit.exe` volta a responder e a pista da **ULA** é coletada |
+| 2 | `(A XOR B) AND (C OR D) AND NOT (A AND D)` | **+1 BRUTE FORCE grátis** (não sobe o trace) |
+| 3 | `NAND(A, B) AND (C XOR D) AND NOR(D, E)` | trace **−40%** |
+
 **Camadas extras**
 
 | Onde | O que acontece |
@@ -119,6 +131,7 @@ O antivírus do ROOT/OS fica na bandeja mostrando o mesmo % do trace.
 | PIN errado na BIOS | `+5%` |
 | Abrir NAO_ABRA.exe | `+15%` |
 | Verificação de integridade correta | `−2%` |
+| LogicNão · Circuito 3 resolvido | `−40%` |
 
 - **verde**: abaixo de 40% · **âmbar**: 40% a 79% · **vermelho**: 80% ou mais, com alarme
 - **100% = `CONEXÃO RASTREADA`** (game over, nos dois atos)
@@ -159,6 +172,7 @@ script.js    núcleo: dados das 16 palavras, Ato 1, trace, dicas, comandos, sons
 desktop.js   desktop do ROOT/OS: ícones, menu Iniciar, barra de tarefas, janelas, balões
 apps.js      apps do Ato 2: Terminal root.exe, pistas, Lixeira, Confidencial, honeypot
 enigmas.js   enigmas do Ato 2: ciclo de instrução, PIN da BIOS, histórico, setores, núcleos
+circuitos.js LogicNão: portas lógicas, circuitos descritos como dados
 defender.js  ROOT Defender: varredura e verificação de integridade
 assets/      SVGs animados deste README
 ```

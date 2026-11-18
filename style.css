@@ -1493,3 +1493,85 @@ body:has(#screen-desktop.active) .scanlines { display: none; }
   .eg-cores { grid-template-columns: 1fr; }
   .br-label { display: none; }
 }
+
+/* =========================================================
+   LOGICBOX (circuitos.js)
+   Área do circuito: fundo claro quadriculado, portas em traço
+   preto com o nome embaixo, fios verdes (1) e cinza (0), LED verde.
+   ========================================================= */
+.rw-body.lb { display: flex; flex-direction: column; gap: 8px; }
+.lb-tabs { margin-bottom: 0; }
+.os-tab.locked { color: #8A8A8A; background: #D9DDE4; cursor: not-allowed; }
+.lb-lock { width: 12px; height: 12px; margin-right: 5px; vertical-align: -1px; fill: currentColor; }
+.lb-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.lb-expr {
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #C3CBD8;
+  font: 12px 'Courier New', monospace;
+  color: #1A3E8C;
+}
+
+.lb-board {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 640 / 360;
+  background-color: #FBFCF8;
+  background-image:
+    linear-gradient(#E3E8E0 1px, transparent 1px),
+    linear-gradient(90deg, #E3E8E0 1px, transparent 1px);
+  background-size: 20px 20px;
+  border: 1px solid #8C9BB4;
+}
+.lb-svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+.lb-wire { fill: none; stroke: #A5ABB2; stroke-width: 3; stroke-linejoin: round; transition: stroke 0.15s; }
+.lb-wire.on { stroke: #22B04A; }
+.lb-gate path, .lb-gate circle { fill: #fff; stroke: #111; stroke-width: 2.2; stroke-linejoin: round; }
+.lb-gate-name { font: 700 11px Tahoma, Verdana, sans-serif; fill: #111; text-anchor: middle; letter-spacing: 0.04em; }
+
+.lb-led-body { fill: #3B4A3F; stroke: #111; stroke-width: 2; transition: fill 0.15s; }
+.lb-led-glow { fill: transparent; }
+.lb-led.on .lb-led-body { fill: #39FF88; }
+.lb-led.on .lb-led-glow { fill: rgba(57, 255, 136, 0.35); filter: blur(4px); }
+.lb-led.blink { animation: lbBlink 0.3s steps(1) 6; }
+@keyframes lbBlink { 50% { opacity: 0.15; } }
+
+/* interruptores das entradas (botões HTML por cima do SVG) */
+.lb-switch {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 40px;
+  padding: 3px 6px;
+  background: #fff;
+  border: 2px solid #111;
+  border-radius: 4px;
+  font: 700 12px Tahoma, Verdana, sans-serif;
+  line-height: 1.1;
+  color: #111;
+  cursor: pointer;
+}
+.lb-switch .lb-sw-val { font: 700 14px 'Courier New', monospace; color: #777; }
+.lb-switch.on { background: #E6F9EB; border-color: #22B04A; }
+.lb-switch.on .lb-sw-val { color: #1B8A3A; }
+.lb-switch:focus-visible { outline: 3px solid #2F6AE0; outline-offset: 2px; }
+
+.lb-status { margin: 0; padding: 6px 10px; background: #fff; border: 1px solid #C3CBD8; border-radius: 3px; }
+.lb-status.ok { border-color: #2B7A3C; color: #2B7A3C; font-weight: 700; }
+
+/* ajuda: tabelas verdade */
+.lb-help { display: flex; flex-wrap: wrap; gap: 10px; }
+.lb-tt { border-collapse: collapse; background: #fff; font: 12px 'Courier New', monospace; }
+.lb-tt caption { font: 700 12px Tahoma, Verdana, sans-serif; color: #1A3E8C; padding-bottom: 2px; }
+.lb-tt th, .lb-tt td { border: 1px solid #C3CBD8; padding: 2px 8px; text-align: center; }
+.lb-tt th { background: #E3E8F0; }
+.lb-tt td.one { color: #1B8A3A; font-weight: 700; }
+
+@media (max-width: 700px) {
+  .lb-switch { min-width: 30px; padding: 2px 4px; font-size: 10px; }
+  .lb-switch .lb-sw-val { font-size: 12px; }
+  .lb-expr { font-size: 11px; }
+}

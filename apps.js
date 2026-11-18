@@ -185,6 +185,9 @@ function renderSelecao() {
     t2.sniffBtn.disabled = usou;
     t2.brute.disabled = faltando(i).length <= 1;
   }
+  // mostra quantos BRUTE FORCE grátis o jogador tem
+  const g = a2.bruteGratis || 0;
+  t2.brute.firstChild.textContent = g > 0 ? 'BRUTE FORCE · grátis (' + g + ')' : 'BRUTE FORCE · +10%';
   renderSlots2();
 }
 
@@ -230,9 +233,13 @@ window.t2Brute = function () {
   (a2.revelados[i] = a2.revelados[i] || []).push(k);
   state.dicas++;
   updateStats();
-  logLine('[ WARN ]', 'warn', 'BRUTE FORCE ' + pkt(i) + ': posição ' + (k + 1) + ' = "' + ETAPAS[i].resposta[k] + '" — trace +10%');
+  // BRUTE FORCE grátis ganho no LogicNão (circuito 2): não sobe o trace
+  const gratis = (a2.bruteGratis || 0) > 0;
+  if (gratis) a2.bruteGratis--;
+  logLine('[ WARN ]', 'warn', 'BRUTE FORCE ' + pkt(i) + ': posição ' + (k + 1) + ' = "' + ETAPAS[i].resposta[k] + '"' +
+    (gratis ? ' — grátis (LogicNão), trace +0%' : ' — trace +10%'));
   renderSelecao();
-  addTrace(10);
+  if (!gratis) addTrace(10);
   if (state.rodando) t2.input.focus();
 };
 
@@ -477,7 +484,6 @@ appById('taskmgr').render = function (body) {
           tr.classList.add('sel');
           info.textContent = nome + ' — ' + desc;
           info.classList.toggle('alert', nome === 'calc_unit.exe');
-          if (nome === 'calc_unit.exe') coletar('ULA');
         };
         tr.addEventListener('click', ver);
         tr.addEventListener('keydown', (e) => { if (e.key === 'Enter') ver(); });
