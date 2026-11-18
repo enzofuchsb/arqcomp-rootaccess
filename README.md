@@ -40,9 +40,7 @@ root@sys:~$ _
 5. Ao ligar a memória de massa: `[ OK ] Sistema operacional encontrado no disco` → tela de carregamento do **ROOT/OS 2002** → desktop.
 
 > Respostas são conferidas em MAIÚSCULAS, sem acento e sem espaço.
-> `memória de massa` vira `MEMORIADEMASSA`.
->
-> Clique na tela durante a animação de abertura para pular direto para o menu.
+> `arq. comp` vira `ARQCOMP`.
 
 <div align="center">
 <img src="assets/modules.svg" alt="Os módulos ficando online em sequência" width="100%">
@@ -149,47 +147,6 @@ O antivírus do ROOT/OS fica na bandeja mostrando o mesmo % do trace.
 | `reboot` | reinicia o jogo |
 
 Qualquer outra coisa digitada é tratada como uma tentativa de chave.
-
----
-
-## `[ DATA ]` Os 16 módulos
-
-<details>
-<summary><b>SPOILER: clique para ver as respostas e onde estão as pistas</b></summary>
-
-<br>
-
-| # | Ato | Resposta | Pista principal | Onde está (Ato 2) |
-|:-:|:--|:--|:--|:--|
-| 01 | 1 · Partida | `CPU` | Chip principal que executa as instruções de todos os programas. | terminal do boot |
-| 02 | 1 · Partida | `ROM` | Memória só de leitura que guarda o programa de inicialização de fábrica. | terminal do boot |
-| 03 | 1 · Partida | `RAM` | Memória principal de trabalho, volátil: perde tudo quando o computador desliga. | terminal do boot |
-| 04 | 1 · Partida | `ADDRESSBUS` | Vias que indicam qual posição da memória o processador quer acessar. | terminal do boot |
-| 05 | 1 · Partida | `DATABUS` | Vias por onde as informações viajam entre processador, memória e periféricos. | terminal do boot |
-| 06 | 1 · Partida | `MEMORIADEMASSA` | Onde arquivos e sistema ficam guardados mesmo desligado, como HDs e SSDs. | terminal do boot |
-| 07 | 2 · Sistema | `UC` | Parte da CPU que busca, decodifica instruções e coordena os outros componentes. | Painel de Controle › Sistema — ordenar o ciclo de instrução |
-| 08 | 2 · Sistema | `ULA` | Parte da CPU responsável pelos cálculos e pelas comparações lógicas. | Gerenciador de Tarefas › Processos › calc_unit.exe |
-| 09 | 2 · Sistema | `REGISTRADORES` | Pequenas memórias dentro do processador, as mais rápidas do computador. | notas_do_admin.txt (texto do admin) |
-| 10 | 2 · Sistema | `EEPROM` | Memória não volátil apagável eletricamente, que guarda configurações da BIOS. | Painel de Controle › BIOS — PIN = resultado do programa nas notas do admin |
-| 11 | 2 · Sistema | `CACHE` | Memória ultrarrápida entre CPU e RAM que guarda o que é mais usado. | Internet › Histórico › "Por que meu PC está tão lento?" |
-| 12 | 2 · Sistema | `FLASH` | Memória não volátil regravável em blocos, usada em pendrives e cartões SD. | Meu Computador › Disco removível (E:) — montar o leia_me.txt fragmentado |
-| 13 | 2 · Sistema | `DUALCORE` | Processador com dois núcleos trabalhando ao mesmo tempo. | Gerenciador de Tarefas › Desempenho — balancear a carga entre 2 núcleos (exige UC online) |
-| 14 | 2 · Sistema | `QUADCORE` | Processador com quatro núcleos trabalhando ao mesmo tempo. | E-mail › "Upgrade aprovado" |
-| 15 | 2 · Sistema | `DMA` | Recurso que deixa periféricos lerem e gravarem na RAM sem ocupar a CPU. | Lixeira › relatorio_perifericos.txt (cifra, chave 7) |
-| 16 | 2 · Sistema | `MICROCONTROLADOR` | Chip com processador, memória e entradas/saídas juntos, como o do Arduino. | Painel de Controle › Gerenciador de Dispositivos (depois dos outros 9) |
-
-Senha da pasta Confidencial: `RAM2002`.
-
-</details>
-
----
-
-## `[ END ]` Final
-
-Com **16/16** módulos online, o aviso de modo de segurança some, o Gerenciador de
-Tarefas mostra os **4 núcleos ativos** e aparece o balão **"Sistema otimizado"**.
-A tela dá um glitch e vem o **ACESSO ROOT CONCEDIDO**, com tempo, trace final, erros,
-dicas e o **Hall dos Invasores** (top 5 por menor tempo).
 
 ---
 
