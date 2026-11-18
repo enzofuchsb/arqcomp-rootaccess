@@ -36,7 +36,7 @@
     <!-- barra de título do terminal -->
     <rect x="1" y="1" width="898" height="28" fill="#0B1013"/>
     <line x1="1" y1="29" x2="899" y2="29" stroke="#1B2A24"/>
-    <text x="16" y="20" class="mono mut" font-size="12">root@sys:~$ ./boot --firewall=on</text>
+    <text x="16" y="20" class="mono mut" font-size="12">invasor@sys:~$ ./boot --firewall=on</text>
     <text x="884" y="20" class="mono mut" font-size="12" text-anchor="end">BIOS v1.6 · tty0</text>
 
     <!-- linhas de boot (iguais às do jogo) -->

@@ -82,7 +82,7 @@ function montarTerminal() {
 
   t2.form = el('form', 'term');
   t2.form.autocomplete = 'off';
-  const prompt = el('label', 'prompt', 'root@sys:~$');
+  const prompt = el('label', 'prompt', 'invasor@sys:~$');
   prompt.htmlFor = 't2-input';
   const field = el('div', 'term-field');
   t2.input = el('input', 'term-input');
@@ -292,11 +292,18 @@ function scan2() {
   if (state.rodando) t2.input.focus();
 }
 
+/* Recompensa por acerto no Ato 2: −5% de trace, ou −8% se a palavra foi acertada sem dicas */
+const BONUS_ACERTO = 5;
+const BONUS_SEM_DICAS = 8;
+
 function acertou2(i) {
+  const usouDica = a2.sniffs.has(i) || (a2.revelados[i] || []).length > 0;
+  const bonus = usouDica ? BONUS_ACERTO : BONUS_SEM_DICAS;
   state.online.add(i);
   a2.quarentena.delete(i);
-  logLine('[  OK  ]', 'ok', ETAPAS[i].logOk);
+  logLine('[  OK  ]', 'ok', ETAPAS[i].logOk + ' — trace −' + bonus + '%' + (usouDica ? '' : ' (sem dicas)'));
   somAcerto();
+  reduzirTrace(bonus);
   if (a2.sel === i) a2.sel = null;
   updateStats();
   renderModules();
@@ -1125,7 +1132,7 @@ const FS = {
   'sistema.cfg': () => ['modo=seguranca', 'versao=ROOT/OS 2002', 'usuario=root'],
   'root.exe': null,                                    // binário
   '.chave_lixeira': () => ['chave do relatorio_perifericos.txt: ' + DMA_CHAVE],
-  '.config_shell': () => ['prompt=root@sys:~$', 'cor=verde']
+  '.config_shell': () => ['usuario=invasor', 'prompt=invasor@sys:~$', 'cor=verde']
 };
 
 window.fsComando = function (cmd, args) {

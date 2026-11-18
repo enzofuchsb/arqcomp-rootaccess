@@ -121,8 +121,8 @@
       <text x="186" y="80" class="pkt"><tspan fill="#5CD8FF">[ INFO ]</tspan><tspan fill="#C9F5DA"> pacote interceptado</tspan></text>
     </g>
     <rect x="186" y="200" width="320" height="30" fill="none" stroke="#1B2A24"/>
-    <text x="196" y="220" class="m" font-size="11"><tspan fill="#39FF88" font-weight="700">root@sys:~$</tspan></text>
-    <rect x="286" y="208" width="7" height="14" fill="#39FF88" class="cursor"/>
+    <text x="196" y="220" class="m" font-size="11"><tspan fill="#39FF88" font-weight="700">invasor@sys:~$</tspan></text>
+    <rect x="306" y="208" width="7" height="14" fill="#39FF88" class="cursor"/>
   </g>
 
   <!-- balão da bandeja -->

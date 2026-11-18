@@ -7,7 +7,7 @@
      durante a varredura o trace passivo sobe 2x mais rápido.
    - Verificação de integridade: a cada 70–110 s (nunca junto
      com a varredura), mostra a pista principal de um módulo já
-     ONLINE; acertou = −2% de trace. Fecha sozinha em 20 s.
+     ONLINE; acertou = −5% de trace. Fecha sozinha em 20 s.
    - defPopup(): pop-up no visual de janela do ROOT/OS com escudo
      (também usado pelo honeypot NAO_ABRA.exe em apps.js).
    Usa do script.js: $, state, ETAPAS, bipe, somAcerto, somErro,
@@ -25,6 +25,7 @@ const def = {
   pops: new Set()
 };
 
+const INTEGRIDADE_BONUS = 5;   // verificação de integridade correta: −5% de trace
 const aleatorio = (min, max) => (min + Math.random() * (max - min)) * 1000;
 const ativo = () => state.rodando && state.ato === 2 && $('screen-desktop').classList.contains('active');
 
@@ -186,13 +187,12 @@ function verificacao() {
     if (respondido || !ativo()) return;
     if (normalizar(inp.value) === et.resposta) {
       respondido = true;
-      state.trace = Math.max(0, Math.round((state.trace - 2) * 10) / 10);
-      renderTrace();
+      reduzirTrace(INTEGRIDADE_BONUS);
       somAcerto();
-      msg.textContent = 'Integridade confirmada. Trace −2%.';
+      msg.textContent = 'Integridade confirmada — trace −' + INTEGRIDADE_BONUS + '%';
       msg.className = 'def-small def-ok';
       inp.disabled = ok.disabled = true;
-      logLine('[  OK  ]', 'ok', 'Integridade confirmada (' + et.resposta + ') — trace −2%');
+      logLine('[  OK  ]', 'ok', 'Integridade confirmada (' + et.resposta + ') — trace −' + INTEGRIDADE_BONUS + '%');
       setTimeout(pop.fechar, 1600);
     } else {
       // errar não custa nada: só avisa

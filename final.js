@@ -6,7 +6,7 @@
    1. último golpe em câmera lenta → tela branca → silêncio total
    2. desmoronamento: tijolos caem, chamas viram fumaça, o olho
       cai, rola, pisca devagar e sussurra "...acesso... concedido..."
-   3. o prompt vira root: root@sys:~$ → root@sys:~#  · whoami → root
+   3. o prompt vira root: invasor@sys:~$ → (glitch) root@sys:~#  · whoami → root
    4. créditos em forma de boot log (as 16 peças com suas pistas)
    5. tela de vitória: LED da plaquinha piscando "OBRIGADO" em Morse
    6. pós-créditos (REBOOT da vitória): o último tijolo, um olhinho,
@@ -187,16 +187,41 @@ async function viraRoot(s) {
   fn.creditos.classList.add('hidden');
   fn.tijolo.classList.add('hidden');
   await esperar(lento(900), s);
-  const l = linhaTerm('<span class="fn-prompt">root@sys:~</span><span class="fn-sinal pisca">$</span><span class="fn-cmd"></span><span class="fn-cursor">█</span>');
+  const l = linhaTerm('<span class="fn-prompt"><span class="fn-user">invasor</span>@sys:~</span><span class="fn-sinal">$</span><span class="fn-cmd"></span><span class="fn-cursor">█</span>');
+  const user = l.querySelector('.fn-user');
   const sinal = l.querySelector('.fn-sinal');
-  await esperar(lento(1800), s);
+  await esperar(lento(1400), s);
+
+  // "invasor" sofre um glitch rápido...
+  user.classList.add('glitch');
+  ruido(0.35, 0.18, 2500);
+  await esperar(lento(550), s);
+  user.classList.remove('glitch');
+  // ...é apagado letra por letra...
+  while (user.textContent.length) {
+    user.textContent = user.textContent.slice(0, -1);
+    bipe(500, 0.02, 'square', 0.02);
+    await esperar(RM ? 30 : 110, s);
+  }
+  await esperar(lento(400), s);
+  // ...e "root" é digitado no lugar
+  user.classList.add('root');
+  await digitarAqui(user, 'root', s, RM ? 40 : 170, () => somTecla());
+  await esperar(lento(700), s);
+
+  // o $ pisca, apaga e vira #
+  sinal.classList.add('pisca');
+  await esperar(lento(1600), s);
   sinal.classList.remove('pisca');
   sinal.textContent = '';
   await esperar(lento(500), s);
   sinal.textContent = '#';
   sinal.classList.add('root');
-  bipe(880, 0.08, 'square', 0.04);
-  await esperar(lento(1100), s);
+  // som curto e grave de "acesso concedido"
+  bipe(98, 0.45, 'square', 0.06);
+  bipe(147, 0.55, 'sine', 0.07, 0.12);
+  bipe(196, 0.7, 'sine', 0.05, 0.24);
+  await esperar(lento(1300), s);
   l.querySelector('.fn-sinal').insertAdjacentText('afterend', ' ');
   await digitarAqui(l.querySelector('.fn-cmd'), 'whoami', s, RM ? 40 : 150, () => somTecla());
   await esperar(lento(500), s);

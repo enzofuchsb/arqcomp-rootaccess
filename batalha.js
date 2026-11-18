@@ -267,7 +267,7 @@ function montarTela() {
         '<div class="bt-tempo"><div class="bt-tempo-fill"></div></div>' +
         '<p class="bt-enunciado"></p>' +
         '<form class="bt-form term" autocomplete="off">' +
-          '<label class="prompt bt-prompt" for="bt-input">root@sys:~$</label>' +
+          '<label class="prompt bt-prompt" for="bt-input">invasor@sys:~$</label>' +
           '<div class="term-field"><input id="bt-input" class="term-input bt-input" type="text" spellcheck="false" autocapitalize="off" aria-label="Sua resposta"></div>' +
           '<button class="btn btn-primary bt-enviar" type="submit">&gt; ATACAR</button>' +
         '</form>' +
@@ -689,7 +689,7 @@ function prepararPainel(tipo, enunciado, nomeGolpe) {
     : 'PISTA INTERCEPTADA';
   // golpes: deixa claro que a resposta é código JavaScript
   bt.enunciado.textContent = golpe ? 'Escreva em JavaScript: ' + enunciado : enunciado;
-  bt.prompt.textContent = golpe ? '>' : 'root@sys:~$';
+  bt.prompt.textContent = golpe ? '>' : 'invasor@sys:~$';
   bt.input.value = '';
   bt.input.disabled = false;
   bt.input.placeholder = golpe ? 'digite aqui o código em JavaScript' : 'nome do componente';

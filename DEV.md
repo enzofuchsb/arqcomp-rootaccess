@@ -217,7 +217,8 @@ Tudo é gerado em `gerarEnigmas()` (`enigmas.js`) e `sortearDma()` (`apps.js`), 
 | Ordem errada (UC) / PIN errado / senha errada / placa errada | +3% / +5% / +5% / +5% |
 | Honeypot | +15% |
 | Restaurar pacote da quarentena | +3% |
-| Verificação de integridade correta | −2% |
+| Verificação de integridade correta | −5% |
+| Palavra acertada no Ato 2 (Terminal) | −5% · −8% se sem SNIFF/BRUTE naquela palavra (não vale no Ato 1 nem na batalha) |
 | LogicNão circuito 3 | −40% |
 | Erro na batalha (ou tempo esgotado) | +15% fixo (não entra no progressivo) |
 
@@ -226,7 +227,7 @@ Tudo é gerado em `gerarEnigmas()` (`enigmas.js`) e `sortearDma()` (`apps.js`), 
 | Evento | Quando | Efeito |
 |:--|:--|:--|
 | Varredura | a cada 60–120 s | pop-up de 10 s; trace passivo 2x |
-| Verificação de integridade | a cada 70–110 s (nunca junto da varredura) | pista de um módulo online; acertou = −2%; fecha em 20 s |
+| Verificação de integridade | a cada 70–110 s (nunca junto da varredura) | pista de um módulo online; acertou = −5%; fecha em 20 s |
 | Quarentena | pacote coletado há 3 min sem resposta | some do Terminal; restaurar pelo escudo da bandeja (+3%, timer zera) |
 | Firewall reagindo | a cada 25–35 s com trace ≥ 70% | fecha uma janela aleatória e embaralha os ícones |
 
@@ -272,7 +273,7 @@ Para adicionar um golpe: novo objeto no array `GOLPES` com `nome`, `enunciado`, 
 
 1. Último golpe em câmera lenta → tela branca → música corta (silêncio).
 2. Desmoronamento: tijolos caem, chamas viram fumaça, o olho cai, rola, pisca e sussurra "...acesso... concedido...".
-3. `root@sys:~$` → `#` → `whoami` → `root`.
+3. `invasor@sys:~$` → glitch, "invasor" é apagado letra por letra e vira "root" → o `$` vira `#` (som grave de acesso concedido) → `root@sys:~#` → `whoami` → `root`.
 4. Créditos em boot log: as 16 peças com a pista, `FIREWALL.EXE — encerrado`, `Sistema 100% operacional`, "ROOT ACCESS / Desenvolvido por Fuchs — Arquitetura Computacional 2026". "pular ›" vai direto para a vitória.
 5. Vitória: **título de hacker** (erros incluem os da batalha; dicas = SNIFF + BRUTE FORCE):
 

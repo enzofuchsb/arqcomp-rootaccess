@@ -1617,3 +1617,21 @@ body:has(#screen-desktop.active) .scanlines { display: none; }
   border: 3px solid #111;
 }
 .morse-led.on { background: #39FF88; box-shadow: 0 0 14px 4px rgba(57, 255, 136, 0.7); }
+
+/* =========================================================
+   Recompensa de trace (acerto no Ato 2 / integridade):
+   a barra desce devagar e pisca verde; o escudo da bandeja também
+   ========================================================= */
+.trace-bar.trace-bonus .trace-fill { transition: width 0.7s ease-out, background 0.3s; animation: traceBonus 0.9s ease-out; }
+.trace-bar.trace-bonus { animation: traceBonusBorda 0.9s ease-out; }
+.tray-shield.trace-bonus { animation: escudoBonus 0.9s ease-out; }
+@keyframes traceBonus {
+  0%, 60% { background: var(--green); box-shadow: 0 0 10px rgba(57, 255, 136, 0.9); }
+  30% { background: #B8FFD6; }
+  100% { box-shadow: none; }
+}
+@keyframes traceBonusBorda { 0%, 50% { border-color: var(--green); box-shadow: 0 0 8px rgba(57, 255, 136, 0.6); } }
+@keyframes escudoBonus {
+  0%, 60% { color: #7DFFB1; filter: drop-shadow(0 0 6px #39FF88); transform: scale(1.15); }
+  100% { transform: none; filter: none; }
+}

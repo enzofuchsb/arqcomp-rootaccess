@@ -352,6 +352,21 @@ function renderTrace() {
   if (typeof window.batalhaTrace === 'function') window.batalhaTrace(v, nivel);
 }
 
+/* Baixa o trace (nunca abaixo de 0%) com animação: a barra desce devagar e pisca verde,
+   e o escudo do ROOT Defender na bandeja também pisca. Usado nas recompensas do Ato 2. */
+function reduzirTrace(qtd) {
+  state.trace = Math.max(0, Math.round((state.trace - qtd) * 10) / 10);
+  renderTrace();
+  const alvos = [...document.querySelectorAll('.trace-bar'), document.getElementById('tray-defender')].filter(Boolean);
+  alvos.forEach((el) => {
+    el.classList.remove('trace-bonus');
+    void el.offsetWidth;
+    el.classList.add('trace-bonus');
+    setTimeout(() => el.classList.remove('trace-bonus'), 1000);
+  });
+}
+window.reduzirTrace = reduzirTrace;
+
 function addTrace(qtd) {
   if (!state.rodando) return;
   const antes = state.trace;
@@ -703,15 +718,16 @@ function cesar(texto, desloc) {
 function executarComando(txt) {
   const partes = txt.trim().toLowerCase().split(/\s+/);
   const cmd = partes[0];
-  const comandos = ['help', 'status', 'brute', 'sniff', 'decrypt', 'ls', 'cat', 'clear', 'reboot'];
+  const comandos = ['help', 'status', 'whoami', 'brute', 'sniff', 'decrypt', 'ls', 'cat', 'clear', 'reboot'];
   if (!comandos.includes(cmd)) return false;
 
-  logLine('root@sys:~$', 'dim', txt.trim());
+  logLine('invasor@sys:~$', 'dim', txt.trim());
 
   switch (cmd) {
     case 'help':
       logLine('[ INFO ]', 'info', 'help ............ lista os comandos');
       logLine('[ INFO ]', 'info', 'status .......... módulos, trace, erros, dicas e tempo');
+      logLine('[ INFO ]', 'info', 'whoami .......... mostra o usuário atual');
       logLine('[ INFO ]', 'info', 'brute ........... revela uma letra (+10% trace)');
       logLine('[ INFO ]', 'info', 'sniff ........... dica extra sobre a palavra (+5% trace)');
       logLine('[ INFO ]', 'info', 'decrypt --chave N aplica a chave N no arquivo cifrado aberto');
@@ -729,6 +745,10 @@ function executarComando(txt) {
         ' · dicas ' + state.dicas + ' · tempo ' + formatTime(state.segundos));
       logLine('[ INFO ]', 'info',
         'BRUTE FORCE restantes: ' + state.brutesRestantes + ' · próximo erro custa +' + custoProximoErro() + '%');
+      break;
+    case 'whoami':
+      // o jogador só vira root no final do jogo
+      logLine('       ', 'dim', 'invasor');
       break;
     case 'brute':
       bruteForce();
@@ -892,7 +912,7 @@ function startGame() {
   renderTrace();
 
   $('log').textContent = '';
-  logLine('[  OK  ]', 'ok', 'Conexão estabelecida com root@sys');
+  logLine('[  OK  ]', 'ok', 'Conexão estabelecida: invasor@sys (acesso limitado)');
   logLine('[ INFO ]', 'info', 'Digite o nome do componente bloqueado e pressione Enter.');
 
   $('btn-scan').disabled = false;

@@ -14,7 +14,7 @@
 </div>
 
 ```
-root@sys:~$ cat MISSAO.txt
+invasor@sys:~$ cat MISSAO.txt
 ```
 
 > Um computador está travado por um **firewall**. Cada um dos seus **16 componentes**
@@ -54,7 +54,7 @@ BOOT ─► ATO 1 · PARTIDA ─► ROOT/OS 2002 ─► ATO 2 · SISTEMA ─► 
 ```
 [  OK  ] Fonte de energia estabilizada
 [ LOCK ] Módulo 01 bloqueado pelo firewall — aguardando chave...
-root@sys:~$ _
+invasor@sys:~$ _
 ```
 
 1. **Leia o pacote interceptado:** é a pista sobre o componente bloqueado.
@@ -104,7 +104,7 @@ O escudo na bandeja mostra o mesmo % do trace. De vez em quando, sem aviso, o De
 | Evento | O que faz |
 |:--|:--|
 | **Varredura** | Uma barra de progresso aparece e, enquanto ela roda, o trace sobe **2x mais rápido**. |
-| **Verificação de integridade** | Mostra a pista de um módulo que **já está online**. Acertou o nome: o trace **cai 2%**. Errar não custa nada. |
+| **Verificação de integridade** | Mostra a pista de um módulo que **já está online**. Acertou o nome: o trace **cai 5%**. Errar não custa nada. |
 | **Quarentena** | Pacotes esquecidos por muito tempo somem do Terminal. Clique no escudo para recuperá-los, pagando um pouco de trace. |
 
 E com o trace muito alto, o **firewall começa a mexer no seu sistema**...
@@ -127,6 +127,8 @@ O firewall está te procurando. A barra sobe sozinha e a cada deslize:
 | BRUTE FORCE | `+10%` |
 | SNIFF | `+5%` |
 | Senhas, códigos e armadilhas erradas | varia |
+| **Palavra acertada no Ato 2** | `−5%` (`−8%` se acertou sem usar dicas nela) |
+| Verificação de integridade correta | `−5%` |
 
 - **verde**: abaixo de 40% · **âmbar**: 40% a 79% · **vermelho**: 80% ou mais, com alarme
 - **100% = `CONEXÃO RASTREADA`** (game over, em qualquer momento do jogo)
@@ -223,8 +225,8 @@ assets/       SVGs deste README e a trilha sonora
 <div align="center">
 
 ```
-root@sys:~$ whoami
-???
+invasor@sys:~$ whoami
+invasor
 ```
 
 **[`> INICIAR INVASÃO`](https://enzofuchsb.github.io/arqcomp-rootaccess/)**
