@@ -215,11 +215,18 @@ function tourAto2() {
     { alvo: () => winApp('email'), titulo: 'O PC ligou!',
       texto: ['Agora faltam 10 peças. Desta vez NÃO tem pista na tela: elas estão ESCONDIDAS dentro do computador, em pastas, arquivos, e-mails, sites e programas.',
         'Vamos achar a primeira juntos. Leia este e-mail do fuchs se quiser e clique em Próximo.'] },
-    { alvo: () => document.querySelector('.rw-win[data-app="email"] .em-item:nth-child(2)'), titulo: '1. Abra este e-mail',
+    { alvo: () => [...document.querySelectorAll('.rw-win[data-app="email"] .em-item')].find((b) => b.textContent.includes('Upgrade aprovado')), titulo: '1. Abra este e-mail',
       texto: 'Clique no e-mail "Upgrade aprovado". Ele tem a pista de uma peça.',
       esperar: () => window.appsA2 && window.appsA2.coletados ? window.appsA2.coletados.has(q) : state.online.has(q),
       aguardando: 'Clique no e-mail destacado...',
-      acao: { label: 'Abrir o E-mail', fn: () => window.dkAbrirApp('email') } },
+      acao: { label: 'Abrir para mim', fn: () => {
+        window.dkAbrirApp('email');
+        setTimeout(() => {
+          const item = [...document.querySelectorAll('.rw-win[data-app="email"] .em-item')]
+            .find((b) => b.textContent.includes('Upgrade aprovado'));
+          if (item) item.click();
+        }, 80);
+      } } },
     { alvo: '#dk-balloon', titulo: 'Pista encontrada!',
       texto: ['Quando você acha uma pista, toca um bipe e aparece este balão: "Pacote interceptado".',
         'Toda pista encontrada vai automaticamente para o Terminal. É lá que você responde.'] },
@@ -238,7 +245,7 @@ function tourAto2() {
       aguardando: 'Digite a resposta e aperte Enter...' },
     { titulo: 'Módulo online!',
       texto: ['Cada acerto aqui no Ato 2 também DIMINUI o trace: −5%, ou −8% se você não usou nenhuma dica naquela palavra.',
-        'Dá para responder em qualquer ordem, e até sem ter achado a pista, se você souber.'] },
+        'Dá para responder em qualquer ordem, mas só depois de achar a pista: sem o pacote, o Terminal não aceita a palavra.'] },
     { alvo: '#dk-icons', titulo: '5. Agora é com você: explore',
       texto: ['As outras 9 pistas estão escondidas nestes ícones. Abra tudo: pastas, arquivos .txt, Lixeira, Internet, Painel de Controle, Gerenciador de Tarefas, LogicNão...',
         'Algumas pistas estão à vista; outras são enigmas (ordenar, decifrar, montar circuitos). Leia tudo com calma, inclusive os detalhes.'] },

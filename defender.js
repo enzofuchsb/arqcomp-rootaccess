@@ -3,7 +3,7 @@
 /* =========================================================
    ROOT ACCESS — defender.js
    ROOT Defender (antivírus do ROOT/OS), só no Ato 2:
-   - Varredura: a cada 60–120 s, pop-up com barra de 10 s;
+   - Varredura: a cada 120–200 s, pop-up com barra de 10 s;
      durante a varredura o trace passivo sobe 2x mais rápido.
    - Verificação de integridade: a cada 70–110 s (nunca junto
      com a varredura), mostra a pista principal de um módulo já
@@ -22,8 +22,17 @@ const def = {
   scanAtivo: false,
   quizAtivo: false,
   boostId: null,
-  pops: new Set()
+  pops: new Set(),
+  notifs: []          // histórico de notificações (aba Notificações)
 };
+
+/* registra uma notificação no histórico do ROOT Defender */
+function notificar(tipo, texto) {
+  def.notifs.unshift({ hora: clock(), tipo, texto });
+  if (def.notifs.length > 60) def.notifs.pop();
+  if (typeof renderDefender === 'function') renderDefender();
+}
+window.defNotificar = notificar;
 
 const INTEGRIDADE_BONUS = 5;   // verificação de integridade correta: −5% de trace
 const aleatorio = (min, max) => (min + Math.random() * (max - min)) * 1000;
@@ -80,7 +89,7 @@ function el2(tag, cls, text) {
 /* ---------- Varredura ---------- */
 function agendarScan() {
   clearTimeout(def.scanTimer);
-  def.scanTimer = setTimeout(varredura, aleatorio(60, 120));
+  def.scanTimer = setTimeout(varredura, aleatorio(120, 200));
 }
 
 function varredura() {
@@ -102,6 +111,7 @@ function varredura() {
   const pop = window.defPopup('ROOT Defender — varredura em andamento…', corpo, { onClose: fimScan });
   bipe(440, 0.12, 'sine', 0.04);
   logLine('[ WARN ]', 'warn', 'ROOT Defender iniciou uma varredura — trace passivo 2x por 10 s');
+  notificar('warn', 'Varredura iniciada: o trace subiu 2x mais rápido por 10 s.');
 
   // +1% extra em 10 s (0,2% a cada 2 s) = o dobro do ritmo normal do Ato 2
   const pastas = ['C:\\ROOTOS\\', 'C:\\Documentos\\', 'C:\\Lixeira\\', 'memória RAM', 'setor de boot'];
@@ -123,6 +133,7 @@ function fimScan() {
   def.scanAtivo = false;
   if (ativo()) {
     logLine('[ INFO ]', 'info', 'ROOT Defender: varredura concluída. Nenhuma ameaça encontrada.');
+    notificar('info', 'Varredura concluída. Nenhuma ameaça encontrada.');
     agendarScan();
   }
 }
@@ -176,6 +187,7 @@ function verificacao() {
     auto: 20000,
     onClose: () => {
       clearInterval(tick);
+      if (!respondido) notificar('info', 'Verificação de integridade (' + et.resposta + ') expirou sem resposta.');
       def.quizAtivo = false;
       if (ativo()) agendarQuiz();
     }
@@ -193,6 +205,7 @@ function verificacao() {
       msg.className = 'def-small def-ok';
       inp.disabled = ok.disabled = true;
       logLine('[  OK  ]', 'ok', 'Integridade confirmada (' + et.resposta + ') — trace −' + INTEGRIDADE_BONUS + '%');
+      notificar('ok', 'Integridade confirmada (' + et.resposta + ') — trace −' + INTEGRIDADE_BONUS + '%.');
       setTimeout(pop.fechar, 1600);
     } else {
       // errar não custa nada: só avisa
@@ -222,6 +235,7 @@ function checarQuarentena() {
     const nome = 'PKT#' + pad2(i + 1);
     logLine('[ WARN ]', 'warn', 'ROOT Defender: ' + nome + ' colocado em quarentena (3 min sem resposta)');
     window.dkBalao('ROOT Defender', 'Pacote ' + nome + ' colocado em quarentena', 5000);
+    notificar('warn', 'Pacote ' + nome + ' colocado em quarentena (3 min sem resposta).');
     bipe(330, 0.12, 'square', 0.04); bipe(247, 0.16, 'square', 0.04, 0.12);
   });
   if (mudou) { window.appsRenderPacotes(); renderDefender(); }
@@ -234,6 +248,7 @@ function restaurarQuarentena(i) {
   a2.coletadoEm.set(i, Date.now());   // timer zerado
   logLine('[ INFO ]', 'info', 'ROOT Defender: PKT#' + pad2(i + 1) + ' restaurado da quarentena — trace +3%');
   window.appsRenderPacotes();
+  notificar('info', 'PKT#' + pad2(i + 1) + ' restaurado da quarentena — trace +3%.');
   renderDefender();
   addTrace(3);
 }
@@ -243,8 +258,22 @@ let defBody = null;
 
 function renderDefender() {
   if (!defBody || !defBody.isConnected) return;
+  const defAbaSalva = def.abaAberta ? def.aba : null;
+  def.abaAberta = true;
   defBody.textContent = '';
-  abas(defBody, ['Status', 'Quarentena'], (k, area) => {
+  const trocar = abas(defBody, ['Status', 'Quarentena', 'Notificações (' + def.notifs.length + ')'], (k, area) => {
+    def.aba = k;
+    if (k === 2) {
+      if (!def.notifs.length) { area.appendChild(el('p', 'os-muted', 'Nenhuma notificação ainda.')); return; }
+      const ul = el('ul', 'def-notifs');
+      def.notifs.forEach((n) => {
+        const li = el('li', 'def-notif ' + n.tipo);
+        li.append(el('time', null, n.hora), el('span', null, n.texto));
+        ul.appendChild(li);
+      });
+      area.appendChild(ul);
+      return;
+    }
     if (k === 0) {
       area.append(
         caixa('Proteção ativa', [
@@ -270,15 +299,14 @@ function renderDefender() {
     });
     area.appendChild(box);
   });
-  // se há algo na quarentena, abre direto nessa aba
-  if (window.appsA2.quarentena.size) {
-    const aba = [...defBody.querySelectorAll('.os-tab')].find((t) => t.textContent === 'Quarentena');
-    if (aba) aba.click();
-  }
+  // mantém a aba que o jogador estava vendo; na primeira abertura, quarentena com itens tem prioridade
+  if (defAbaSalva != null) trocar(defAbaSalva);
+  else if (window.appsA2.quarentena.size) trocar(1);
 }
 
 appById('defender').render = function (body) {
   defBody = body;
+  def.abaAberta = false;   // janela nova: começa na aba padrão
   renderDefender();
 };
 
@@ -295,12 +323,14 @@ function firewall() {
     alarme();
     window.dkBalao('Firewall interferindo no sistema', fechada ? 'A janela "' + fechada + '" foi fechada e os ícones mudaram de lugar.' : 'Os ícones da área de trabalho mudaram de lugar.', 5000);
     logLine('[ WARN ]', 'warn', 'Firewall interferindo no sistema (trace ' + Math.round(state.trace) + '%)');
+    notificar('bad', 'Firewall interferindo no sistema (trace ' + Math.round(state.trace) + '%).');
   }
   agendarFirewall();
 }
 
 window.defenderStart = function () {
   window.defenderStop();
+  def.notifs = [];
   agendarScan();
   agendarQuiz();
   agendarFirewall();

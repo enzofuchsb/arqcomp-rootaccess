@@ -86,7 +86,7 @@ Um sistema operacional com cara de anos 2000 e identidade própria: área de tra
   outras estão escondidas, trancadas ou embaralhadas e precisam de um pouco de raciocínio.
 - Quando você encontra uma pista, toca um bipe e aparece o balão **`Pacote interceptado`**.
 - Abra o **Terminal (`root.exe`)**: os pacotes encontrados ficam na lista **PACOTES COLETADOS**.
-- Digite as respostas **em qualquer ordem**. Dá até para acertar antes de achar a pista.
+- Digite as respostas **em qualquer ordem**. A resposta só é aceita depois que você acha a pista dela (o pacote precisa estar coletado).
 - Aqui as casinhas ficam **escondidas**: você não sabe quantas letras a palavra tem até pedir uma dica.
 - Alguns programas **dependem de outros** módulos para funcionar. Se algo não abre, talvez falte uma peça.
 - **Nem tudo é o que parece.** Há arquivos que mentem e arquivos que pedem para não ser abertos.
@@ -110,6 +110,7 @@ O escudo na bandeja mostra o mesmo % do trace. De vez em quando, sem aviso, o De
 | **Varredura** | Uma barra de progresso aparece e, enquanto ela roda, o trace sobe **2x mais rápido**. |
 | **Verificação de integridade** | Mostra a pista de um módulo que **já está online**. Acertou o nome: o trace **cai 5%**. Errar não custa nada. |
 | **Quarentena** | Pacotes esquecidos por muito tempo somem do Terminal. Clique no escudo para recuperá-los, pagando um pouco de trace. |
+| **Notificações** | Aba no ROOT Defender com o histórico de tudo o que ele avisou: varreduras, verificações, quarentenas, ameaças e interferências do firewall. |
 
 E com o trace muito alto, o **firewall começa a mexer no seu sistema**...
 

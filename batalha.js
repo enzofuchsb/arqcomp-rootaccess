@@ -21,7 +21,8 @@
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const DEBUG = /[?&]debug=1\b/.test(location.search);
 const MUSICA_URL = 'assets/audio/firewall-rootos.mp3';
-const TEMPO_RESPOSTA = 15000;   // 15 s para responder cada camada (pista ou golpe)
+const TEMPO_RESPOSTA = 15000;   // 15 s para responder uma pista
+const TEMPO_GOLPE = 25000;      // 25 s para responder um golpe de código JavaScript
 
 /* ---------- Estado ---------- */
 const BT = {
@@ -823,7 +824,7 @@ async function rodada(tipo, s) {
     await falar('FIREWALL.EXE usou ' + g.nome + '!', s);
     prepararPainel('g', g.enunciado, g.nome);
     if (DEBUG) console.info('[debug] exemplo:', g.exemplo);
-    const v = await aguardarResposta(TEMPO_RESPOSTA, s);
+    const v = await aguardarResposta(TEMPO_GOLPE, s);
     certo = v != null && g.re.test(v);
     exemplo = g.exemplo;
     bt.svg.classList.remove('bracos-erguidos');

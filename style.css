@@ -1727,3 +1727,12 @@ body:has(#screen-desktop.active) .scanlines { display: none; }
   .tour-hole { animation: none; transition: none; }
   .tour-wait { animation: none; }
 }
+
+/* ROOT Defender · aba Notificações */
+.def-notifs { list-style: none; margin: 0; padding: 0; max-height: 240px; overflow-y: auto; border: 1px solid #B9C3D3; background: #fff; }
+.def-notif { display: flex; gap: 10px; padding: 6px 8px; border-bottom: 1px solid #E3E8F0; font-size: 12px; color: #1B1B1B; border-left: 4px solid #5C8BD6; }
+.def-notif:last-child { border-bottom: 0; }
+.def-notif time { color: #666; font-variant-numeric: tabular-nums; flex: none; }
+.def-notif.ok   { border-left-color: #2FC46B; }
+.def-notif.warn { border-left-color: #E6A100; }
+.def-notif.bad  { border-left-color: #D8343F; }

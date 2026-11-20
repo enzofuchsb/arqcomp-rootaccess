@@ -118,6 +118,8 @@ function montarTerminal() {
     renderSlots2();
   });
   t2.log.addEventListener('click', () => t2.input.focus());
+  t2.form.addEventListener('click', () => t2.input.focus());
+  t2.slots.addEventListener('click', () => t2.input.focus());
 }
 
 function iniciarLogTerminal() {
@@ -287,7 +289,11 @@ function scan2() {
 
   const chave = normalizar(bruto);
   const i = ATO2_IDX.find((k) => !state.online.has(k) && ETAPAS[k].resposta === chave);
-  if (i != null) acertou2(i);
+  if (i != null && !a2.coletados.has(i)) {
+    // resposta certa, mas a pista ainda não foi encontrada: não vale e não custa trace
+    logLine('[ LOCK ]', 'lock', 'chave "' + chave + '" sem pacote correspondente — encontre a pista dela no sistema primeiro.');
+    somErro();
+  } else if (i != null) acertou2(i);
   else errou2(bruto, ETAPAS.some((e, k) => state.online.has(k) && e.resposta === chave));
   if (state.rodando) t2.input.focus();
 }
@@ -627,7 +633,7 @@ const EMAILS = [
       { lista: [
         'Abra os ícones com duplo clique e explore. Quando achar uma pista, toca um bipe e aparece o balão "Pacote interceptado".',
         'Toda pista encontrada vai para a lista PACOTES COLETADOS do Terminal (root.exe).',
-        'No Terminal, digite o nome do componente e aperte Enter. Vale qualquer ordem, e dá até para acertar sem ter a pista.',
+        'No Terminal, digite o nome do componente e aperte Enter. Vale qualquer ordem, mas a resposta só é aceita depois que você encontra a pista dela.',
         'Clique num pacote da lista para usar BRUTE FORCE (revela uma letra, +10% de trace) ou SNIFF (dica extra, +5%).'
       ] },
       { h: 'Cuidado com o TRACE' },
@@ -986,6 +992,7 @@ function honeypot() {
       el('p', 'def-small', 'Trace +15%')
     );
     window.defPopup('ROOT Defender — ameaça', corpo, { danger: true, auto: 6000 });
+    if (typeof window.defNotificar === 'function') window.defNotificar('bad', 'Ameaça: NAO_ABRA.exe foi executado — trace +15%.');
   }
   addTrace(15);
 }
