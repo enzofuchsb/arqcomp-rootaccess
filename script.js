@@ -941,8 +941,9 @@ function startGame() {
   showScreen('game');
   startTimer();
   loadStage();
-  // tutorial guiado do Ato 1 (só na primeira vez; "tutorial" no terminal reabre)
-  if (typeof window.tourAto1 === 'function' && !window.tourVisto('ato1')) setTimeout(window.tourAto1, 500);
+  // tutorial guiado do Ato 1 (toda partida nova; "Pular" fecha, "tutorial" no terminal reabre)
+  window.tour2Feito = false;
+  if (typeof window.tourAto1 === 'function') setTimeout(window.tourAto1, 500);
 }
 
 /* TÍTULO DE HACKER pelo desempenho (erros incluem os da batalha; dicas = sniff + brute force) */

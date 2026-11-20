@@ -697,8 +697,11 @@ function marcarTutorialLido() {
   if (ic) ic.classList.remove('notify');
   if (tutorialPop) { tutorialPop.fechar(); tutorialPop = null; }
   // depois de abrir o e-mail do fuchs, começa o tutorial guiado (tour.js)
-  if (typeof window.tourAto2 === 'function' && !window.tourAtivo && !window.tourVisto('ato2') &&
-      !state.online.has(idxDe('QUADCORE'))) setTimeout(window.tourAto2, 600);
+  if (typeof window.tourAto2 === 'function' && !window.tourAtivo && !window.tour2Feito &&
+      !state.online.has(idxDe('QUADCORE'))) {
+    window.tour2Feito = true;   // uma vez por partida (startGame zera)
+    setTimeout(window.tourAto2, 600);
+  }
 }
 
 window.appsTutorial = function () {

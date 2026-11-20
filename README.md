@@ -40,7 +40,7 @@ BOOT ─► ATO 1 · PARTIDA ─► ROOT/OS 2002 ─► ATO 2 · SISTEMA ─► 
 | **Ato 2 · Sistema** | O sistema **ROOT/OS 2002** sobe em modo de segurança. As outras 10 peças estão **escondidas** em pastas, arquivos, programas e enigmas. |
 | **???** | Dizem que religar o sistema não é o fim. Ninguém que chegou lá voltou para contar. |
 
-> **Tutorial guiado:** na primeira partida, um guia destaca cada parte da tela e diz onde clicar
+> **Tutorial guiado:** em toda partida nova, um guia destaca cada parte da tela e diz onde clicar
 > (no Ato 1 ao começar, no Ato 2 depois de abrir o e-mail do tutorial). Enquanto ele está aberto,
 > o trace e o ROOT Defender ficam pausados. Digite `tutorial` no terminal para rever.
 
