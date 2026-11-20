@@ -40,6 +40,10 @@ BOOT ─► ATO 1 · PARTIDA ─► ROOT/OS 2002 ─► ATO 2 · SISTEMA ─► 
 | **Ato 2 · Sistema** | O sistema **ROOT/OS 2002** sobe em modo de segurança. As outras 10 peças estão **escondidas** em pastas, arquivos, programas e enigmas. |
 | **???** | Dizem que religar o sistema não é o fim. Ninguém que chegou lá voltou para contar. |
 
+> **Tutorial guiado:** na primeira partida, um guia destaca cada parte da tela e diz onde clicar
+> (no Ato 1 ao começar, no Ato 2 depois de abrir o e-mail do tutorial). Enquanto ele está aberto,
+> o trace e o ROOT Defender ficam pausados. Digite `tutorial` no terminal para rever.
+
 > Respostas são conferidas em MAIÚSCULAS, sem acento e sem espaço:
 > `placa de vídeo` vira `PLACADEVIDEO`.
 
@@ -151,6 +155,7 @@ No Ato 2, as dicas agem sobre o **pacote selecionado** no Terminal (clique nele 
 | Comando | Ação |
 |:--|:--|
 | `help` | lista os comandos |
+| `tutorial` | abre de novo o tutorial guiado do ato atual |
 | `status` | módulos online, trace, erros, dicas, tempo e BRUTE FORCE restantes |
 | `brute` / `sniff` | mesmo que os botões de dica |
 | `decrypt --chave N` | aplica uma chave num arquivo cifrado aberto |
@@ -205,6 +210,7 @@ circuitos.js  LogicNão: portas lógicas, circuitos descritos como dados
 defender.js   ROOT Defender
 batalha.js    ????
 final.js      ????
+tour.js       tutorial guiado (destaque na tela + passos que esperam a ação)
 assets/       SVGs deste README e a trilha sonora
 ```
 

@@ -632,11 +632,12 @@ const EMAILS = [
       ] },
       { h: 'Cuidado com o TRACE' },
       { lista: [
-        'Ele sobe sozinho com o tempo e +10% a cada resposta errada. Em 100%, você é rastreado.',
-        'O ROOT Defender faz varreduras de vez em quando (o trace acelera) e às vezes pede uma verificação de integridade: acertando, o trace cai 2%.',
+        'Ele sobe sozinho com o tempo e a cada resposta errada (+10% ou mais). Cada acerto aqui no Terminal derruba o trace em 5% (8% sem usar dicas). Em 100%, você é rastreado.',
+        'O ROOT Defender faz varreduras de vez em quando (o trace acelera) e às vezes pede uma verificação de integridade: acertando, o trace cai 5%.',
         'Tem arquivo que é armadilha. Se ele pede para não ser aberto, não abra... Ou abra, tente a sorte ;)'
       ] },
       { h: 'Exemplo' },
+      'Um tutorial guiado vai aparecer na tela mostrando onde clicar. É só seguir.',
       { exemplo: 'Abra o e-mail logo abaixo deste, "Upgrade aprovado", do Suporte TI. Ele tem a dica da próxima palavra. Leia, abra o Terminal (root.exe) e digite a resposta.' },
       'Boa sorte. — fuchs'
     ] },
@@ -695,6 +696,9 @@ function marcarTutorialLido() {
   const ic = document.querySelector('.dk-icon[data-app="email"]');
   if (ic) ic.classList.remove('notify');
   if (tutorialPop) { tutorialPop.fechar(); tutorialPop = null; }
+  // depois de abrir o e-mail do fuchs, começa o tutorial guiado (tour.js)
+  if (typeof window.tourAto2 === 'function' && !window.tourAtivo && !window.tourVisto('ato2') &&
+      !state.online.has(idxDe('QUADCORE'))) setTimeout(window.tourAto2, 600);
 }
 
 window.appsTutorial = function () {

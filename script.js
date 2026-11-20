@@ -324,8 +324,24 @@ function startTimer() {
 /* trace passivo: +1% a cada 6s no Ato 1 e a cada 10s no Ato 2 */
 function startTrace() {
   if (traceId) clearInterval(traceId);
+  traceId = null;
+  if (window.tourAtivo) return;
   traceId = setInterval(() => addTrace(1), state.ato === 1 ? 6000 : 10000);
 }
+
+/* pausa do tutorial guiado (tour.js): congela o trace passivo e o relógio */
+let pausaInicio = 0;
+window.pausarTrace = function (on) {
+  if (on) {
+    if (traceId) clearInterval(traceId);
+    traceId = null;
+    if (!pausaInicio) pausaInicio = Date.now();
+  } else {
+    if (pausaInicio && state.inicio) state.inicio += Date.now() - pausaInicio;
+    pausaInicio = 0;
+    if (state.rodando && timerId) startTrace();
+  }
+};
 
 function stopTimer() {
   if (timerId) clearInterval(timerId);
@@ -718,7 +734,7 @@ function cesar(texto, desloc) {
 function executarComando(txt) {
   const partes = txt.trim().toLowerCase().split(/\s+/);
   const cmd = partes[0];
-  const comandos = ['help', 'status', 'whoami', 'brute', 'sniff', 'decrypt', 'ls', 'cat', 'clear', 'reboot'];
+  const comandos = ['help', 'status', 'whoami', 'brute', 'sniff', 'decrypt', 'ls', 'cat', 'clear', 'reboot', 'tutorial'];
   if (!comandos.includes(cmd)) return false;
 
   logLine('invasor@sys:~$', 'dim', txt.trim());
@@ -726,6 +742,7 @@ function executarComando(txt) {
   switch (cmd) {
     case 'help':
       logLine('[ INFO ]', 'info', 'help ............ lista os comandos');
+      logLine('[ INFO ]', 'info', 'tutorial ........ abre de novo o tutorial guiado');
       logLine('[ INFO ]', 'info', 'status .......... módulos, trace, erros, dicas e tempo');
       logLine('[ INFO ]', 'info', 'whoami .......... mostra o usuário atual');
       logLine('[ INFO ]', 'info', 'brute ........... revela uma letra (+10% trace)');
@@ -745,6 +762,11 @@ function executarComando(txt) {
         ' · dicas ' + state.dicas + ' · tempo ' + formatTime(state.segundos));
       logLine('[ INFO ]', 'info',
         'BRUTE FORCE restantes: ' + state.brutesRestantes + ' · próximo erro custa +' + custoProximoErro() + '%');
+      break;
+    case 'tutorial':
+      if (state.ato === 1 && typeof window.tourAto1 === 'function') window.tourAto1();
+      else if (state.ato === 2 && typeof window.tourAto2 === 'function') window.tourAto2();
+      else logLine('[ INFO ]', 'info', 'tutorial indisponível agora.');
       break;
     case 'whoami':
       // o jogador só vira root no final do jogo
@@ -919,6 +941,8 @@ function startGame() {
   showScreen('game');
   startTimer();
   loadStage();
+  // tutorial guiado do Ato 1 (só na primeira vez; "tutorial" no terminal reabre)
+  if (typeof window.tourAto1 === 'function' && !window.tourVisto('ato1')) setTimeout(window.tourAto1, 500);
 }
 
 /* TÍTULO DE HACKER pelo desempenho (erros incluem os da batalha; dicas = sniff + brute force) */

@@ -22,25 +22,36 @@
 
         <div id="boot-intro" class="boot-intro hidden">
           <h1 class="title-giant">ROOT ACCESS</h1>
-          <p class="tagline">Dê a partida no PC, invada o sistema e religue os 16 módulos antes que o firewall te rastreie.</p>
+          <p class="tagline">Um computador foi travado por um firewall. Você é o invasor: religue as 16 peças dele, uma por uma, antes que o firewall descubra quem você é.</p>
 
           <div class="rules">
             <article class="rule-card">
               <span class="rule-num">01</span>
-              <h2>Descubra a chave</h2>
-              <p>Leia o pacote interceptado e digite o nome do componente bloqueado.</p>
+              <h2>Leia a pista</h2>
+              <p>Cada peça do computador (CPU, RAM, cache...) está bloqueada. Você recebe um <strong>pacote interceptado</strong> com a descrição da peça.</p>
             </article>
             <article class="rule-card">
               <span class="rule-num">02</span>
-              <h2>Fuja do trace</h2>
-              <p>O rastreamento sobe com o tempo e a cada erro. Em 100%, você é pego.</p>
+              <h2>Digite o nome</h2>
+              <p>Escreva o nome da peça no terminal e aperte <kbd>Enter</kbd>. Sem acento e sem espaço: memória de massa vira <strong>MEMORIADEMASSA</strong>.</p>
             </article>
             <article class="rule-card">
               <span class="rule-num">03</span>
-              <h2>Use as dicas</h2>
-              <p>BRUTE FORCE revela uma letra, SNIFF dá uma dica extra. Ambos custam trace.</p>
+              <h2>Fuja do trace</h2>
+              <p>A barra TRACE sobe com o tempo e a cada erro. Se chegar a 100%, você é rastreado e perde.</p>
+            </article>
+            <article class="rule-card">
+              <span class="rule-num">04</span>
+              <h2>Peça ajuda</h2>
+              <p><strong>BRUTE FORCE</strong> revela uma letra e <strong>SNIFF</strong> dá uma dica extra. Ajudam, mas aumentam o trace.</p>
             </article>
           </div>
+
+          <ol class="acts">
+            <li><strong>Ato 1 · Partida</strong> — o PC está desligado. Descubra as 6 peças mínimas para ele ligar, uma de cada vez, em ordem.</li>
+            <li><strong>Ato 2 · Sistema</strong> — o PC liga num desktop antigo. As pistas das outras 10 peças estão <strong>escondidas</strong> em pastas, arquivos, e-mails e programas. Explore, colete e responda no Terminal, em qualquer ordem.</li>
+          </ol>
+          <p class="hint tour-note">Primeira vez? Um tutorial guiado mostra onde clicar em cada ato (o trace fica pausado enquanto ele estiver aberto).</p>
 
           <button id="btn-start" class="btn btn-primary btn-big" type="button">&gt; INICIAR INVASÃO</button>
           <p class="hint">ou pressione <kbd>Enter</kbd></p>
@@ -107,7 +118,7 @@
         </aside>
       </div>
 
-      <footer class="footer">comandos: help · status · brute · sniff · decrypt · clear · reboot</footer>
+      <footer class="footer">comandos: help · tutorial · status · brute · sniff · decrypt · clear · reboot</footer>
     </section>
 
     <!-- TELA: CARREGAMENTO DO ROOT/OS -->
@@ -246,5 +257,6 @@
   <script src="defender.js"></script>
   <script src="batalha.js"></script>
   <script src="final.js"></script>
+  <script src="tour.js"></script>
 </body>
 </html>

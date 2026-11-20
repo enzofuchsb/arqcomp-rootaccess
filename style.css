@@ -115,9 +115,9 @@ html, body {
 
 .rules {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 .rule-card {
   background: var(--panel);
@@ -136,7 +136,26 @@ html, body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
-.rule-card p { margin: 0; color: var(--muted); font-size: 13px; }
+.rule-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.rule-card p strong { color: var(--text); }
+
+.acts {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--cyan);
+  background: var(--panel);
+  display: grid;
+  gap: 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 820px;
+}
+.acts strong { color: var(--text); }
+.acts li strong:first-child { color: var(--cyan); }
+.tour-note { margin: -16px 0 24px; }
 
 .hint { color: var(--muted); font-size: 13px; margin-top: 12px; }
 kbd {
@@ -1634,4 +1653,77 @@ body:has(#screen-desktop.active) .scanlines { display: none; }
 @keyframes escudoBonus {
   0%, 60% { color: #7DFFB1; filter: drop-shadow(0 0 6px #39FF88); transform: scale(1.15); }
   100% { transform: none; filter: none; }
+}
+
+
+/* =========================================================
+   TUTORIAL GUIADO (tour.js)
+   ========================================================= */
+.tour-hole {
+  position: fixed;
+  z-index: 20000;
+  pointer-events: none;
+  border: 2px solid var(--green);
+  box-shadow: 0 0 0 9999px rgba(3, 5, 6, 0.72), 0 0 18px rgba(57, 255, 136, 0.55);
+  transition: left 0.25s, top 0.25s, width 0.25s, height 0.25s;
+  animation: tourPulse 1.4s ease-in-out infinite;
+}
+.tour-hole.center { left: 50%; top: 50%; width: 0; height: 0; border: 0; animation: none; }
+@keyframes tourPulse { 50% { border-color: rgba(57, 255, 136, 0.35); } }
+
+.tour-card {
+  position: fixed;
+  z-index: 20001;
+  width: min(380px, calc(100vw - 24px));
+  background: var(--panel);
+  border: 1px solid var(--green);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.55;
+  padding: 14px 16px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+.tour-card p { margin: 0 0 8px; }
+.tour-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px;
+  font-size: 11px; letter-spacing: 0.08em; color: var(--muted);
+}
+.tour-title { font-size: 16px; margin: 6px 0 8px; color: var(--green); text-transform: uppercase; letter-spacing: 0.04em; }
+.tour-wait { color: var(--amber); animation: blink 1.4s steps(1) infinite; }
+.tour-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.tour-btn, .tour-skip {
+  font-family: var(--mono);
+  cursor: pointer;
+}
+.tour-btn {
+  background: var(--green); color: #06080A; border: 1px solid var(--green);
+  font-weight: 700; font-size: 13px; padding: 8px 14px;
+}
+.tour-btn.alt { background: transparent; color: var(--cyan); border-color: var(--cyan); }
+.tour-skip { background: none; border: 0; color: var(--muted); font-size: 11px; text-decoration: underline; padding: 2px; }
+.tour-btn:focus-visible, .tour-skip:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* variante ROOT/OS 2002: balão amarelo de ajuda, anos 2000 */
+.tour-card.os {
+  background: #FFFBE1; color: #1B1B1B; border: 1px solid #6B6B4A;
+  font-family: Tahoma, Verdana, sans-serif; border-radius: 6px;
+  box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.45);
+}
+.tour-card.os .tour-head { color: #6B6B4A; }
+.tour-card.os .tour-title { color: #0B3A9E; text-transform: none; letter-spacing: 0; }
+.tour-card.os .tour-wait { color: #A04A00; }
+.tour-card.os .tour-skip { color: #555; }
+.tour-card.os .tour-btn {
+  background: linear-gradient(#5CC56A, #2E9A3E); border: 1px solid #1E6B2A; color: #fff;
+  border-radius: 4px; font-family: inherit;
+}
+.tour-card.os .tour-btn.alt { background: linear-gradient(#FFFFFF, #DCDCDC); border-color: #7A7A7A; color: #1B1B1B; }
+
+/* celular: o card fica preso embaixo da tela */
+.tour-card.dock { left: 8px; right: 8px; bottom: 8px; top: auto; width: auto; max-height: 55vh; overflow-y: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tour-hole { animation: none; transition: none; }
+  .tour-wait { animation: none; }
 }

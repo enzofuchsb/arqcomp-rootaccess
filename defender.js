@@ -85,7 +85,7 @@ function agendarScan() {
 
 function varredura() {
   if (!ativo()) return;
-  if (def.quizAtivo) { def.scanTimer = setTimeout(varredura, 8000); return; }
+  if (def.quizAtivo || window.tourAtivo) { def.scanTimer = setTimeout(varredura, 8000); return; }
   def.scanAtivo = true;
 
   const corpo = el2('div', 'def-body');
@@ -136,7 +136,7 @@ function agendarQuiz() {
 function verificacao() {
   if (!ativo()) return;
   // nunca junto com a varredura
-  if (def.scanAtivo) { def.quizTimer = setTimeout(verificacao, 6000); return; }
+  if (def.scanAtivo || window.tourAtivo) { def.quizTimer = setTimeout(verificacao, 6000); return; }
   const online = [...state.online];
   if (!online.length) { agendarQuiz(); return; }
   const i = online[Math.floor(Math.random() * online.length)];
@@ -290,7 +290,7 @@ function agendarFirewall() {
 
 function firewall() {
   if (!ativo()) return;
-  if (state.trace >= 70) {
+  if (state.trace >= 70 && !window.tourAtivo) {
     const fechada = window.dkFirewall();
     alarme();
     window.dkBalao('Firewall interferindo no sistema', fechada ? 'A janela "' + fechada + '" foi fechada e os ícones mudaram de lugar.' : 'Os ícones da área de trabalho mudaram de lugar.', 5000);
