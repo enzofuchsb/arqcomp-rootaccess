@@ -1089,12 +1089,29 @@ function painelMorse() {
   ledBox.append(led, el('small', null, 'LED de status'));
   box.appendChild(ledBox);
 
+  // fita de sinal: escreve · e − conforme o LED acende (sem traduzir as letras)
+  const fita = el('div', 'morse-fita');
+  fita.setAttribute('aria-label', 'Fita de sinal do LED');
+  box.appendChild(fita);
+  let letraAtual = null;
+
   const seq = sequenciaMorse(PLACA);
+  // símbolo de cada passo aceso, na ordem da palavra (mesma ordem em que a sequência acende)
+  const simbolos = PLACA.split('').map((l) => MORSE[l]).join('').split('');
   let k = 0;
+  let s = 0;
   (function passo() {
     if ((!led.isConnected || !state.rodando) && k > 0) return;   // janela fechada ou jogo parado: para o loop
-    const [aceso, ms] = seq[k % seq.length];
+    const pos = k % seq.length;
+    if (pos === 0) { fita.textContent = ''; letraAtual = null; s = 0; }   // recomeça junto com o LED
+    const [aceso, ms] = seq[pos];
     led.classList.toggle('on', aceso);
+    if (aceso) {
+      if (!letraAtual) { letraAtual = el('span', 'morse-fita-letra'); fita.appendChild(letraAtual); }
+      letraAtual.textContent += simbolos[s++] === '.' ? '·' : '−';
+    } else if (ms >= MORSE_T.letra) {
+      letraAtual = null;   // pausa entre letras: a próxima vai num bloco separado
+    }
     k++;
     setTimeout(passo, ms);
   })();
